@@ -1,0 +1,33 @@
+
+types:
+  LoanManagement:
+    actions:
+      createAccount:
+        delay: 4 # time in seconds
+        max_retry: 2
+        handler: App\Queue\RetryStrategryHandler::class
+
+      createGreenLoanAccount:
+        max_retry: 2
+        delay: 20 # time in seconds
+        handler: App\Queue\RetryStrategryHandler::class
+          Default:
+            default_delay: 10
+            max_retry: 5
+            handler: App\Queue\RetryStrategryHandler::class
+
+  salesforce:
+    actions:
+      applicationCreated:
+        delay: 4 # time in seconds
+
+Default:
+  default_delay: 10
+  max_retry: 5
+  handler: App\Queue\RetryStrategryHandler::class
+
+DB:
+  host: localhost:3360
+  username: env(username)
+  password: env(password)
+
