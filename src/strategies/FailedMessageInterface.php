@@ -10,7 +10,7 @@ interface FailedMessageInterface
 {
     public function getDelay(): int;
 
-    public function getMaxRetries(): int;
+    public function getRetryCount(): int;
 
     public function getMessage(): Message;
 }

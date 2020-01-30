@@ -8,16 +8,16 @@ class FailedMessage implements FailedMessageInterface
 {
     protected $delay;
 
-    protected $retries;
+    protected $retryCount;
     /**
      * @var \Interop\Queue\Message
      */
     private $message;
 
-    public function __construct(Message $message, int $delays, int $retries)
+    public function __construct(Message $message, int $delays, int $retryCount)
     {
         $this->delay = $delays;
-        $this->retries = $retries;
+        $this->retryCount = $retryCount;
         $this->message = $message;
     }
 
@@ -26,9 +26,9 @@ class FailedMessage implements FailedMessageInterface
         return $this->delay;
     }
 
-    public function getMaxRetries(): int
+    public function getRetryCount(): int
     {
-        return $this->retries;
+        return $this->retryCount;
     }
 
     /**
