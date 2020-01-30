@@ -2,7 +2,7 @@
 
 namespace App\queue;
 
-use App\strategies\RetryStrategyInterface;
+use App\strategies\AbstractRetryStrategy;
 use Interop\Queue\Message;
 
 interface QueueClientInterface
@@ -15,5 +15,5 @@ interface QueueClientInterface
 
     public function acknowledge(Message $message): void;
 
-    public function reject(Message $message, RetryStrategyInterface $retry = null): void;
+    public function reject(Message $message, AbstractRetryStrategy $retry = null): void;
 }

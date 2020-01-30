@@ -15,7 +15,6 @@ types:
                         default_delay: 10
                         max_retry: 5
                         handler: App\Queue\RetryStrategryHandler::classs
-
     salesforce:
         actions:
             applicationCreated:

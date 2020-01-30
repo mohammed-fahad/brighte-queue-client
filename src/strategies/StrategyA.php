@@ -4,12 +4,14 @@
 namespace App\strategies;
 
 
-class StrategyA implements RetryStrategyInterface
+class StrategyA extends AbstractRetryStrategy
 {
     public function handle(): bool
     {
-        echo "Saving to DB";
+        echo "Saving to DB \n";
 
+        echo "body  = " . $this->failedMessage->getMessage()->getBody();
         return true;
+
     }
 }

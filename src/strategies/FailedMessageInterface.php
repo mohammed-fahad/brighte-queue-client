@@ -4,11 +4,13 @@
 namespace App\strategies;
 
 
+use Interop\Queue\Message;
+
 interface FailedMessageInterface
 {
     public function getDelay(): int;
 
     public function getMaxRetries(): int;
 
-    public function getStrategy(): RetryStrategyInterface;
+    public function getMessage(): Message;
 }
