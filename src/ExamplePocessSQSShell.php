@@ -16,6 +16,7 @@ $config = [
     "provider" => "sqs"
 ];
 
+
 $sqsClient = QueueClientFactory::create($config);
 
 $msg = new SqsMessage("this is a test");
