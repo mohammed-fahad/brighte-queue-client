@@ -21,7 +21,6 @@ $sqsClient = QueueClientFactory::create($config);
 
 $msg = new SqsMessage("this is a test");
 
-//$strategy = new StrategyA(new FailedMessage($msg, 6, 4));
 
 
 $sqsClient->reject($msg);
