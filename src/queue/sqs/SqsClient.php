@@ -7,7 +7,7 @@ namespace App\queue\sqs;
 use App\queue\QueueClientInterface;
 use App\strategies\AbstractRetryStrategy;
 use App\strategies\DefaultRetryStrategyDriver;
-use Brighte\Sqs\SqsConnectionFactory;
+use Enqueue\Sqs\SqsConnectionFactory;
 use Interop\Queue\Message;
 
 class SqsClient implements QueueClientInterface
@@ -57,8 +57,6 @@ class SqsClient implements QueueClientInterface
         if ($result === false) {
             throw new \Exception("Failed to reject message " . $message);
         }
-        echo "done ";
-        return;
         $this->consumer->reject($message);
     }
 

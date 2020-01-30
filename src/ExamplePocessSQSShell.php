@@ -4,8 +4,7 @@
 require_once "vendor/autoload.php";
 
 use App\queue\factories\QueueClientFactory;
-use App\queue\SqsClient;
-use Brighte\Sqs\SqsMessage;
+use Enqueue\Sqs\SqsMessage;
 
 $config = [
     'key' => 'Key here',
@@ -21,9 +20,9 @@ $sqsClient = QueueClientFactory::create($config);
 
 $msg = new SqsMessage("this is a test");
 
+$msg->setMessageGroupId(9);
+$msg->setMessageDeduplicationId(9);
 
+$sqsClient->send($msg);
 
-$sqsClient->reject($msg);
-
-exit("stop");
-
+echo "done";
