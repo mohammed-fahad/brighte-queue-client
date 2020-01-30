@@ -4,6 +4,8 @@
 namespace App\strategies;
 
 
+use Interop\Queue\Message;
+
 class FailedMessage implements FailedMessageInterface
 {
     /**
@@ -12,9 +14,14 @@ class FailedMessage implements FailedMessageInterface
     protected $retryStrategy;
     protected $delay;
     protected $retries;
+    private $message;
 
-    public function __construct(RetryStrategyInterface $retryStrategy, $delays, $retries)
+    public function __construct(RetryStrategyInterface $retryStrategy, Message $message, $delays, $retries)
     {
+        if ($retryStrategy === null) {
+            $retryStrategy = new StrategyA();
+        }
+        $this->message = $message;
         $this->retryStrategy = $retryStrategy;
         $this->delay = $delays;
         $this->retries = $retries;
@@ -30,8 +37,8 @@ class FailedMessage implements FailedMessageInterface
         return $this->retries;
     }
 
-    public function getHandler(): RetryStrategyInterface
+    public function getStrategy(): RetryStrategyInterface
     {
-        return $this->getHandler();
+        return $this->retryStrategy;
     }
 }

@@ -5,7 +5,9 @@ namespace App\queue\sqs;
 
 
 use App\queue\QueueClientInterface;
+use App\strategies\FailedMessage;
 use App\strategies\RetryStrategyInterface;
+use App\strategies\StrategyA;
 use Brighte\Sqs\SqsConnectionFactory;
 use Interop\Queue\Message;
 
@@ -48,6 +50,14 @@ class SqsClient implements QueueClientInterface
 
     public function reject(Message $message, RetryStrategyInterface $retryStrategy = null): void
     {
+
+        $failedMsg = new FailedMessage(new StrategyA(), $message, 4, 6);
+
+        var_dump($failedMsg->getStrategy()->handle());
+        exit("stop here");
+
+        $failedMsg->getHandler()->handle();
+
         if (!$retryStrategy) {
             $this->consumer->reject($message);
 

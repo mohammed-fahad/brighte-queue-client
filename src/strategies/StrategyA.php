@@ -6,9 +6,10 @@ namespace App\strategies;
 
 class StrategyA implements RetryStrategyInterface
 {
-
-    public function handle(FailedMessageInterface $message): bool
+    public function handle(): bool
     {
         echo "Saving to DB";
+
+        return true;
     }
 }

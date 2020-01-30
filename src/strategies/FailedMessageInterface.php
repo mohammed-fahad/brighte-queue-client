@@ -10,5 +10,5 @@ interface FailedMessageInterface
 
     public function getMaxRetries(): int;
 
-    public function getHandler(): RetryStrategyInterface;
+    public function getStrategy(): RetryStrategyInterface;
 }
