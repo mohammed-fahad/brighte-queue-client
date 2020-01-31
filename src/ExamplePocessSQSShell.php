@@ -3,7 +3,7 @@
 
 require_once "vendor/autoload.php";
 
-use App\queue\factories\QueueClientFactory;
+use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use Enqueue\Sqs\SqsMessage;
 
 $config = [

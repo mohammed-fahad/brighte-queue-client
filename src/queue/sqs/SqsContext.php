@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\queue\sqs;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 
 use Enqueue\Sqs\SqsMessage;

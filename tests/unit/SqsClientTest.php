@@ -1,7 +1,7 @@
 <?php
 
-use App\queue\sqs\SqsClient;
-use App\queue\sqs\SqsConfig;
+use BrighteCapital\QueueClient\queue\sqs\SqsClient;
+use BrighteCapital\QueueClient\queue\sqs\SqsConfig;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
 

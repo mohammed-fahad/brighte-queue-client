@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\queue\sqs;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 
 use Enqueue\Sqs\SqsContext;
@@ -18,7 +18,7 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
         $this->context = $context;
     }
 
-    public function convertMessage(array $sqsMessage): SqsMessage
+    protected function convertMessage(array $sqsMessage): SqsMessage
     {
         $message = $this->context->createMessage();
 
@@ -26,7 +26,7 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
         $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
 
         if (isset($sqsMessage['Attributes']['ApproximateReceiveCount'])) {
-            $message->setRedelivered(((int)$sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
+            $message->setRedelivered(((int) $sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
         }
 
         if (isset($sqsMessage['MessageAttributes'])) {
@@ -35,12 +35,10 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
                     $headers = json_decode($value['StringValue'], true);
                     $message->setHeaders($headers[0]);
                 } else {
-                    foreach ($value as $propertyKey => $propertyValue) {
-                        $message->setProperty($propertyKey, $propertyValue);
+                        $message->setProperty($key, $value['StringValue']);
                     }
                 }
             }
-        }
 
         return $message;
     }

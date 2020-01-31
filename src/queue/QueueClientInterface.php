@@ -1,8 +1,8 @@
 <?php
 
-namespace App\queue;
+namespace BrighteCapital\QueueClient\queue;
 
-use App\strategies\AbstractRetryStrategy;
+use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
 use Interop\Queue\Message;
 
 interface QueueClientInterface

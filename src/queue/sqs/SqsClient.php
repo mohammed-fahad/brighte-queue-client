@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\queue\sqs;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 
-use App\queue\QueueClientInterface;
-use App\strategies\AbstractRetryStrategy;
-use App\strategies\DefaultRetryStrategyDriver;
-use Enqueue\Sqs\SqsConnectionFactory;
+use BrighteCapital\QueueClient\queue\factories\SqsConnectionFactory;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
+use BrighteCapital\QueueClient\strategies\DefaultRetryStrategyDriver;
 use Interop\Queue\Message;
 
 class SqsClient implements QueueClientInterface

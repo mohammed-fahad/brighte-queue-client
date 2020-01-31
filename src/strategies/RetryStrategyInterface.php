@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\strategies;
+namespace BrighteCapital\QueueClient\strategies;
 
 
 interface RetryStrategyInterface

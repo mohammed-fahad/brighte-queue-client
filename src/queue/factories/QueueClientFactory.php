@@ -1,10 +1,10 @@
 <?php
 
-namespace App\queue\factories;
+namespace BrighteCapital\QueueClient\queue\factories;
 
-use App\queue\QueueClientInterface;
-use App\queue\sqs\SqsClient;
-use App\queue\sqs\SqsConfig;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use BrighteCapital\QueueClient\queue\sqs\SqsClient;
+use BrighteCapital\QueueClient\queue\sqs\SqsConfig;
 
 class QueueClientFactory
 {

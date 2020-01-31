@@ -1,22 +1,32 @@
 <?php
 
-namespace App\queue\sqs;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 class SqsConfig
 {
-    /** @var string $key aws key */
+    /**
+     * @var string $key aws key
+     */
     protected $key;
 
-    /** @var string $secret aws secret */
+    /**
+     * @var string $secret aws secret
+     */
     protected $secret;
 
-    /** @var string $region aws region */
+    /**
+     * @var string $region aws region
+     */
     protected $region;
 
-    /** @var string $queue queue name */
+    /**
+     * @var string $queue queue name
+     */
     protected $queue;
 
-    /** @var bool $fifo is fifo queue */
+    /**
+     * @var bool $fifo is fifo queue
+     */
     protected $fifo = false;
 
     public function __construct(array $config)
@@ -25,9 +35,8 @@ class SqsConfig
         $this->secret = $config['secret'] ?? null;
         $this->region = $config['region'] ?? null;
         $this->queue = $config['queue'] ?? null;
-        $this->fifo = isset($config['isFifo']) ? (bool)$config['isFifo'] : false;
+        $this->fifo = substr($this->queue, -5) === '.fifo' ? true : false;
     }
-
 
     /**
      * @return string[]
