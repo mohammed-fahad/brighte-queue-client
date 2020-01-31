@@ -2,7 +2,7 @@
   "name": "brighte/brightecapitial-queueclient",
   "description": "Extension of enqueue/sqs to adapt to Brighte's needs",
   "keywords": ["sqs", "kafka", "enqueue"],
-  "homepage": "https://github.com/alhoqbani/slim-php-realworld-example-app",
+  "homepage": "https://bitbucket.org/brighte/brighte-queue-client/",
   "license": "MIT",
   "authors": [
     {
@@ -28,7 +28,7 @@
     "brighte/brighte-ms-standards": "^1.2"
   },
   "require-dev": {
-    "phpunit/phpunit": "^7",
+    "phpunit/phpunit": "^8",
     "squizlabs/php_codesniffer": "^3.4"
   },
   "autoload": {

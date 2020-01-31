@@ -13,7 +13,7 @@ class SqsClientTest extends TestCase
      */
     private $sqsClient;
 
-    protected function setUp()
+    protected function setUp():void
     {
         $config = [
             'key' => 'key',
