@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace BrighteCapital\QueueClient\strategies;
 
-
 interface RetryStrategyInterface
 {
-    /**
-     * @return bool
-     */
+
     public function handle(): bool;
+
 }
