@@ -2,4 +2,4 @@ vendor/
 /src/processSQSShell.php
 .idea/*
 /src/config.php
-
+.phpunit.result.cache
