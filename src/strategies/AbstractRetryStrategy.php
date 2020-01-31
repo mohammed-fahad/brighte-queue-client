@@ -13,6 +13,4 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     {
         $this->failedMessage = $failedMessage;
     }
-
-    abstract public function handle(): bool;
 }

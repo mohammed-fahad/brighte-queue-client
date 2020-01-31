@@ -18,6 +18,9 @@ class SqsContext extends \Enqueue\Sqs\SqsContext
         return new SqsMessage($body, $properties, $headers);
     }
 
+    /**
+     * @return \BrighteCapital\QueueClient\queue\sqs\Producer
+     */
     public function createProducer(): Producer
     {
         return new SqsProducer($this);
