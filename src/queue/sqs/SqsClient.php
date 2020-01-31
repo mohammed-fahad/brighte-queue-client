@@ -29,14 +29,13 @@ class SqsClient implements QueueClientInterface
 
     /**
      * SqsClient constructor.
-     * @param \BrighteCapital\QueueClient\queue\sqs\SqsConfig $config config
+     * @param array $config config
      */
-    public function __construct(SqsConfig $config)
+    public function __construct(array $config)
     {
-        $factory = new SqsConnectionFactory($config->toArray());
+        $factory = new SqsConnectionFactory($config);
         $this->context = $factory->createContext();
-        $this->sqsDestination = $this->context->createQueue($config->getQueue());
-
+        $this->sqsDestination = $this->context->createQueue($config['queue'] ?? '');
         $this->producer = $this->context->createProducer();
         $this->consumer = $this->context->createConsumer($this->sqsDestination);
     }
@@ -48,7 +47,7 @@ class SqsClient implements QueueClientInterface
      */
     public function receive($timeout = 0): Message
     {
-        // TODO: Implement receive() method.
+        return $this->consumer->receive($timeout);
     }
 
     /**
