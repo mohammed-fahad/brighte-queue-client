@@ -9,7 +9,7 @@ class SqsClientTest extends TestCase
 {
 
     /**
-     * @var \App\queue\sqs\SqsClient
+     * @var SqsClient
      */
     private $sqsClient;
 

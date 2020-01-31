@@ -38,6 +38,7 @@
   },
   "scripts": {
     "cs": "vendor/bin/phpcs -ps",
-    "cbf": "vendor/bin/phpcbf -p"
+    "cbf": "vendor/bin/phpcbf -p",
+    "phpunit": "vendor/bin/phpunit --testdox"
   }
 }

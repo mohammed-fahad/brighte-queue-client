@@ -59,7 +59,7 @@ class SqsClient implements QueueClientInterface
      */
     public function createMessage(string $body, array $properties = [], array $headers = []): Message
     {
-        $this->context->createMessage($body, $properties, $body);
+        return $this->context->createMessage($body, $properties, $headers);
     }
 
     /**
