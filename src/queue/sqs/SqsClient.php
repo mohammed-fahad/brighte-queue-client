@@ -2,10 +2,11 @@
 
 namespace BrighteCapital\QueueClient\queue\sqs;
 
-use BrighteCapital\QueueClient\queue\factories\SqsConnectionFactory;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\strategies\DefaultRetryStrategyDriver;
+use Exception;
+use Interop\Queue\Context;
 use Interop\Queue\Message;
 
 class SqsClient implements QueueClientInterface
@@ -17,7 +18,7 @@ class SqsClient implements QueueClientInterface
     /**
      * @var \Enqueue\Sqs\SqsDestination
      */
-    protected $sqsDestination;
+    protected $destination;
     /**
      * @var \BrighteCapital\QueueClient\queue\sqs\SqsProducer
      */
@@ -29,17 +30,16 @@ class SqsClient implements QueueClientInterface
 
     /**
      * SqsClient constructor.
-     * @param array $config config
+     * @param string $queueName queueName
+     * @param \Interop\Queue\Context $context context
      */
-    public function __construct(array $config)
+    public function __construct(string $queueName, Context $context)
     {
-        $factory = new SqsConnectionFactory($config);
-        $this->context = $factory->createContext();
-        $this->sqsDestination = $this->context->createQueue($config['queue'] ?? '');
+        $this->context = $context;
+        $this->destination = $this->context->createQueue($queueName);
         $this->producer = $this->context->createProducer();
-        $this->consumer = $this->context->createConsumer($this->sqsDestination);
+        $this->consumer = $this->context->createConsumer($this->destination);
     }
-
 
     /**
      * @param int $timeout timeout
@@ -69,7 +69,7 @@ class SqsClient implements QueueClientInterface
      */
     public function send(Message $message): void
     {
-        $this->producer->send($this->sqsDestination, $message);
+        $this->producer->send($this->destination, $message);
     }
 
     /**
@@ -93,7 +93,7 @@ class SqsClient implements QueueClientInterface
         $result = $retryStrategy->handle($message);
 
         if ($result === false) {
-            throw new \Exception("Failed to reject message " . $message);
+            throw new Exception("Failed to reject message " . $message);
         }
         $this->consumer->reject($message);
     }
@@ -117,9 +117,9 @@ class SqsClient implements QueueClientInterface
     /**
      * @return \Enqueue\Sqs\SqsDestination|\Interop\Queue\Queue
      */
-    public function getSqsDestination()
+    public function getDestination()
     {
-        return $this->sqsDestination;
+        return $this->destination;
     }
 
     /**

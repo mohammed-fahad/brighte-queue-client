@@ -3,9 +3,9 @@
 
 namespace BrighteCapital\QueueClient\queue\factories;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
 use Aws\Sdk;
 use Aws\Sqs\SqsClient as AwsSqsClient;
+use BrighteCapital\QueueClient\queue\sqs\SqsContext;
 use Enqueue\Dsn\Dsn;
 use Enqueue\Sqs\SqsClient;
 use Interop\Queue\Context;
