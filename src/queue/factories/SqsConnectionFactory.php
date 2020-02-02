@@ -1,6 +1,5 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\queue\factories;
 
 use Aws\Sdk;
@@ -43,7 +42,12 @@ class SqsConnectionFactory extends \Enqueue\Sqs\SqsConnectionFactory
                 unset($config['dsn']);
             }
         } else {
-            throw new \LogicException(sprintf('The config must be either an array of options, a DSN string, null or instance of %s', AwsSqsClient::class));
+            throw new \LogicException(
+                sprintf(
+                    'The config must be either an array of options, a DSN string, null or instance of %s',
+                    AwsSqsClient::class
+                )
+            );
         }
 
         $this->config = array_replace($this->defaultConfig(), $config);
@@ -102,17 +106,16 @@ class SqsConnectionFactory extends \Enqueue\Sqs\SqsConnectionFactory
         $dsn = Dsn::parseFirst($dsn);
 
         if ('sqs' !== $dsn->getSchemeProtocol()) {
-            throw new \LogicException(
-                sprintf(
-                    'The given scheme protocol "%s" is not supported. It must be "sqs"',
-                    $dsn->getSchemeProtocol()
-                )
-            );
+            throw new \LogicException(sprintf(
+                'The given scheme protocol "%s" is not supported. It must be "sqs"',
+                $dsn->getSchemeProtocol()
+            ));
         }
 
         return array_filter(
             array_replace(
-                $dsn->getQuery(), [
+                $dsn->getQuery(),
+                [
                     'key' => $dsn->getString('key'),
                     'secret' => $dsn->getString('secret'),
                     'token' => $dsn->getString('token'),
@@ -123,9 +126,10 @@ class SqsConnectionFactory extends \Enqueue\Sqs\SqsConnectionFactory
                     'endpoint' => $dsn->getString('endpoint'),
                     'queue_owner_aws_account_id' => $dsn->getString('queue_owner_aws_account_id'),
                 ]
-            ), function ($value) {
-            return null !== $value;
-        }
+            ),
+            function ($value) {
+                return null !== $value;
+            }
         );
     }
 

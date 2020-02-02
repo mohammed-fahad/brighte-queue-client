@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\queue\sqs;
-
 
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Consumer;
@@ -19,7 +17,7 @@ class SqsContext extends \Enqueue\Sqs\SqsContext
     }
 
     /**
-     * @return \BrighteCapital\QueueClient\queue\sqs\Producer
+     * @return \Interop\Queue\Producer
      */
     public function createProducer(): Producer
     {
@@ -30,5 +28,4 @@ class SqsContext extends \Enqueue\Sqs\SqsContext
     {
         return new SqsConsumer($this, $destination);
     }
-
 }

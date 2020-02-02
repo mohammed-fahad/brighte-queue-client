@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\queue\sqs;
-
 
 use Enqueue\Sqs\SqsContext;
 use Interop\Queue\Destination;
@@ -51,7 +49,7 @@ class SqsProducer extends \Enqueue\Sqs\SqsProducer
         }
 
         if (isset($body['DelaySeconds'])) {
-            $arguments['DelaySeconds'] = (int) $body['DelaySeconds'] / 1000;
+            $arguments['DelaySeconds'] = (int)$body['DelaySeconds'] / 1000;
         }
 
         if (substr($destination->getQueueName(), -5) === '.fifo') {

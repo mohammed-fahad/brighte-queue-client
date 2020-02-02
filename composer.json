@@ -38,8 +38,8 @@
     }
   },
   "scripts": {
-    "cs": "vendor/bin/phpcs -ps --standard=vendor/brighte/brighte-ms-standards/BrighteCustom",
-    "cbf": "vendor/bin/phpcbf -p",
+    "cs": "vendor/bin/phpcs -ps --standard=PSR2 src/",
+    "cbf": "vendor/bin/phpcbf --standard=PSR2 src/",
     "phpunit": "vendor/bin/phpunit --testdox --colors=always"
   }
 }

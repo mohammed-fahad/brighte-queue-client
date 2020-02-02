@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\queue\sqs;
-
 
 use Enqueue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
@@ -26,7 +24,7 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
         $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
 
         if (isset($sqsMessage['Attributes']['ApproximateReceiveCount'])) {
-            $message->setRedelivered(((int) $sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
+            $message->setRedelivered(((int)$sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
         }
 
         if (isset($sqsMessage['MessageAttributes'])) {
@@ -35,10 +33,10 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
                     $headers = json_decode($value['StringValue'], true);
                     $message->setHeaders($headers[0]);
                 } else {
-                        $message->setProperty($key, $value['StringValue']);
-                    }
+                    $message->setProperty($key, $value['StringValue']);
                 }
             }
+        }
 
         return $message;
     }
