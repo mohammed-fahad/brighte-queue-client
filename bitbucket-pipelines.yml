@@ -10,10 +10,14 @@ pipelines:
           - composer -v
         caches:
           - composer
+        artifacts:
+          - vendor/**
 
     - step:
         name: Install dependencies
         script:
+          - ls /usr/local/bin
+          - composer -v
           - composer install --prefer-source --no-interaction
 
     - step:
