@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\strategies;
-
 
 use Interop\Queue\Message;
 

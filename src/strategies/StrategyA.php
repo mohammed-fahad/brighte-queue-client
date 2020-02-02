@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\strategies;
-
 
 class StrategyA extends AbstractRetryStrategy
 {
@@ -10,8 +8,6 @@ class StrategyA extends AbstractRetryStrategy
     {
         echo "Saving to DB \n";
 
-        echo "body  = " . $this->failedMessage->getMessage()->getBody();
         return true;
-
     }
 }

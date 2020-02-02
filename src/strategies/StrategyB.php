@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\strategies;
-
 
 class StrategyB extends AbstractRetryStrategy
 {
