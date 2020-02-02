@@ -7,21 +7,11 @@ pipelines:
         script:
           - apt-get update && apt-get install -y unzip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-          - composer -v
+          #install dependencies
+          - composer install --prefer-source --no-interaction
+          # Run phpunit
+          - php vendor/bin/phpunit
+          # CS check
+          - composer cs src/
         caches:
           - composer
-        artifacts:
-          - vendor/**
-
-    - step:
-        name: Install dependencies
-        script:
-          - ls /usr/local/bin
-          - composer -v
-          - composer install --prefer-source --no-interaction
-
-    - step:
-        name: PHP Build and CS Check
-        script:
-          - php vendor/bin/phpunit
-          - composer cs src/
