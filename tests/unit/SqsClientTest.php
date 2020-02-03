@@ -1,4 +1,5 @@
 <?php
+namespace tests\unit;
 
 use BrighteCapital\QueueClient\queue\sqs\SqsClient;
 use BrighteCapital\QueueClient\queue\sqs\SqsConfig;

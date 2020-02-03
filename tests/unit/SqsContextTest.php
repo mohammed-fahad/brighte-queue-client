@@ -1,5 +1,5 @@
 <?php
-
+namespace tests\unit;
 
 use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;
 use BrighteCapital\QueueClient\queue\sqs\SqsContext;
@@ -23,7 +23,6 @@ class SqsContextTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethodsExcept(['createMessage', 'createProducer', 'createConsumer'])
             ->getMock();
-
     }
 
     public function testCreateMessage()
@@ -42,6 +41,7 @@ class SqsContextTest extends TestCase
     {
         $this->assertInstanceOf(
             SqsConsumer::class,
-            $this->context->createConsumer(new SqsDestination("some destination")));
+            $this->context->createConsumer(new SqsDestination("some destination"))
+        );
     }
 }
