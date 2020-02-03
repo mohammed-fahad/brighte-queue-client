@@ -3,6 +3,8 @@
 namespace BrighteCapital\QueueClient\queue\sqs;
 
 use Enqueue\Sqs\SqsContext;
+use Enqueue\Sqs\SqsDestination;
+use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Destination;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
@@ -34,22 +36,23 @@ class SqsProducer extends \Enqueue\Sqs\SqsProducer
 
         $arguments = [
             '@region' => $destination->getRegion(),
-            'MessageAttributes' => [
-                'Headers' => [
-                    'DataType' => 'String',
-                    'StringValue' => json_encode([$message->getHeaders()]),
-                ],
-            ],
             'MessageBody' => $body,
             'QueueUrl' => $this->context->getQueueUrl($destination),
         ];
 
-        foreach ($message->getProperties() as $name => $value) {
-            $arguments['MessageAttributes'][$name] = $value;
+        if ($message->getDelaySeconds()) {
+            $arguments['DelaySeconds'] = $message->getDelaySeconds();
         }
 
-        if (isset($body['DelaySeconds'])) {
-            $arguments['DelaySeconds'] = (int)$body['DelaySeconds'] / 1000;
+        if ($message->getHeaders()) {
+            $arguments['MessageAttributes']['Headers'] = [
+                'DataType' => 'String',
+                'StringValue' => json_encode([$message->getHeaders()]),
+            ];
+        }
+
+        foreach ($message->getProperties() as $name => $value) {
+            $arguments['MessageAttributes'][$name] = ['DataType' => 'String', 'StringValue' => $value];
         }
 
         if (substr($destination->getQueueName(), -5) === '.fifo') {
@@ -67,5 +70,7 @@ class SqsProducer extends \Enqueue\Sqs\SqsProducer
         if ($result->hasKey('MessageId') === false) {
             throw new \RuntimeException('Message was not sent');
         }
+
+        $message->setMessageId($result['MessageId']);
     }
 }
