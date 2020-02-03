@@ -10,7 +10,7 @@ pipelines:
           #install dependencies
           - composer install --prefer-source --no-interaction --no-suggest --no-plugins --no-scripts
           # Run phpunit
-          - php vendor/bin/phpunit
+          - php vendor/bin/phpunit tests
           # CS check
           - composer cs src/
         caches:
