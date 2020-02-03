@@ -38,8 +38,8 @@
     }
   },
   "scripts": {
-    "cs": "vendor/bin/phpcs -ps --standard=PSR2 src/",
-    "cbf": "vendor/bin/phpcbf --standard=PSR2 src/",
+    "cs": "vendor/bin/phpcs -ps --standard=PSR2 src/ tests/",
+    "cbf": "vendor/bin/phpcbf --standard=PSR2 src/ tests/",
     "phpunit": "vendor/bin/phpunit tests/ --testdox --colors=always"
   }
 }
