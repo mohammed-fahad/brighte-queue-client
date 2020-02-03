@@ -7,6 +7,7 @@ use BrighteCapital\QueueClient\queue\sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 
 class SqsConsumerTest extends TestCase
 {
