@@ -40,6 +40,6 @@
   "scripts": {
     "cs": "vendor/bin/phpcs -ps --standard=PSR2 src/",
     "cbf": "vendor/bin/phpcbf --standard=PSR2 src/",
-    "phpunit": "vendor/bin/phpunit --testdox --colors=always"
+    "phpunit": "vendor/bin/phpunit tests/ --testdox --colors=always"
   }
 }
