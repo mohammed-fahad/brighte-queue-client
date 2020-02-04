@@ -71,7 +71,7 @@ class QueueClient implements QueueClientInterface
      */
     public function acknowledge(Message $message): void
     {
-        $this->consumer->acknowledge($message);
+        $this->getConsumer()->acknowledge($message);
     }
 
     /**
@@ -79,7 +79,7 @@ class QueueClient implements QueueClientInterface
      */
     public function reject(Message $message): void
     {
-        $this->consumer->reject($message);
+        $this->getConsumer()->reject($message);
     }
 
     /**

@@ -11,7 +11,7 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
 
-class SqsClientTest extends TestCase
+class QueueClientTest extends TestCase
 {
 
     /**
@@ -57,17 +57,6 @@ class SqsClientTest extends TestCase
             ->method('createQueue')
             ->willReturn($this->createMock(SqsDestination::class));
 
-
-        $this->sqsContext
-            ->expects($this->once())
-            ->method('createProducer')
-            ->willReturn($this->producer);
-
-        $this->sqsContext
-            ->expects($this->once())
-            ->method('createConsumer')
-            ->willReturn($this->consumer);
-
         $this->sqsClient = new QueueClient($config['queue'], $this->sqsContext);
     }
 
@@ -81,6 +70,12 @@ class SqsClientTest extends TestCase
 
     public function testReceiveMessage()
     {
+
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
+
         $this->consumer->expects($this->once())
             ->method('receive')
             ->willReturn(new SqsMessage());
@@ -89,6 +84,10 @@ class SqsClientTest extends TestCase
 
     public function testAcknowledge()
     {
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
         $msg = new SqsMessage();
         $this->consumer->expects($this->once())->method('acknowledge')->with($msg);
         $this->sqsClient->acknowledge($msg);
@@ -102,11 +101,20 @@ class SqsClientTest extends TestCase
 
     public function testGetConsumer()
     {
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
+
         $this->assertEquals($this->consumer, $this->sqsClient->getConsumer());
     }
 
     public function testGetProducer()
     {
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createproducer')
+            ->willReturn($this->producer);
         $this->assertEquals($this->producer, $this->sqsClient->getProducer());
     }
 
