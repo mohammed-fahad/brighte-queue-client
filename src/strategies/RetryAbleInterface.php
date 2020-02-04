@@ -8,5 +8,5 @@ interface RetryAbleInterface
 
     public function getRetryCount(): int;
 
-    public function getStrategyClass(): String;
+    public function getStrategy(): string;
 }

@@ -1,9 +1,8 @@
 <?php
 
-
 require_once "vendor/autoload.php";
 
-use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
+use BrighteCapital\QueueClient\queue\BrighteQueueClient;
 use Enqueue\Sqs\SqsMessage;
 
 $config = [
@@ -15,14 +14,12 @@ $config = [
     "provider" => "sqs"
 ];
 
-
-$sqsClient = QueueClientFactory::create($config);
-
-$msg = new SqsMessage("this is a test");
+$queueClient = new BrighteQueueClient($config);
+$msg = new SqsMessage("this is the body");
 
 $msg->setMessageGroupId(9);
 $msg->setMessageDeduplicationId(9);
 
-$sqsClient->send($msg);
+$queueClient->send($msg);
 
 echo "done";

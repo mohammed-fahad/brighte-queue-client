@@ -22,7 +22,6 @@
       "email": "Mohammed.fahad@brighte.com.au"
     }
   ],
-
   "require": {
     "enqueue/sqs": "^0.10.0",
     "brighte/brighte-ms-standards": "^1.2"
@@ -38,8 +37,8 @@
     }
   },
   "scripts": {
-    "cs": "vendor/bin/phpcs -ps --standard=PSR2 src/ tests/",
-    "cbf": "vendor/bin/phpcbf --standard=PSR2 src/ tests/",
+    "cs": "vendor/bin/phpcs -ps --standard=PSR12 src/ tests/",
+    "cbf": "vendor/bin/phpcbf --standard=PSR12 src/ tests/",
     "phpunit": "vendor/bin/phpunit tests/ --testdox --colors=always"
   }
 }

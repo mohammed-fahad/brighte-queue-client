@@ -65,7 +65,8 @@ class BrighteQueueClient
     public function reject(Message $message, RetryAbleInterface $retryAble = null): void
     {
         $strategy = StrategyFactory::create($retryAble);
-
         $strategy->handle($message);
+
+        $this->client->reject($message);
     }
 }

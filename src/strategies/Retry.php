@@ -1,10 +1,8 @@
 <?php
 
-namespace App\strategies;
+namespace BrighteCapital\QueueClient\strategies;
 
-use BrighteCapital\QueueClient\strategies\RetryAbleInterface;
-
-class RetryAble implements RetryAbleInterface
+class Retry implements RetryAbleInterface
 {
     protected $delay;
 
@@ -29,7 +27,7 @@ class RetryAble implements RetryAbleInterface
         return $this->retryCount;
     }
 
-    public function getStrategyClass(): string
+    public function getStrategy(): string
     {
         return $this->strategy;
     }
