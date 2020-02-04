@@ -1,10 +1,9 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue\factories;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 use Aws\Sdk;
 use Aws\Sqs\SqsClient as AwsSqsClient;
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
 use Enqueue\Dsn\Dsn;
 use Enqueue\Sqs\SqsClient;
 use Interop\Queue\Context;

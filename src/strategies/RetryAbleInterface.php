@@ -2,13 +2,11 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
-use Interop\Queue\Message;
-
-interface FailedMessageInterface
+interface RetryAbleInterface
 {
     public function getDelay(): int;
 
     public function getRetryCount(): int;
 
-    public function getMessage(): Message;
+    public function getStrategyClass(): String;
 }

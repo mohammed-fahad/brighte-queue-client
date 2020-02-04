@@ -2,14 +2,11 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
+use Interop\Queue\Message;
+
 class StrategyB extends AbstractRetryStrategy
 {
-    public function __construct(FailedMessageInterface $failedMessage)
-    {
-        parent::__construct($failedMessage);
-    }
-
-    public function handle(): bool
+    public function handle(Message $message): bool
     {
         echo "Brighte Default Strategy";
 

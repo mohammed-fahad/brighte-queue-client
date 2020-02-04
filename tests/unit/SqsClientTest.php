@@ -1,7 +1,8 @@
 <?php
+
 namespace tests\unit;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsClient;
+use BrighteCapital\QueueClient\queue\QueueClient;
 use BrighteCapital\QueueClient\queue\sqs\SqsConfig;
 use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;
 use BrighteCapital\QueueClient\queue\sqs\SqsContext;
@@ -14,13 +15,9 @@ class SqsClientTest extends TestCase
 {
 
     /**
-     * @var SqsClient
+     * @var QueueClient
      */
     private $sqsClient;
-    /**
-     * @var \BrighteCapital\QueueClient\queue\factories\SqsConnectionFactory|\PHPUnit\Framework\MockObject\MockObject
-     */
-    private $sqsConnectionFactory;
     /**
      * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
      */
@@ -71,7 +68,7 @@ class SqsClientTest extends TestCase
             ->method('createConsumer')
             ->willReturn($this->consumer);
 
-        $this->sqsClient = new SqsClient($config['queue'], $this->sqsContext);
+        $this->sqsClient = new QueueClient($config['queue'], $this->sqsContext);
     }
 
     public function testCreateMessage()

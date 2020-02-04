@@ -2,8 +2,9 @@
 
 namespace BrighteCapital\QueueClient\queue\factories;
 
+use BrighteCapital\QueueClient\queue\QueueClient;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
-use BrighteCapital\QueueClient\queue\sqs\SqsClient;
+use BrighteCapital\QueueClient\queue\sqs\SqsConnectionFactory;
 
 class QueueClientFactory
 {
@@ -23,7 +24,7 @@ class QueueClientFactory
         switch ($provider) {
             case self::PROVIDERS_SQS:
                 $sqsConnectFactory = new SqsConnectionFactory($config);
-                return new SqsClient($config['queue'] ?? '', $sqsConnectFactory->createContext());
+                return new QueueClient($config['queue'] ?? '', $sqsConnectFactory->createContext());
         }
 
         throw new \Exception(sprintf("Failed to create Queue Client %s", $provider));

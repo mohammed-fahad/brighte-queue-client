@@ -1,15 +1,11 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue\sqs;
+namespace BrighteCapital\QueueClient\queue;
 
-use BrighteCapital\QueueClient\queue\QueueClientInterface;
-use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
-use BrighteCapital\QueueClient\strategies\DefaultRetryStrategyDriver;
-use Exception;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 
-class SqsClient implements QueueClientInterface
+class QueueClient implements QueueClientInterface
 {
     /**
      * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext
@@ -37,8 +33,6 @@ class SqsClient implements QueueClientInterface
     {
         $this->context = $context;
         $this->destination = $this->context->createQueue($queueName);
-        $this->producer = $this->context->createProducer();
-        $this->consumer = $this->context->createConsumer($this->destination);
     }
 
     /**
@@ -47,7 +41,7 @@ class SqsClient implements QueueClientInterface
      */
     public function receive($timeout = 0): Message
     {
-        return $this->consumer->receive($timeout);
+        return $this->getConsumer()->receive($timeout);
     }
 
     /**
@@ -69,7 +63,7 @@ class SqsClient implements QueueClientInterface
      */
     public function send(Message $message): void
     {
-        $this->producer->send($this->destination, $message);
+        $this->getProducer()->send($this->destination, $message);
     }
 
     /**
@@ -82,19 +76,9 @@ class SqsClient implements QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\AbstractRetryStrategy|null $retryStrategy
-     * @throws \Exception
      */
-    public function reject(Message $message, AbstractRetryStrategy $retryStrategy = null): void
+    public function reject(Message $message): void
     {
-        if (is_null($retryStrategy)) {
-            $retryStrategy = new DefaultRetryStrategyDriver($message);
-        }
-        $result = $retryStrategy->handle($message);
-
-        if ($result === false) {
-            throw new Exception("Failed to reject message " . $message);
-        }
         $this->consumer->reject($message);
     }
 
@@ -103,6 +87,9 @@ class SqsClient implements QueueClientInterface
      */
     public function getConsumer()
     {
+        if ($this->consumer === null) {
+            $this->consumer = $this->context->createConsumer($this->getDestination());
+        }
         return $this->consumer;
     }
 
@@ -111,6 +98,9 @@ class SqsClient implements QueueClientInterface
      */
     public function getProducer()
     {
+        if ($this->producer === null) {
+            $this->producer = $this->context->createProducer();
+        }
         return $this->producer;
     }
 

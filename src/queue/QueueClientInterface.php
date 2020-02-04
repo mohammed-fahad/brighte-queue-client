@@ -36,7 +36,6 @@ interface QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\AbstractRetryStrategy|null $retry strategy
      */
-    public function reject(Message $message, AbstractRetryStrategy $retry = null): void;
+    public function reject(Message $message): void;
 }
