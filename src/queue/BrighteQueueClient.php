@@ -14,9 +14,18 @@ class BrighteQueueClient
      */
     protected $client;
 
+    /** @var array */
+    protected $config;
+
+    /**
+     * BrighteQueueClient constructor.
+     * @param array $config
+     * @throws \Exception
+     */
     public function __construct(array $config)
     {
         $this->client = QueueClientFactory::create($config);
+        $this->config = $config;
     }
 
     /**
@@ -61,10 +70,11 @@ class BrighteQueueClient
     /**
      * @param \Interop\Queue\Message $message message
      * @param \BrighteCapital\QueueClient\strategies\RetryAbleInterface $retryAble
+     * @throws \ReflectionException
      */
     public function reject(Message $message, RetryAbleInterface $retryAble = null): void
     {
-        $strategy = StrategyFactory::create($retryAble);
+        $strategy = StrategyFactory::create($retryAble, $this->client, $this->config);
         
         $strategy->handle($message);
     }

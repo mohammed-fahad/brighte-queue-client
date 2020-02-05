@@ -84,8 +84,9 @@ class QueueClient implements QueueClientInterface
 
     public function delay(Message $message, int $seconds = 0): void
     {
+        $this->getConsumer()->setVisibilityTimeout($seconds);
         /*Need to set visibilty....henc need to make this queue SQS */
-        $this->getConsumer()->reject($message);
+        $this->getConsumer()->reject($message, true);
     }
 
     /**
