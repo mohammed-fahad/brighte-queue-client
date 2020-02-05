@@ -120,7 +120,6 @@ class SqsClientTest extends TestCase
             ->willReturn($this->consumer);
         $this->consumer->expects($this->once())->method('reject')->withConsecutive([$msg, true]);
         $this->sqsClient->delay($msg, $delayCount);
-
     }
 
     public function testGetConsumer()
