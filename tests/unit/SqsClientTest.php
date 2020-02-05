@@ -10,7 +10,7 @@ use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
 
-class QueueClientTest extends TestCase
+class SqsClientTest extends TestCase
 {
 
     /**
@@ -59,14 +59,6 @@ class QueueClientTest extends TestCase
         $this->sqsClient = new SqsClient($config['queue'], $this->sqsContext);
     }
 
-    public function testCreateMessage()
-    {
-        $this->sqsContext->expects($this->once())
-            ->method('createMessage')
-            ->willReturn(new SqsMessage());
-        $this->assertInstanceOf(SqsMessage::class, $this->sqsClient->createMessage("this is the bodyt"));
-    }
-
     public function testReceiveMessage()
     {
 
@@ -79,6 +71,24 @@ class QueueClientTest extends TestCase
             ->method('receive')
             ->willReturn(new SqsMessage());
         $this->assertInstanceOf(SqsMessage::class, $this->sqsClient->receive());
+    }
+
+    public function testCreateMessage()
+    {
+        $this->sqsContext->expects($this->once())
+            ->method('createMessage')
+            ->willReturn(new SqsMessage());
+        $this->assertInstanceOf(SqsMessage::class, $this->sqsClient->createMessage("this is the bodyt"));
+    }
+
+    public function testSend()
+    {
+        $this->sqsContext->expects($this->once())
+            ->method('createProducer')
+            ->willReturn(new SqsProducer($this->sqsContext));
+        $msg = new SqsMessage("First message");
+        $this->sqsClient->send($msg);
+        $this->sqsClient->send($msg);
     }
 
     public function testAcknowledge()
@@ -96,6 +106,20 @@ class QueueClientTest extends TestCase
     public function testReject()
     {
         /*TODO*/
+    }
+
+    public function testDelay()
+    {
+        $delayCount = 1000;
+        $msg = $this->createMock(SqsMessage::class);
+        $msg->expects($this->once())->method('setRequeueVisibilityTimeout')->with($delayCount);
+
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
+        $this->consumer->expects($this->once())->method('reject')->withConsecutive([$msg, true]);
+        $this->sqsClient->delay($msg, $delayCount);
     }
 
     public function testGetConsumer()

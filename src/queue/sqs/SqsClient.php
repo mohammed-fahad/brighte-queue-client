@@ -75,10 +75,11 @@ class SqsClient implements QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
+     * @param bool $requeue requeue
      */
-    public function reject(Message $message): void
+    public function reject(Message $message, bool $requeue = false): void
     {
-        $this->getConsumer()->reject($message);
+        $this->getConsumer()->reject($message, $requeue);
     }
 
     public function delay(Message $message, int $seconds = 0): void
