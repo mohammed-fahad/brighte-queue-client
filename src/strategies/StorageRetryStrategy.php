@@ -2,35 +2,34 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
+use BrighteCapital\QueueClient\queue\factories\StorageFactory;
+use BrighteCapital\QueueClient\Storage\StorageInterface;
+use Exception;
 use Interop\Queue\Message;
 
 class StorageRetryStrategy extends AbstractRetryStrategy
 {
-    /** @var Connection */
-    protected $connection;
+    /** @var StorageInterface */
+    protected $storage;
+
+    /** @var array */
+    protected $config;
+
+    public function setConfig(array $config)
+    {
+        $this->config = $config;
+    }
 
     /**
-     * @param $data
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception
      */
-    public function _construct($data)
+    public function setup()
     {
-        parent::_construct($data);
-        $connectionParams = [
-            'dbname' => $data['config']['dbname'],
-            'user' =>  $data['config']['user'],
-            'password' =>  $data['config']['password'],
-            'host' =>  $data['config']['host'],
-            'driver' => 'pdo_mysql',
-        ];
-
-        $this->connection = DriverManager::getConnection($connectionParams);
+        $this->storage = StorageFactory::create($this->config);
     }
 
     function onMaxRetryReached(Message $message): void
     {
-
+        $this->storage->storeMessage($message);
     }
 }

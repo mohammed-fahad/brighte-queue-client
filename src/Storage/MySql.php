@@ -15,7 +15,7 @@ class MySql implements StorageInterface
      * @param array $config
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function init(array $config): void
+    public function _construct(array $config)
     {
         $connectionParams = [
             'dbname' => $config['dbname'],
@@ -29,7 +29,7 @@ class MySql implements StorageInterface
 
     public function storeMessage(Message $message): bool
     {
-        // TODO: Implement storeMessage() method.
+        $this->connection->insert();
     }
 
     public function updateMessage(Message $message): bool

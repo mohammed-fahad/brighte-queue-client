@@ -18,10 +18,10 @@ class StrategyFactory
 
         switch ($retry->getStrategy()) {
             case DefaultRetryStrategy::class:
-                return new DefaultRetryStrategy($retry, $queueClient);
+                return new DefaultRetryStrategy($queueClient, $retry);
 
             case StorageRetryStrategy::class:
-                return new StorageRetryStrategy($retry, $queueClient, $config);
+                return new StorageRetryStrategy($queueClient, $retry);
         }
     }
 }

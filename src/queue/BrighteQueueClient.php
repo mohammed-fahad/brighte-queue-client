@@ -51,9 +51,6 @@ class BrighteQueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @throws \Interop\Queue\Exception
-     * @throws \Interop\Queue\Exception\InvalidDestinationException
-     * @throws \Interop\Queue\Exception\InvalidMessageException
      */
     public function send(Message $message): void
     {
@@ -70,11 +67,11 @@ class BrighteQueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\Retry $retryAble
+     * @param \BrighteCapital\QueueClient\strategies\Retry $retry
      */
-    public function reject(Message $message, Retry $retryAble = null): void
+    public function reject(Message $message, Retry $retry = null): void
     {
-        $strategy = StrategyFactory::create($retryAble, $this->client, $this->config);
+        $strategy = StrategyFactory::create($retry, $this->client, $this->config);
         
         $strategy->handle($message);
     }

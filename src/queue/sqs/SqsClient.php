@@ -1,11 +1,13 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Context;
 use Interop\Queue\Message;
 
-class QueueClient implements QueueClientInterface
+class SqsClient implements QueueClientInterface
 {
     /**
      * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext
@@ -57,9 +59,6 @@ class QueueClient implements QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @throws \Interop\Queue\Exception
-     * @throws \Interop\Queue\Exception\InvalidDestinationException
-     * @throws \Interop\Queue\Exception\InvalidMessageException
      */
     public function send(Message $message): void
     {
@@ -84,8 +83,8 @@ class QueueClient implements QueueClientInterface
 
     public function delay(Message $message, int $seconds = 0): void
     {
-        $this->getConsumer()->setVisibilityTimeout($seconds);
-        /*Need to set visibilty....henc need to make this queue SQS */
+        /** @var SqsMessage $message */
+        $message->setRequeueVisibilityTimeout($seconds);
         $this->getConsumer()->reject($message, true);
     }
 

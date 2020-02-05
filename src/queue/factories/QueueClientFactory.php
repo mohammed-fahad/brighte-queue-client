@@ -14,7 +14,7 @@ class QueueClientFactory
 
     /**
      * @param array $config config
-     * @return \BrighteCapital\QueueClient\queue\QueueClientInterface
+     * @return SqsClient
      * @throws \Exception
      */
     public static function create(array $config): QueueClientInterface
