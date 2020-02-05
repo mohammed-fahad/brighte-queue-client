@@ -4,11 +4,12 @@ namespace BrighteCapital\QueueClient\strategies;
 
 use Interop\Queue\Message;
 
-class StrategyA extends AbstractRetryStrategy
+class DefaultRetryStrategy extends AbstractRetryStrategy
 {
     public function handle(Message $message): void
     {
         echo "Saving to DB \n";
+        $this->onMaxRetryReached($message);
     }
 
     protected function onMaxRetryReached(Message $message): void

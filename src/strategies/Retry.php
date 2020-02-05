@@ -2,18 +2,18 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
-class Retry implements RetryAbleInterface
+class Retry
 {
     protected $delay;
 
-    protected $retryCount;
+    protected $maxRetryCount;
 
     private $strategy;
 
-    public function __construct(int $delays, int $retryCount, string $strategy)
+    public function __construct(int $delays, int $maxRetryCount, string $strategy)
     {
         $this->delay = $delays;
-        $this->retryCount = $retryCount;
+        $this->maxRetryCount = $maxRetryCount;
         $this->strategy = $strategy;
     }
 
@@ -22,9 +22,9 @@ class Retry implements RetryAbleInterface
         return $this->delay;
     }
 
-    public function getRetryCount(): int
+    public function getMaxRetryCount(): int
     {
-        return $this->retryCount;
+        return $this->maxRetryCount;
     }
 
     public function getStrategy(): string
