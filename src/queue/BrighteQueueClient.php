@@ -25,7 +25,7 @@ class BrighteQueueClient
      */
     public function receive($timeout = 0): Message
     {
-        $this->client->receive($timeout);
+        return $this->client->receive($timeout);
     }
 
     /**
@@ -65,8 +65,7 @@ class BrighteQueueClient
     public function reject(Message $message, RetryAbleInterface $retryAble = null): void
     {
         $strategy = StrategyFactory::create($retryAble);
+        
         $strategy->handle($message);
-
-        $this->client->reject($message);
     }
 }

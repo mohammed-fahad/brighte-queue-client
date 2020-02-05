@@ -8,7 +8,11 @@ class StrategyB extends AbstractRetryStrategy
 {
     public function handle(Message $message): void
     {
-        echo "Brighte Default Strategy";
+        $this->onMaxRetryReached($message);
+    }
+
+    function onMaxRetryReached(Message $message)
+    {
+        //do the heavey lifting here
     }
 }
-

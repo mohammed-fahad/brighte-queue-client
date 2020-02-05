@@ -2,12 +2,14 @@
 
 namespace BrighteCapital\QueueClient\queue\factories;
 
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\strategies\RetryAbleInterface;
+use ReflectionException;
 
 class StrategyFactory
 {
-    public static function create(RetryAbleInterface $retry): AbstractRetryStrategy
+    public static function create(RetryAbleInterface $retry, QueueClientInterface $queueClient): AbstractRetryStrategy
     {
         try {
             $reflectionClass = new \ReflectionClass($retry->getStrategy());
@@ -15,6 +17,6 @@ class StrategyFactory
             throw new ReflectionException($e->getMessage());
         }
 
-        return $reflectionClass->newInstance();
+        return $reflectionClass->newInstanceArgs($queueClient);
     }
 }

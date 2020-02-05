@@ -82,6 +82,12 @@ class QueueClient implements QueueClientInterface
         $this->getConsumer()->reject($message);
     }
 
+    public function delay(Message $message, int $seconds = 0): void
+    {
+        /*Need to set visibilty....henc need to make this queue SQS */
+        $this->getConsumer()->reject($message);
+    }
+
     /**
      * @return \Enqueue\Sqs\SqsConsumer|\Interop\Queue\Consumer
      */

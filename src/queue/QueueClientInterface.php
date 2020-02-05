@@ -2,7 +2,6 @@
 
 namespace BrighteCapital\QueueClient\queue;
 
-use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
 use Interop\Queue\Message;
 
 interface QueueClientInterface
@@ -38,4 +37,6 @@ interface QueueClientInterface
      * @param \Interop\Queue\Message $message message
      */
     public function reject(Message $message): void;
+
+    public function delay(Message $message, int $seconds = 0): void;
 }
