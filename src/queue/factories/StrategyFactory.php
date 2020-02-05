@@ -4,26 +4,24 @@ namespace BrighteCapital\QueueClient\queue\factories;
 
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
-use BrighteCapital\QueueClient\strategies\RetryAbleInterface;
-use ReflectionException;
+use BrighteCapital\QueueClient\strategies\DefaultRetryStrategy;
+use BrighteCapital\QueueClient\strategies\Retry;
+use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
 
 class StrategyFactory
 {
-    /**
-     * @param RetryAbleInterface $retry
-     * @param QueueClientInterface $queueClient
-     * @param array $config
-     * @return AbstractRetryStrategy
-     * @throws ReflectionException
-     */
-    public static function create(RetryAbleInterface $retry, QueueClientInterface $queueClient, array $config): AbstractRetryStrategy
+    public static function create(Retry $retry, QueueClientInterface $queueClient, array $config): AbstractRetryStrategy
     {
-        try {
-            $reflectionClass = new \ReflectionClass($retry->getStrategy());
-        } catch (\ReflectionException $e) {
-            throw new ReflectionException($e->getMessage());
+        if (!$retry) {
+            $retry = new Retry(0, 0, DefaultRetryStrategy::class);
         }
 
-        return $reflectionClass->newInstanceArgs(['queueClient' => $queueClient, 'retry' => $retry, 'config' => $config]);
+        switch ($retry->getStrategy()) {
+            case DefaultRetryStrategy::class:
+                return new DefaultRetryStrategy($retry, $queueClient);
+
+            case StorageRetryStrategy::class:
+                return new StorageRetryStrategy($retry, $queueClient, $config);
+        }
     }
 }

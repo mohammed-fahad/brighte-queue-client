@@ -4,6 +4,7 @@ namespace BrighteCapital\QueueClient\queue;
 
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StrategyFactory;
+use BrighteCapital\QueueClient\strategies\Retry;
 use BrighteCapital\QueueClient\strategies\RetryAbleInterface;
 use Interop\Queue\Message;
 
@@ -69,10 +70,9 @@ class BrighteQueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\RetryAbleInterface $retryAble
-     * @throws \ReflectionException
+     * @param \BrighteCapital\QueueClient\strategies\Retry $retryAble
      */
-    public function reject(Message $message, RetryAbleInterface $retryAble = null): void
+    public function reject(Message $message, Retry $retryAble = null): void
     {
         $strategy = StrategyFactory::create($retryAble, $this->client, $this->config);
         
