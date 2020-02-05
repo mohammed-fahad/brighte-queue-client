@@ -87,8 +87,8 @@ class SqsClientTest extends TestCase
             ->method('createProducer')
             ->willReturn(new SqsProducer($this->sqsContext));
         $msg = new SqsMessage("First message");
-         $this->sqsClient->send($msg);
-         $this->sqsClient->send($msg);
+        $this->sqsClient->send($msg);
+        $this->sqsClient->send($msg);
     }
 
     public function testAcknowledge()
@@ -106,6 +106,21 @@ class SqsClientTest extends TestCase
     public function testReject()
     {
         /*TODO*/
+    }
+
+    public function testDelay()
+    {
+        $delayCount = 1000;
+        $msg = $this->createMock(SqsMessage::class);
+        $msg->expects($this->once())->method('setRequeueVisibilityTimeout')->with($delayCount);
+
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
+        $this->consumer->expects($this->once())->method('reject')->withConsecutive([$msg, true]);
+        $this->sqsClient->delay($msg, $delayCount);
+
     }
 
     public function testGetConsumer()

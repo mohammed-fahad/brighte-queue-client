@@ -61,11 +61,11 @@ class BrighteQueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\Retry $retryAble
+     * @param \BrighteCapital\QueueClient\strategies\Retry|null $retry
      */
-    public function reject(Message $message, Retry $retryAble = null): void
+    public function reject(Message $message, Retry $retry = null): void
     {
-        $strategy = StrategyFactory::create($retryAble, $this->client);
+        $strategy = StrategyFactory::create($retry, $this->client);
         $strategy->handle($message);
     }
 }

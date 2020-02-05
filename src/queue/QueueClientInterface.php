@@ -35,8 +35,9 @@ interface QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
+     * @param bool $requeue $requeue
      */
-    public function reject(Message $message): void;
+    public function reject(Message $message, bool $requeue = false): void;
 
     public function delay(Message $message, int $seconds = 0): void;
 }
