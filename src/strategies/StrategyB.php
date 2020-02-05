@@ -11,7 +11,7 @@ class StrategyB extends AbstractRetryStrategy
         $this->onMaxRetryReached($message);
     }
 
-    function onMaxRetryReached(Message $message)
+    protected function onMaxRetryReached(Message $message): void
     {
         //do the heavey lifting here
     }

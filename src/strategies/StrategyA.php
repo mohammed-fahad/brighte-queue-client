@@ -10,4 +10,9 @@ class StrategyA extends AbstractRetryStrategy
     {
         echo "Saving to DB \n";
     }
+
+    protected function onMaxRetryReached(Message $message): void
+    {
+        // TODO: Implement onMaxRetryReached() method.
+    }
 }

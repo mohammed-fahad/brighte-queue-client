@@ -6,5 +6,5 @@ use Interop\Queue\Message;
 
 abstract class AbstractRetryStrategy implements RetryStrategyInterface
 {
-    abstract function onMaxRetryReached(Message $message);
+    abstract protected function onMaxRetryReached(Message $message): void;
 }
