@@ -10,11 +10,11 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     /**
      * @var \BrighteCapital\QueueClient\queue\QueueClientInterface
      */
-    private $queueClient;
+    protected $queueClient;
     /**
      * @var \BrighteCapital\QueueClient\strategies\Retry
      */
-    private $retry;
+    protected $retry;
 
     public function __construct(Retry $retry, QueueClientInterface $queueClient)
     {
