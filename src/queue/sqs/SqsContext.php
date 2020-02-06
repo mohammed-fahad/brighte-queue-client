@@ -2,6 +2,9 @@
 
 namespace BrighteCapital\QueueClient\queue\sqs;
 
+use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use BrighteCapital\QueueClient\queue\SqsBlockerHandler;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Consumer;
 use Interop\Queue\Destination;
@@ -24,8 +27,22 @@ class SqsContext extends \Enqueue\Sqs\SqsContext
         return new SqsProducer($this);
     }
 
+    /**
+     * @param Destination $destination
+     * @return Consumer
+     */
     public function createConsumer(Destination $destination): Consumer
     {
         return new SqsConsumer($this, $destination);
+    }
+
+    /**
+     * @param QueueClientInterface $client
+     * @param array $config
+     * @return BlockerHandlerInterface
+     * @throws \Exception
+     */
+    public function createBlockerChecker(QueueClientInterface $client, array $config): BlockerHandlerInterface {
+        return new SqsBlockerHandler($client, $config);
     }
 }

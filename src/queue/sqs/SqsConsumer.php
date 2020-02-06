@@ -22,6 +22,7 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
 
         $message->setBody($sqsMessage['Body']);
         $message->setReceiptHandle($sqsMessage['ReceiptHandle']);
+        $message->setMessageId($sqsMessage['MessageId']);
 
         if (isset($sqsMessage['Attributes']['ApproximateReceiveCount'])) {
             $message->setRedelivered(((int)$sqsMessage['Attributes']['ApproximateReceiveCount']) > 1);
@@ -35,6 +36,12 @@ class SqsConsumer extends \Enqueue\Sqs\SqsConsumer
                 } else {
                     $message->setProperty($key, $value['StringValue']);
                 }
+            }
+        }
+
+        if (isset($sqsMessage['Attributes'])) {
+            foreach ($sqsMessage['Attributes'] as $key => $value) {
+                $message->setProperty($key, $value);
             }
         }
 

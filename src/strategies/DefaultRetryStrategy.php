@@ -8,6 +8,6 @@ class DefaultRetryStrategy extends AbstractRetryStrategy
 {
     protected function onMaxRetryReached(Message $message): void
     {
-        // TODO: Delete the message & Notify
+        $this->client->reject($message);
     }
 }

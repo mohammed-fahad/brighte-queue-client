@@ -5,7 +5,6 @@ namespace BrighteCapital\QueueClient\queue;
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StrategyFactory;
 use BrighteCapital\QueueClient\strategies\Retry;
-use BrighteCapital\QueueClient\strategies\RetryAbleInterface;
 use Interop\Queue\Message;
 
 class BrighteQueueClient
@@ -18,6 +17,9 @@ class BrighteQueueClient
     /** @var array */
     protected $config;
 
+    /** @var BlockerHandlerInterface */
+    protected $blockerHandler;
+
     /**
      * BrighteQueueClient constructor.
      * @param array $config
@@ -26,6 +28,7 @@ class BrighteQueueClient
     public function __construct(array $config)
     {
         $this->client = QueueClientFactory::create($config);
+        $this->blockerHandler = $this->client->
         $this->config = $config;
     }
 
@@ -68,10 +71,12 @@ class BrighteQueueClient
     /**
      * @param \Interop\Queue\Message $message message
      * @param \BrighteCapital\QueueClient\strategies\Retry $retry
+     * @throws \Exception
      */
     public function reject(Message $message, Retry $retry = null): void
     {
-        $strategy = StrategyFactory::create($this->client, $retry);
+        $strategy = StrategyFactory::create($this->client, $retry, $this->config);
+
         $strategy->handle($message);
     }
 }

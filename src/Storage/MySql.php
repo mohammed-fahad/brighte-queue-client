@@ -11,11 +11,14 @@ class MySql implements StorageInterface
     /** @var Connection */
     protected $connection;
 
+    /** @var Query */
+    protected $queryBuilder;
+
     /**
      * @param array $config
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function _construct(array $config)
+    public function __construct(array $config)
     {
         $connectionParams = [
             'dbname' => $config['dbname'],
@@ -25,15 +28,34 @@ class MySql implements StorageInterface
             'driver' => 'pdo_mysql'
         ];
         $this->connection = DriverManager::getConnection($connectionParams);
+        $this->connection->connect();
     }
 
-    public function storeMessage(Message $message): bool
+    /**
+     * @param Message $message
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function store(Message $message): void
     {
-        $this->connection->insert();
+        $this->connection->insert('brighte_queue_messages', [
+            'message_id' => $message->getMessageId(),
+            'message_handle' => $message->getReceiptHandle(),
+            'group_id' => $message->getProperty('MessageGroupId'),
+            'message' => $message->getBody(),
+            'attributes' => json_encode($message->getProperties()),
+            'alert_count' => 1,
+            'last_error_message' => 'errorMessage',
+        ]);
     }
 
-    public function updateMessage(Message $message): bool
+    public function update(Message $message): void
     {
-        // TODO: Implement updateMessage() method.
+        // TODO: Implement update() method.
+    }
+
+    public function messageExist(Message $message): array
+    {
+        $this->connection->select('id', 'alert_count')->where('email')->setParamter(0, $message->getMessageId());;
+        // TODO: Implement messageExist() method.
     }
 }

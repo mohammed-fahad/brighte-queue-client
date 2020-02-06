@@ -5,9 +5,12 @@ use Interop\Queue\Message;
 
 interface StorageInterface
 {
-    public function _construct(array $config);
+    public function __construct(array $config);
 
-    public function storeMessage(Message $message): bool;
+    public function store(Message $message): void;
 
-    public function updateMessage(Message $message): bool;
+    public function update(Message $message): void;
+
+    public function messageExist(Message $message): array;
+
 }

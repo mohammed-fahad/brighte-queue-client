@@ -17,7 +17,9 @@ class StorageFactory
      */
     public static function create(array $config): StorageInterface
     {
-        $provider = $config['type'] ?? "undefined";
+        // check if instance of storgatgeinterface, its get priority
+
+        $provider = $config['provider'] ?? "undefined";
 
         switch ($provider) {
             case self::TYPE_MYSQL:

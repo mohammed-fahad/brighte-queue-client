@@ -13,7 +13,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     /** @var Retry */
     protected $retry;
 
-    public function _construct(SqsClient $queueClient, Retry $retry)
+    public function __construct(SqsClient $queueClient, Retry $retry)
     {
         $this->client = $queueClient;
         $this->retry = $retry;
@@ -21,7 +21,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
 
     public function handle(Message $message): void
     {
-        $attemptCount = (int) $message->getAttribute('ApproximateReceiveCount');
+        $attemptCount = (int) $message->getProperty('ApproximateReceiveCount');
 
         if ($attemptCount >= $this->retry->getMaxRetryCount()) {
             $this->onMaxRetryReached($message);

@@ -10,7 +10,14 @@ use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
 
 class StrategyFactory
 {
-    public static function create(QueueClientInterface $queueClient, Retry $retry = null): AbstractRetryStrategy
+    /**
+     * @param Retry|null $retry
+     * @param QueueClientInterface $queueClient
+     * @param array $config
+     * @return AbstractRetryStrategy
+     * @throws \Exception
+     */
+    public static function create(Retry $retry = null, QueueClientInterface $queueClient, array $config): AbstractRetryStrategy
     {
         if (!$retry) {
             $retry = new Retry(0, 0, DefaultRetryStrategy::class);
@@ -18,10 +25,13 @@ class StrategyFactory
 
         switch ($retry->getStrategy()) {
             case DefaultRetryStrategy::class:
-                return new DefaultRetryStrategy($retry, $queueClient);
+                return new DefaultRetryStrategy($queueClient, $retry);
 
             case StorageRetryStrategy::class:
-                return new StorageRetryStrategy($retry, $queueClient);
+                $storage =  new StorageRetryStrategy($queueClient, $retry);
+                $storage->setConfig($config['database']);
+                $storage->setup();
+                return $storage;
         }
     }
 }

@@ -9,6 +9,7 @@ use Interop\Queue\Message;
 
 class StorageRetryStrategy extends AbstractRetryStrategy
 {
+    const DEFAULT_DELAY_FOR_STORED_MESSAGE = '43200';
     /** @var StorageInterface */
     protected $storage;
 
@@ -30,6 +31,7 @@ class StorageRetryStrategy extends AbstractRetryStrategy
 
     function onMaxRetryReached(Message $message): void
     {
-        $this->storage->storeMessage($message);
+//        $this->client->delay($message, self::DEFAULT_DELAY_FOR_STORED_MESSAGE);
+        $this->storage->store($message);
     }
 }
