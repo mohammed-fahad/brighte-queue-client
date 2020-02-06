@@ -4,14 +4,7 @@ namespace BrighteCapital\QueueClient\container;
 
 class Container
 {
-    /**
-     * This keeps track of all the bindings that have been made, any retrieved instances (e.g logger) are also added to the services array
-     * Before a binding is retrieved its checked if its already in services if not, it added to the $services along with the $container.
-     * At this point both $services and $container contain retrieved instance.
-     * $container is source of truth of all the active bindings that have been made (excludes removed bindings).
-     */
     protected static $container = [];
-
     /*
      * This helps pull the bound service instead of creating a new service with each get
      * E.g bind('servicexName', servicex) you  can be certain, when you do get on servicexName,
