@@ -2,7 +2,8 @@
 
 namespace BrighteCapital\QueueClient\queue;
 
-use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
+use BrighteCapital\QueueClient\container\Bindings;
+use BrighteCapital\QueueClient\container\Container;
 use BrighteCapital\QueueClient\queue\factories\StrategyFactory;
 use BrighteCapital\QueueClient\strategies\Retry;
 use Interop\Queue\Message;
@@ -27,9 +28,8 @@ class BrighteQueueClient
      */
     public function __construct(array $config)
     {
-        $this->client = QueueClientFactory::create($config);
-        $this->blockerHandler = $this->client->
-        $this->config = $config;
+        Bindings::register($config);
+        $this->client = Container::instance()->get('QueueClient');
     }
 
     /**
