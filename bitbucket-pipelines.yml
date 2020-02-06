@@ -1,18 +1,17 @@
-# This is a sample build configuration for PHP.
-# Check our guides at https://confluence.atlassian.com/x/e8YWN for more examples.
-# Only use spaces to indent your .yml configuration.
-# -----
-# You can specify a custom docker image from Docker Hub as your build environment.
-image: php:7.1.29
+image: php:7.2.27-cli-stretch
 
 pipelines:
   default:
     - step:
-        caches:
-          - composer
+        name: Install composer and build
         script:
           - apt-get update && apt-get install -y unzip
           - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-          - composer install
-          - vendor/bin/phpunit
-          - composer cs src/
+          #install dependencies
+          - composer install --prefer-source --no-interaction --no-suggest --no-plugins --no-scripts
+          # Run phpunit
+          - composer phpunit
+          # CS check
+          - composer cs
+        caches:
+          - composer

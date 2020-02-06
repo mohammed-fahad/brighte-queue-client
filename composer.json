@@ -1,0 +1,44 @@
+{
+  "name": "brighte/brightecapitial-queueclient",
+  "description": "Extension of enqueue/sqs to adapt to Brighte's needs",
+  "keywords": ["sqs", "kafka", "enqueue"],
+  "homepage": "https://bitbucket.org/brighte/brighte-queue-client/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Ali Fareh",
+      "email": "ali.fareh@brighte.com.au"
+    },
+    {
+      "name": "Ka Chan",
+      "email": "Ka.Chan@brighte.com.au"
+    },
+    {
+      "name": "Alan Nguyen",
+      "email": "alan.nguyen@brighte.com.au"
+    },
+    {
+      "name": "Mohammed Fahad",
+      "email": "Mohammed.fahad@brighte.com.au"
+    }
+  ],
+  "require": {
+    "enqueue/sqs": "^0.10.0",
+    "brighte/brighte-ms-standards": "^1.2",
+    "phpunit/phpunit": "^7.5"
+  },
+  "require-dev": {
+    "squizlabs/php_codesniffer": "^3.4",
+    "php": "^7.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "BrighteCapital\\QueueClient\\": "src"
+    }
+  },
+  "scripts": {
+    "cs": "vendor/bin/phpcs -ps --standard=PSR12 src/ tests/",
+    "cbf": "vendor/bin/phpcbf --standard=PSR12 src/ tests/",
+    "phpunit": "vendor/bin/phpunit tests/ --testdox --colors=always"
+  }
+}
