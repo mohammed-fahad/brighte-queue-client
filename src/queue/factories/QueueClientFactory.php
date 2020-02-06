@@ -19,14 +19,19 @@ class QueueClientFactory
      */
     public static function create(array $config): QueueClientInterface
     {
-        $provider = $config['provider'] ?? "undefined";
+        $provider = $config['provider'] ?? 'undefined';
+
+        if (!isset($config['queue'])) {
+            throw new \Exception('Please provide queue name');
+        }
 
         switch ($provider) {
             case self::PROVIDERS_SQS:
                 $sqsConnectFactory = new SqsConnectionFactory($config);
+
                 return new SqsClient($config['queue'] ?? '', $sqsConnectFactory->createContext());
         }
 
-        throw new \Exception(sprintf("Failed to create Queue Client %s", $provider));
+        throw new \Exception(sprintf('Failed to create Queue Client %s', $provider));
     }
 }
