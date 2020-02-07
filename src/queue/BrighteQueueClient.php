@@ -15,7 +15,7 @@ class BrighteQueueClient
      */
     protected $client;
 
-    public function __construct(array $config)
+    public function __construct(array $config, LoggerInterface $logger)
     {
         Bindings::register($config);
         $this->client = Container::instance()->get('QueueClient');
