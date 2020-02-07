@@ -12,5 +12,4 @@ class NotificationChannelFactory
         $url = 'https://hooks.slack.com/services/sdklfdjlskdfj';
         return new SlackNotificationChannel($url);
     }
-
 }
