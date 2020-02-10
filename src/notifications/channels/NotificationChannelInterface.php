@@ -2,14 +2,11 @@
 
 namespace BrighteCapital\QueueClient\notifications\Channels;
 
-use Interop\Queue\Message;
-
 interface NotificationChannelInterface
 {
     /**
-     * @param \Interop\Queue\Message $message message
+     * @param array $data
      * @return bool
-     * @throws \Exception
      */
-    public function send(Message $message): bool;
+    public function send(array $data): bool;
 }
