@@ -2,7 +2,8 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
-use BrighteCapital\QueueClient\queue\factories\StorageFactory;
+use BrighteCapital\QueueClient\container\Container;
+use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\StorageInterface;
 use Exception;
 use Interop\Queue\Message;
@@ -13,25 +14,24 @@ class StorageRetryStrategy extends AbstractRetryStrategy
     /** @var StorageInterface */
     protected $storage;
 
-    /** @var array */
-    protected $config;
-
-    public function setConfig(array $config)
-    {
-        $this->config = $config;
-    }
-
     /**
+     * StorageRetryStrategy constructor.
+     * @param Retry $retry
      * @throws Exception
      */
-    public function setup()
+    public function __construct(Retry $retry)
     {
-        $this->storage = StorageFactory::create($this->config);
+        parent::__construct($retry);
+        $this->storage = Container::instance()->get('Storage');
+
     }
 
     function onMaxRetryReached(Message $message): void
     {
-//        $this->client->delay($message, self::DEFAULT_DELAY_FOR_STORED_MESSAGE);
-        $this->storage->store($message);
+        $messageEntity = new MessageEntity($message);
+        $messageEntity->setLastErrorMessage($this->retry->getErrorMessage());
+
+        //TODO: $this->client->delay($message, self::DEFAULT_DELAY_FOR_STORED_MESSAGE);
+        $this->storage->store($messageEntity);
     }
 }

@@ -2,7 +2,9 @@
 namespace BrighteCapital\QueueClient\queue;
 
 use BrighteCapital\QueueClient\queue\factories\StorageFactory;
+use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
+use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Message;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
@@ -30,12 +32,19 @@ class SqsBlockerHandler implements BlockerHandlerInterface
      */
     public function checkAndHandle(Message $message) : bool
     {
-        $oldMessage = $this->storage->messageExist($message);
-        if (!$oldMessage) {
+        $entity = new MessageEntity($message);
+        /** @var MessageEntity $oldEntity */
+        $oldEntity = $this->storage->messageExist($entity);
+
+        if ($oldEntity === false) {
             return false;
         }
-        $this->storage->update($message);
+
+        $oldEntity->setAlertCount($oldEntity->getAlertCount() + 1);
+        $this->storage->update($oldEntity);
+
         $this->client->delay($message, StorageRetryStrategy::DEFAULT_DELAY_FOR_STORED_MESSAGE);
+
         return true;
     }
 }

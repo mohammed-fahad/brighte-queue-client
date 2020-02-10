@@ -14,18 +14,26 @@ class StorageFactory
      * @param array $config
      * @return StorageInterface
      * @throws \Exception
+     * @throws \Doctrine\DBAL\DBALException
      */
     public static function create(array $config): StorageInterface
     {
-        // check if instance of storgatgeinterface, its get priority
 
-        $provider = $config['provider'] ?? "undefined";
+        $provider = $config['provider'];
+
+        if (empty($provider)) {
+            throw new \Exception(sprintf('Failed to create Storage'));
+        }
+
+        if ($provider instanceof StorageInterface) {
+            return $config['provider'];
+        }
 
         switch ($provider) {
             case self::TYPE_MYSQL:
                 return new MySql($config);
         }
 
-        throw new \Exception(sprintf("Failed to create Storage %s", $provider));
+        throw new \Exception(sprintf('Failed to create Storage: %s', $provider));
     }
 }

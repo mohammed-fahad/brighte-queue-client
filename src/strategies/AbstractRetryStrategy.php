@@ -2,20 +2,26 @@
 
 namespace BrighteCapital\QueueClient\strategies;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsClient;
+use BrighteCapital\QueueClient\container\Container;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use Interop\Queue\Message;
 
 abstract class AbstractRetryStrategy implements RetryStrategyInterface
 {
-    /** @var SqsClient */
+    /** @var QueueClientInterface */
     protected $client;
 
     /** @var Retry */
     protected $retry;
 
-    public function __construct(SqsClient $queueClient, Retry $retry)
+    /**
+     * AbstractRetryStrategy constructor.
+     * @param Retry $retry
+     * @throws \Exception
+     */
+    public function __construct(Retry $retry)
     {
-        $this->client = $queueClient;
+        $this->client = Container::instance()->get('QueueClient');
         $this->retry = $retry;
     }
 
