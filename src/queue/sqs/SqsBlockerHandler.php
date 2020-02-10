@@ -1,10 +1,9 @@
 <?php
 namespace BrighteCapital\QueueClient\queue;
 
-use BrighteCapital\QueueClient\queue\factories\StorageFactory;
+use BrighteCapital\QueueClient\container\Container;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
-use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Message;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
@@ -17,13 +16,16 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     /**
      * BlockerChecker constructor.
      * @param QueueClientInterface $client
-     * @param array $config
      * @throws \Exception
      */
-    public function __construct(QueueClientInterface $client, array $config)
+    public function __construct(QueueClientInterface $client)
     {
         $this->client = $client;
-        $this->storage = StorageFactory::create($config);
+        try {
+            $this->storage = Container::instance()->get('Storage');
+        } catch (\Exception $e) {
+            // Do nothing
+        }
     }
 
     /**
@@ -32,7 +34,12 @@ class SqsBlockerHandler implements BlockerHandlerInterface
      */
     public function checkAndHandle(Message $message) : bool
     {
+        if (empty($this->storage)) {
+            return false;
+        }
+
         $entity = new MessageEntity($message);
+
         /** @var MessageEntity $oldEntity */
         $oldEntity = $this->storage->messageExist($entity);
 
@@ -40,8 +47,9 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             return false;
         }
 
-        $oldEntity->setAlertCount($oldEntity->getAlertCount() + 1);
-        $this->storage->update($oldEntity);
+        $entity->setId($oldEntity->getId());
+        $entity->setAlertCount($oldEntity->getAlertCount() + 1);
+        $this->storage->update($entity);
 
         $this->client->delay($message, StorageRetryStrategy::DEFAULT_DELAY_FOR_STORED_MESSAGE);
 

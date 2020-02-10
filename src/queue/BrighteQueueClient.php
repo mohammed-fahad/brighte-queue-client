@@ -38,7 +38,13 @@ class BrighteQueueClient
      */
     public function receive($timeout = 0): Message
     {
-        return $this->client->receive($timeout);
+        $message = $this->client->receive($timeout);
+
+        while ($this->client->getBlockerHandler()->checkAndHandle($message) === true) {
+            $this->client->receive($timeout);
+        }
+
+        return $message;
     }
 
     /**

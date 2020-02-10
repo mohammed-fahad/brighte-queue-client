@@ -101,6 +101,7 @@ class MySql implements StorageInterface
              ->execute();
 
          if ($row = $result->fetch()) {
+             $entity = new MessageEntity();
              return $entity->toEntity($row);
          }
 

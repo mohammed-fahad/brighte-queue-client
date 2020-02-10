@@ -22,13 +22,17 @@ class MessageEntity implements EntityInterface
      * MessageEntity constructor.
      * @param Message $message
      */
-    public function __construct(Message $message)
+    public function __construct(Message $message = null)
     {
-            $this->messageId = $message->getMessageId();
-            $this->messageHandle = $message->getReceiptHandle();
-            $this->groupId = $message->getProperty('MessageGroupId');
-            $this->message = $message->getBody();
-            $this->attributes = json_encode($message->getProperties());
+        if ($message === null) {
+            return;
+        }
+
+        $this->messageId = $message->getMessageId();
+        $this->messageHandle = $message->getReceiptHandle();
+        $this->groupId = $message->getProperty('MessageGroupId');
+        $this->message = $message->getBody();
+        $this->attributes = json_encode($message->getProperties());
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace BrighteCapital\QueueClient\container;
 
+use BrighteCapital\QueueClient\queue\factories\BlockerHandlerFactory;
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StorageFactory;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
 
 class Bindings
 {
@@ -22,5 +24,13 @@ class Bindings
         Container::instance()->bind('QueueClient', function () use ($config) {
             return QueueClientFactory::create($config);
         });
+
+        Container::instance()->bind('BlockerHandler', function ()  use ($config) {
+            /** @var QueueClientInterface $client */
+            $client = Container::instance()->get('QueueClient');
+
+            return BlockerHandlerFactory::create($client, $config);
+        });
     }
 }
+

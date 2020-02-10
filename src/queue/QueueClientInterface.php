@@ -40,4 +40,6 @@ interface QueueClientInterface
     public function reject(Message $message, bool $requeue = false): void;
 
     public function delay(Message $message, int $seconds = 0): void;
+
+    public function getBlockerHandler(): BlockerHandlerInterface;
 }
