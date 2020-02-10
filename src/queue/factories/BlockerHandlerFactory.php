@@ -4,7 +4,7 @@ namespace BrighteCapital\QueueClient\queue\factories;
 
 use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
-use BrighteCapital\QueueClient\queue\SqsBlockerHandler;
+use BrighteCapital\QueueClient\queue\sqs\SqsBlockerHandler;
 
 class BlockerHandlerFactory
 {

@@ -56,7 +56,7 @@ class MessageEntity implements EntityInterface
     {
         foreach ($data as $key => $value) {
             $key = StringUtility::snakeCaseToCamelCase($key);
-            if (property_exists($this, $key) and !in_array($key, $this->notDatabaseAttributes)) {
+            if (property_exists($this, $key) and in_array($key, $this->databaseAttributes)) {
                 $this->$key = $value;
             }
         }

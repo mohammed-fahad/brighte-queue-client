@@ -35,12 +35,14 @@ class BrighteQueueClient
     /**
      * @param int $timeout timeout
      * @return \Interop\Queue\Message
+     * @throws \Exception
      */
     public function receive($timeout = 0): Message
     {
         $message = $this->client->receive($timeout);
-
-        while ($this->client->getBlockerHandler()->checkAndHandle($message) === true) {
+        /** @var BlockerHandlerInterface $blockerHandler */
+        $blockerHandler = Container::instance()->get('BlockerHandler');
+        while ($blockerHandler->checkAndHandle($message) === true) {
             $this->client->receive($timeout);
         }
 
@@ -85,7 +87,6 @@ class BrighteQueueClient
     public function reject(Message $message, Retry $retry = null): void
     {
         $strategy = StrategyFactory::create($retry);
-
         $strategy->handle($message);
     }
 }

@@ -1,10 +1,11 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue;
+namespace BrighteCapital\QueueClient\queue\sqs;
 
 use BrighteCapital\QueueClient\container\Container;
+use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
+use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
-use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
 use Interop\Queue\Message;
 
 class SqsBlockerHandler implements BlockerHandlerInterface

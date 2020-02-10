@@ -1,5 +1,4 @@
 <?php
-
 namespace tests\unit;
 
 use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;

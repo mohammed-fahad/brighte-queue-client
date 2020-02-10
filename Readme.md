@@ -3,8 +3,8 @@
 #### Config
 <pre>
 $config = [
-    'key' => 'AKIAUQNGXHESCI4THQTD',
-    'secret' => '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',
+    'key' => '',
+    'secret' => '',
     'region' => 'ap-southeast-2',
     'queue' => 'fahad-queue.fifo',
     'provider' => 'sqs',
@@ -12,11 +12,11 @@ $config = [
       'storedMessageRetryDelay' => 300
     ],
     'database' => [
-        'host' => '172.18.0.6',
-        'user' => 'root',
-        'password' => 'lksdoiwe09',
-        'dbname' => 'brighte_prod',
-        'provider' => 'MySql', // object / string ()
+        'host' => '',
+        'user' => '',
+        'password' => '',
+        'dbname' => '',
+        'provider' => 'MySql', // object/MySql
     ]
 ];
 </pre>

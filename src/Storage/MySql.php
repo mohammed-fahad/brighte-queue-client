@@ -14,9 +14,6 @@ class MySql implements StorageInterface
     /** @var Connection */
     protected $connection;
 
-    /** @var QueryBuilder */
-    protected $queryBuilder;
-
     /**
      * @param array $config
      * @throws DBALException
@@ -32,7 +29,6 @@ class MySql implements StorageInterface
         ];
         $this->connection = DriverManager::getConnection($connectionParams);
         $this->connection->connect();
-        $this->queryBuilder = $this->connection->createQueryBuilder();
     }
 
     /**
@@ -43,6 +39,7 @@ class MySql implements StorageInterface
     {
         $parameters = [];
         $data = $entity->toArray();
+        $queryBuilder = $this->connection->createQueryBuilder();
 
         if (empty($data)) {
             throw new Exception('Data trying to insert in database in empty');
@@ -55,11 +52,11 @@ class MySql implements StorageInterface
                 continue;
             }
 
-            $this->queryBuilder->setValue($key, ':' . $key);
+            $queryBuilder->setValue($key, ':' . $key);
             $parameters[':' . $key] = $value;
         }
 
-        $this->queryBuilder->insert($entity->getTableName())->setParameters($parameters)->execute();
+        $queryBuilder->insert($entity->getTableName())->setParameters($parameters)->execute();
     }
 
     /**
@@ -78,6 +75,7 @@ class MySql implements StorageInterface
         if (empty($data)) {
             throw new Exception('Data trying to insert in database in empty');
         }
+        $queryBuilder = $this->connection->createQueryBuilder();
 
         foreach ($data as $key => $value) {
             $key = StringUtility::camelCaseToSnakeCase($key);
@@ -87,11 +85,11 @@ class MySql implements StorageInterface
                 continue;
             }
 
-            $this->queryBuilder->set($key, ':' . $key);
+            $queryBuilder->set($key, ':' . $key);
             $parameters[':' . $key] = $value;
         }
 
-        $this->queryBuilder->update($entity->getTableName())->where('id = :id')->setParameters($parameters)->execute();
+        $queryBuilder->update($entity->getTableName())->where('id = :id')->setParameters($parameters)->execute();
     }
 
     /**
@@ -100,7 +98,9 @@ class MySql implements StorageInterface
      */
     public function messageExist(EntityInterface $entity)
     {
-         $result = $this->queryBuilder
+        $queryBuilder = $this->connection->createQueryBuilder();
+
+         $result = $queryBuilder
              ->select('id', 'alert_count')
              ->from($entity->getTableName())
              ->where('message_id = :message_id')
@@ -112,6 +112,6 @@ class MySql implements StorageInterface
             return $entity->toEntity($row);
         }
 
-         return false;
+        return false;
     }
 }

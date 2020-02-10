@@ -2,7 +2,6 @@
 
 namespace BrighteCapital\QueueClient\queue\sqs;
 
-use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Context;
@@ -26,11 +25,6 @@ class SqsClient implements QueueClientInterface
      * @var \BrighteCapital\QueueClient\queue\sqs\SqsConsumer
      */
     protected $consumer;
-
-    /**
-     * @var BlockerHandlerInterface
-     */
-    protected $blockerHandler;
 
     /**
      * SqsClient constructor.
