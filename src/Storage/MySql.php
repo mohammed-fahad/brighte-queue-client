@@ -2,6 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Storage;
 
+use BrighteCapital\QueueClient\Utility\StringUtility;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
@@ -43,10 +44,12 @@ class MySql implements StorageInterface
         $parameters = [];
         $data = $entity->toArray();
 
-        if (empty($data)) throw new Exception('Data trying to insert in database in empty');
+        if (empty($data)) {
+            throw new Exception('Data trying to insert in database in empty');
+        }
 
         foreach ($data as $key => $value) {
-            $key = $this->convertCamelCaseToSnakeCase($key);
+            $key = StringUtility::camelCaseToSnakeCase($key);
 
             if ($key === 'id') {
                 continue;
@@ -65,15 +68,19 @@ class MySql implements StorageInterface
      */
     public function update(EntityInterface $entity): void
     {
-        if (empty($entity->getId())) throw new Exception('Update action requires Id to be set');
+        if (empty($entity->getId())) {
+            throw new Exception('Update action requires Id to be set');
+        }
 
         $parameters = [];
         $data = $entity->toArray();
 
-        if (empty($data)) throw new Exception('Data trying to insert in database in empty');
+        if (empty($data)) {
+            throw new Exception('Data trying to insert in database in empty');
+        }
 
         foreach ($data as $key => $value) {
-            $key = $this->convertCamelCaseToSnakeCase($key);
+            $key = StringUtility::camelCaseToSnakeCase($key);
 
             if ($key === 'id') {
                 $parameters[':' . $key] = $value;
@@ -100,25 +107,11 @@ class MySql implements StorageInterface
              ->setParameter(':message_id', $entity->getMessageId())
              ->execute();
 
-         if ($row = $result->fetch()) {
-             $entity = new MessageEntity();
-             return $entity->toEntity($row);
-         }
+        if ($row = $result->fetch()) {
+            $entity = new MessageEntity();
+            return $entity->toEntity($row);
+        }
 
          return false;
-    }
-
-    /**
-     * @param String $input
-     * @return string
-     */
-    private function convertCamelCaseToSnakeCase(String $input): string
-    {
-        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-        $ret = $matches[0];
-        foreach ($ret as &$match) {
-            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
-        }
-        return implode('_', $ret);
     }
 }

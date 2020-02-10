@@ -10,13 +10,18 @@ use Interop\Queue\Message;
 
 class StorageRetryStrategy extends AbstractRetryStrategy
 {
-    const DEFAULT_DELAY_FOR_STORED_MESSAGE = '43200';
-
+    /**
+     * @param Message $message
+     * @throws Exception
+     */
     function onMaxRetryReached(Message $message): void
     {
+        $config = Container::instance()->get('Config');
+
         $messageEntity = new MessageEntity($message);
         $messageEntity->setLastErrorMessage($this->retry->getErrorMessage());
-        //TODO: $this->client->delay($message, self::DEFAULT_DELAY_FOR_STORED_MESSAGE);
+        $messageEntity->setQueueName($config['queue']);
+        $this->client->delay($message, $config['retryStrategy']['storedMessageRetryDelay']);
         try {
             $storage = Container::instance()->get('Storage');
             /** @var StorageInterface $storage */

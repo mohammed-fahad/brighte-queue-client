@@ -1,6 +1,8 @@
 <?php
+
 namespace BrighteCapital\QueueClient\Storage;
 
+use BrighteCapital\QueueClient\Utility\StringUtility;
 use Interop\Queue\Message;
 
 class MessageEntity implements EntityInterface
@@ -16,7 +18,8 @@ class MessageEntity implements EntityInterface
     protected $alertCount = 1;
     protected $lastErrorMessage = '';
     protected $queueName = '';
-    protected $notDatabaseAttributes = ['tableName', 'notDatabaseAttributes'] ;
+    protected $databaseAttributes = ['id', 'messageId', 'messageHandle', 'groupId', 'message', 'attributes',
+        'alertCount', 'lastErrorMessage', 'queueName'] ;
 
     /**
      * MessageEntity constructor.
@@ -40,8 +43,8 @@ class MessageEntity implements EntityInterface
      */
     public function toArray(): array
     {
-        return array_filter(get_object_vars($this), function($value, $key) {
-            return !empty($value) && !in_array($key, $this->notDatabaseAttributes);
+        return array_filter(get_object_vars($this), function ($value, $key) {
+            return !empty($value) && in_array($key, $this->databaseAttributes);
         }, ARRAY_FILTER_USE_BOTH);
     }
 
@@ -51,25 +54,14 @@ class MessageEntity implements EntityInterface
      */
     public function toEntity(array $data): EntityInterface
     {
-        foreach ($data as $key =>$value) {
-            $key = $this->toCamelCase($key);
-
+        foreach ($data as $key => $value) {
+            $key = StringUtility::snakeCaseToCamelCase($key);
             if (property_exists($this, $key) and !in_array($key, $this->notDatabaseAttributes)) {
                 $this->$key = $value;
             }
         }
 
         return $this;
-    }
-
-    /**
-     * @param $input
-     * @param string $separator
-     * @return string
-     */
-    private function toCamelCase($input, $separator = '_')
-    {
-        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
 
     /**

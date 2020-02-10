@@ -1,4 +1,5 @@
 <?php
+
 namespace BrighteCapital\QueueClient\Storage;
 
 interface StorageInterface

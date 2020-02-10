@@ -25,7 +25,7 @@ class Bindings
             return QueueClientFactory::create($config);
         });
 
-        Container::instance()->bind('BlockerHandler', function ()  use ($config) {
+        Container::instance()->bind('BlockerHandler', function () use ($config) {
             /** @var QueueClientInterface $client */
             $client = Container::instance()->get('QueueClient');
 
@@ -33,4 +33,3 @@ class Bindings
         });
     }
 }
-

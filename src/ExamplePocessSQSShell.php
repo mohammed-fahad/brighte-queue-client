@@ -28,7 +28,8 @@ $msg->setMessageGroupId(9);
 $msg->setMessageDeduplicationId(9);
 $message = $queueClient->receive(20);
 $queueClient->reject($message, new \BrighteCapital\QueueClient\strategies\Retry(15, 0, StorageRetryStrategy::class));
-var_dump($message); die(0);
+var_dump($message);
+die(0);
 die(0);
 
 echo "done";

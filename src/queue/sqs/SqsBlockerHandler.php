@@ -1,4 +1,5 @@
 <?php
+
 namespace BrighteCapital\QueueClient\queue;
 
 use BrighteCapital\QueueClient\container\Container;
@@ -21,6 +22,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     public function __construct(QueueClientInterface $client)
     {
         $this->client = $client;
+
         try {
             $this->storage = Container::instance()->get('Storage');
         } catch (\Exception $e) {
@@ -31,8 +33,9 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     /**
      * @param Message $message
      * @return bool
+     * @throws \Exception
      */
-    public function checkAndHandle(Message $message) : bool
+    public function checkAndHandle(Message $message): bool
     {
         if (empty($this->storage)) {
             return false;
@@ -51,7 +54,9 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         $entity->setAlertCount($oldEntity->getAlertCount() + 1);
         $this->storage->update($entity);
 
-        $this->client->delay($message, StorageRetryStrategy::DEFAULT_DELAY_FOR_STORED_MESSAGE);
+        $config = Container::instance()->get('Config');
+
+        $this->client->delay($message, $config['retryStrategy']['storedMessageRetryDelay']);
 
         return true;
     }
