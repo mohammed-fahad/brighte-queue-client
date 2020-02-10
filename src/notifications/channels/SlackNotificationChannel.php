@@ -53,7 +53,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
     {
         $text = '';
         foreach ($data as $key => $value) {
-            $newKey = $key;
+            $newKey = strtolower($key);
             if ($newKey == 'body') {
                 $value = substr($value, 0, $this->getMaxCharactersToSend());
             }
