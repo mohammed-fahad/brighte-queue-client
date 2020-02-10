@@ -38,13 +38,15 @@ class SlackNotificationChannel implements NotificationChannelInterface
     {
         try {
             $this->client->post($this->slackEndpoint, $this->createMessage($data));
-        } catch (\Exception $e) {
-            throw new \Exception(sprintf("Failed to send Slack message. %s data= %s", $e->getMessage(), print_r($data, true)));
 
-            return false;
+            return true;
+        } catch (\Exception $e) {
+            throw new \Exception(
+                sprintf("Failed to send Slack message. %s data= %s", $e->getMessage(), print_r($data, true))
+            );
         }
 
-        return true;
+        return false;
     }
 
     public function createMessage(array $data): array
