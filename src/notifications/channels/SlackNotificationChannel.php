@@ -18,15 +18,16 @@ class SlackNotificationChannel implements NotificationChannelInterface
 
     public $maxCharactersToSend = 100;
 
-    public function __construct(string $slackEndpoint, Client $client = null)
+    public function __construct(string $slackEndpoint, $maxCharactersToSend = 100, Client $client = null)
     {
         $this->client = $client;
+        $this->slackEndpoint = $slackEndpoint;
+        $this->maxCharactersToSend = $maxCharactersToSend;
 
         if (is_null($client)) {
             $this->client = new Client();
         }
 
-        $this->slackEndpoint = $slackEndpoint;
     }
 
     /**
