@@ -7,8 +7,8 @@ use BrighteCapital\QueueClient\Storage\StorageInterface;
 
 class StorageFactory
 {
-    const TYPE_MYSQL = 'MySql';
-    const TYPE_DYNAMODB  = 'DynamoDB';
+    public const TYPE_MYSQL = 'MySql';
+    public const TYPE_DYNAMODB  = 'DynamoDB';
 
     /**
      * @param array $config
