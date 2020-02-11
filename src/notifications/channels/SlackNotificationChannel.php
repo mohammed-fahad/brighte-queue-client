@@ -27,7 +27,6 @@ class SlackNotificationChannel implements NotificationChannelInterface
         if (is_null($client)) {
             $this->client = new Client();
         }
-
     }
 
     /**
