@@ -24,7 +24,6 @@
   ],
   "require": {
     "enqueue/sqs": "^0.10.0",
-    "brighte/brighte-ms-standards": "^1.2",
     "phpunit/phpunit": "^7.5",
     "doctrine/dbal": "^2.10"
   },
