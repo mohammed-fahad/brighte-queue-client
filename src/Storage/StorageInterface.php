@@ -11,4 +11,6 @@ interface StorageInterface
     public function update(EntityInterface $message): void;
 
     public function messageExist(EntityInterface $message);
+
+    public function checkAndCreateMessageTable(): void;
 }

@@ -6,6 +6,7 @@ use BrighteCapital\QueueClient\queue\factories\BlockerHandlerFactory;
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StorageFactory;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use BrighteCapital\QueueClient\Storage\StorageInterface;
 
 class Bindings
 {
@@ -18,7 +19,11 @@ class Bindings
         });
 
         Container::instance()->bind('Storage', function () use ($config) {
-            return StorageFactory::create($config['database']);
+            /** @var StorageInterface $storage */
+            $storage = StorageFactory::create($config['database']);
+            $storage->checkAndCreateMessageTable();
+
+            return $storage;
         });
 
         Container::instance()->bind('QueueClient', function () use ($config) {

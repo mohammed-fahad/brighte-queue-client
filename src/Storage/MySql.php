@@ -6,7 +6,7 @@ use BrighteCapital\QueueClient\Utility\StringUtility;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Schema\Table;
 use Exception;
 
 class MySql implements StorageInterface
@@ -29,6 +29,34 @@ class MySql implements StorageInterface
         ];
         $this->connection = DriverManager::getConnection($connectionParams);
         $this->connection->connect();
+    }
+
+    /**
+     * Check if table exist or create one
+     * @throws DBALException
+     */
+    public function checkAndCreateMessageTable(): void
+    {
+        $entity = new MessageEntity();
+        $scm = $this->connection->getSchemaManager();
+
+        if (!$scm->tablesExist($entity->getTableName())) {
+            //TODO: Log table created.
+
+            $table = new Table($entity->getTableName());
+            $table->addColumn('id', 'integer', ['autoincrement' => true]);
+            $table->addColumn('message_id', 'string', ['customSchemaOptions' => ['unique' => true]]);
+            $table->addColumn('group_id', 'string', []);
+            $table->addColumn('message', 'text', []);
+            $table->addColumn('attributes', 'text', ['notnull' => false]);
+            $table->addColumn('alert_count', 'integer', ['notnull' => false]);
+            $table->addColumn('last_error_message', 'text', ['notnull' => false]);
+            $table->addColumn('message_handle', 'text', ['notnull' => false]);
+            $table->addColumn('queue_name', 'text');
+            $table->setPrimaryKey(['id']);
+
+            $scm->createTable($table);
+        }
     }
 
     /**
