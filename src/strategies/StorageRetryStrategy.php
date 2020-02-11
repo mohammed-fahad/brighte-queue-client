@@ -14,7 +14,7 @@ class StorageRetryStrategy extends AbstractRetryStrategy
      * @param Message $message
      * @throws Exception
      */
-    function onMaxRetryReached(Message $message): void
+    protected function onMaxRetryReached(Message $message): void
     {
         $config = Container::instance()->get('Config');
 
