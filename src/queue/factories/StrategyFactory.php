@@ -25,8 +25,7 @@ class StrategyFactory
                 return new DefaultRetryStrategy($retry);
 
             case StorageRetryStrategy::class:
-                $storage = new StorageRetryStrategy($retry);
-                return $storage;
+                return new StorageRetryStrategy($retry);
         }
     }
 }
