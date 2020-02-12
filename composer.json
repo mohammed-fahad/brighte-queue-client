@@ -1,5 +1,5 @@
 {
-  "name": "brighte/brightecapitial-queueclient",
+  "name": "brightecapital/brighte-queue-client",
   "description": "Extension of enqueue/sqs to adapt to Brighte's needs",
   "keywords": ["sqs", "kafka", "enqueue"],
   "homepage": "https://bitbucket.org/brighte/brighte-queue-client/",
