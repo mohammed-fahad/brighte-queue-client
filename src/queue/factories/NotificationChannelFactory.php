@@ -7,6 +7,8 @@ use BrighteCapital\QueueClient\notifications\Channels\SlackNotificationChannel;
 
 class NotificationChannelFactory
 {
+    const ERROR_MISSING_CONFIG_KEY = '%s must be provided';
+
     public static function create($config)
     {
         /** ---notification format----
@@ -21,11 +23,11 @@ class NotificationChannelFactory
          * ];
          * */
         if (!isset($config['notification'])) {
-            throw new \Exception("Notification Channel not provided");
+            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'notification key'));
         }
 
         if (!isset($config['notification']['channel'])) {
-            throw new \Exception("Channel name not provided");
+            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'notification.Channel'));
         }
 
         $channel = $config['notification']['channel'];
@@ -35,14 +37,19 @@ class NotificationChannelFactory
                 return (new NotificationChannelFactory())->getSlackChannel($config['notification']);
         }
 
-        throw new \Exception("Failed to create Notification channel. Channel name not implemented " . $channel);
+        throw new \Exception(
+            sprintf(
+                "Failed to create Notification channel. notification.channel %s does not match expected names",
+                $channel
+            )
+        );
     }
 
     public function getSlackChannel($slackConfig): NotificationChannelInterface
     {
 
         if (!isset($slackConfig['driverClass'])) {
-            throw new \Exception("DriverClass must be provided");
+            throw new \Exception("notification.DriverClass must be provided");
         }
 
         $driverClass = $slackConfig['driverClass'];
@@ -65,14 +72,13 @@ class NotificationChannelFactory
 
         // slack
         if (!isset($slackConfig['params'])) {
-            throw new \Exception("params key must be provided");
+            throw new \Exception("notification.params must be provided");
         }
         if (!isset($slackConfig['params']['url'])) {
-            throw new \Exception("Slack WebHook URL must be provided");
+            throw new \Exception("notification.params.url must be provided");
         }
 
         $defaultBodyChars = SlackNotificationChannel::DEFAULT_MAX_BODY_CHARS_TO_SEND;
-        ;
         $maxChars = $slackConfig['params']['maxBodyCharactersToSend'] ?? $defaultBodyChars;
 
         return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars);
