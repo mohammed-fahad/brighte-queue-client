@@ -36,6 +36,7 @@
       "BrighteCapital\\QueueClient\\": "src"
     }
   },
+  "minimum-stability": "stable",
   "scripts": {
     "cs": "vendor/bin/phpcs -ps --standard=PSR12 src/ tests/",
     "cbf": "vendor/bin/phpcbf --standard=PSR12 src/ tests/",
