@@ -57,16 +57,12 @@ class NotificationChannelFactory
             return $driverClass;
         }
 
-        /**its not slack channel configuration but its the users own implementation of channel*/
         if ($driverClass !== SlackNotificationChannel::class) {
-            try {
-                $reflectionClass = new \ReflectionClass($driverClass);
-                $class = $reflectionClass->newInstance(...array_values($slackConfig['params']));
-            } catch (\ReflectionException $e) {
-                throw new \Exception("Failed to create channel $driverClass: " . $e->getMessage());
-            }
-
-            return self::isValidInstance($class);
+            throw new \Exception(
+                sprintf(
+                    "DriverClass must either be instance of %s (object) or %s (string)",
+                    NotificationChannelInterface::class, SlackNotificationChannel::class
+                ));
         }
 
         // slack
