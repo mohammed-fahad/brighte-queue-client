@@ -72,10 +72,10 @@ class NotificationChannelFactory
 
         // slack
         if (!isset($slackConfig['params'])) {
-            throw new \Exception("notification.params must be provided");
+            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, "notification.params"));
         }
         if (!isset($slackConfig['params']['url'])) {
-            throw new \Exception("notification.params.url must be provided");
+            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, "notification.params.url"));
         }
 
         $defaultBodyChars = SlackNotificationChannel::DEFAULT_MAX_BODY_CHARS_TO_SEND;
