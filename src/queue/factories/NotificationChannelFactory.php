@@ -45,9 +45,8 @@ class NotificationChannelFactory
         );
     }
 
-    public function getSlackChannel($slackConfig): NotificationChannelInterface
+    private function getSlackChannel($slackConfig): NotificationChannelInterface
     {
-
         if (!isset($slackConfig['driverClass'])) {
             throw new \Exception("notification.DriverClass must be provided");
         }
