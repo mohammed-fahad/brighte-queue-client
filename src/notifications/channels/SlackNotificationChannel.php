@@ -45,8 +45,6 @@ class SlackNotificationChannel implements NotificationChannelInterface
                 sprintf("Failed to send Slack message. %s data= %s", $e->getMessage(), print_r($data, true))
             );
         }
-
-        return false;
     }
 
     public function createMessage(array $data): array
