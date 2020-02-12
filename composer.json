@@ -23,8 +23,7 @@
     }
   ],
   "require": {
-    "enqueue/sqs": "^0.10.0",
-    "brighte/brighte-ms-standards": "^1.2"
+    "enqueue/sqs": "^0.10.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^7.5",
