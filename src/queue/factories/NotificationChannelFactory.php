@@ -61,8 +61,10 @@ class NotificationChannelFactory
             throw new \Exception(
                 sprintf(
                     "DriverClass must either be instance of %s (object) or %s (string)",
-                    NotificationChannelInterface::class, SlackNotificationChannel::class
-                ));
+                    NotificationChannelInterface::class,
+                    SlackNotificationChannel::class
+                )
+            );
         }
 
         // slack
