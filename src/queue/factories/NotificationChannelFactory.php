@@ -83,7 +83,7 @@ class NotificationChannelFactory
         return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars);
     }
 
-    public function isValidInstance($driverClass): NotificationChannelInterface
+    private function isValidInstance($driverClass): NotificationChannelInterface
     {
         if ($driverClass instanceof NotificationChannelInterface) {
             return $driverClass;
