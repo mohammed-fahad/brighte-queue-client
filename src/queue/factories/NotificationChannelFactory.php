@@ -38,7 +38,7 @@ class NotificationChannelFactory
         throw new \Exception("Failed to create Notification channel. Channel name not implemented " . $channel);
     }
 
-    public function getSlackChannel($slackConfig)
+    public function getSlackChannel($slackConfig): NotificationChannelInterface
     {
 
         if (!isset($slackConfig['driverClass'])) {
@@ -51,25 +51,31 @@ class NotificationChannelFactory
             return $driverClass;
         }
 
-        if ($driverClass == SlackNotificationChannel::class) {
-            if (!isset($slackConfig['params']) && !isset($slackConfig['params']['url'])) {
-                throw new \Exception("Slack WebHook URL must be provided");
+        /**its not slack channel configuration but its the users own implementation of channel*/
+        if ($driverClass !== SlackNotificationChannel::class) {
+            try {
+                $reflectionClass = new \ReflectionClass($driverClass);
+                $class = $reflectionClass->newInstance(...array_values($slackConfig['params']));
+            } catch (\ReflectionException $e) {
+                throw new \Exception("Failed to create channel $driverClass: " . $e->getMessage());
             }
 
-            return new SlackNotificationChannel($slackConfig['params']['url']);
+            return self::isValidInstance($class);
         }
 
-        /**its not slack channel configuration but its the users own implementation of channel*/
-
-        try {
-            $reflectionClass = new \ReflectionClass($driverClass);
-        } catch (\ReflectionException $e) {
-            throw new \Exception("Failed to create channel $driverClass: " . $e->getMessage());
+        // slack
+        if (!isset($slackConfig['params'])) {
+            throw new \Exception("params key must be provided");
+        }
+        if (!isset($slackConfig['params']['url'])) {
+            throw new \Exception("Slack WebHook URL must be provided");
         }
 
-        $class = $reflectionClass->newInstance(...array_values($slackConfig['params']));
+        $defaultBodyChars = SlackNotificationChannel::DEFAULT_MAX_BODY_CHARS_TO_SEND;
+        ;
+        $maxChars = $slackConfig['params']['maxBodyCharactersToSend'] ?? $defaultBodyChars;
 
-        return self::isValidInstance($class);
+        return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars);
     }
 
     public function isValidInstance($driverClass): NotificationChannelInterface

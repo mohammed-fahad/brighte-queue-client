@@ -2,11 +2,11 @@
 
 namespace BrighteCapital\QueueClient\notifications\Channels;
 
-use BrighteCapital\QueueClient\notifications\messages\NotificationMessageInterface;
 use GuzzleHttp\Client;
 
 class SlackNotificationChannel implements NotificationChannelInterface
 {
+    const DEFAULT_MAX_BODY_CHARS_TO_SEND = 100;
     /**
      * @var \GuzzleHttp\ClientInterface
      */
@@ -14,15 +14,15 @@ class SlackNotificationChannel implements NotificationChannelInterface
     /**
      * @var string
      */
-    private $slackEndpoint;
+    private $url;
 
-    public $maxCharactersToSend = 100;
+    public $maxBodyCharsToSend;
 
-    public function __construct(string $slackEndpoint, $maxCharactersToSend = 100, Client $client = null)
+    public function __construct(string $url, $maxBodyChars, Client $client = null)
     {
+        $this->url = $url;
+        $this->maxBodyCharsToSend = $maxBodyChars;
         $this->client = $client;
-        $this->slackEndpoint = $slackEndpoint;
-        $this->maxCharactersToSend = $maxCharactersToSend;
 
         if (is_null($client)) {
             $this->client = new Client();
@@ -37,7 +37,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
     public function send(array $data): bool
     {
         try {
-            $this->client->post($this->slackEndpoint, $this->createMessage($data));
+            $this->client->post($this->url, $this->createMessage($data));
 
             return true;
         } catch (\Exception $e) {
@@ -55,7 +55,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
         foreach ($data as $key => $value) {
             $newKey = strtolower($key);
             if ($newKey == 'body') {
-                $value = substr($value, 0, $this->getMaxCharactersToSend());
+                $value = substr($value, 0, $this->getMaxBodyCharsToSend());
             }
             $text .= $key . ': ' . $value . PHP_EOL;
         }
@@ -70,16 +70,16 @@ class SlackNotificationChannel implements NotificationChannelInterface
     /**
      * @return int
      */
-    public function getMaxCharactersToSend(): int
+    public function getMaxBodyCharsToSend(): int
     {
-        return $this->maxCharactersToSend;
+        return $this->maxBodyCharsToSend;
     }
 
     /**
-     * @param int $maxCharactersToSend
+     * @param int $maxBodyCharsToSend
      */
-    public function setMaxCharactersToSend(int $maxCharactersToSend): void
+    public function setMaxBodyCharsToSend(int $maxBodyCharsToSend): void
     {
-        $this->maxCharactersToSend = $maxCharactersToSend;
+        $this->maxBodyCharsToSend = $maxBodyCharsToSend;
     }
 }
