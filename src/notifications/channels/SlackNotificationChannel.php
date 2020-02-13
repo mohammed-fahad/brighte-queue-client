@@ -16,30 +16,30 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     private $url;
 
-    public $maxBodyCharsToSend;
+    private $maxBodyCharsToSend;
 
-    public function __construct(string $url, $maxBodyChars, Client $client = null)
+    /**
+     * SlackNotificationChannel constructor.
+     * @param string $url slack webHook url
+     * @param int $maxBodyChars message body character limit
+     * @param \GuzzleHttp\Client|null $client client
+     */
+    public function __construct(string $url, int $maxBodyChars, Client $client = null)
     {
         $this->url = $url;
         $this->maxBodyCharsToSend = $maxBodyChars;
-        $this->client = $client;
-
-        if (is_null($client)) {
-            $this->client = new Client();
-        }
+        $this->client = $client ?? new Client();
     }
 
     /**
      * @param array $data
-     * @return bool
+     * @return void
      * @throws \Exception
      */
-    public function send(array $data): bool
+    public function send(array $data)
     {
         try {
             $this->client->post($this->url, $this->createMessage($data));
-
-            return true;
         } catch (\Exception $e) {
             throw new \Exception(
                 sprintf("Failed to send Slack message. %s data= %s", $e->getMessage(), print_r($data, true))
