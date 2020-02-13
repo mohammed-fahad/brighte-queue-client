@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class SlackNotificationChannel implements NotificationChannelInterface
 {
-    const DEFAULT_MAX_BODY_CHARS_TO_SEND = 100;
+    public const DEFAULT_MAX_BODY_CHARS_TO_SEND = 100;
     /**
      * @var \GuzzleHttp\ClientInterface
      */

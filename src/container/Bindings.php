@@ -1,8 +1,6 @@
 <?php
 
-
 namespace BrighteCapital\QueueClient\container;
-
 
 use BrighteCapital\QueueClient\notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\queue\factories\NotificationChannelFactory;
@@ -26,7 +24,7 @@ class Bindings
                     return QueueClientFactory::create($config);
                 });*/
 
-        Container::instance()->bind('NotificationChannel', function () use ($config) : NotificationChannelInterface {
+        Container::instance()->bind('NotificationChannel', function () use ($config): NotificationChannelInterface {
             return NotificationChannelFactory::create($config);
         });
     }

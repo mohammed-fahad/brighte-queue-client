@@ -7,7 +7,7 @@ use BrighteCapital\QueueClient\notifications\Channels\SlackNotificationChannel;
 
 class NotificationChannelFactory
 {
-    const ERROR_MISSING_CONFIG_KEY = '%s must be provided';
+    public const ERROR_MISSING_CONFIG_KEY = '%s must be provided';
 
     public static function create($config)
     {
