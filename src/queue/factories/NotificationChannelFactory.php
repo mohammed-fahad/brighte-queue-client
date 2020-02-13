@@ -19,6 +19,7 @@ class NotificationChannelFactory
          * 'url' => $tempEndpoint,
          * 'maxBodyCharactersToSend' => 200
          * ]
+         * ]
          * */
         if (!isset($config['provider'])) {
             throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'provider key'));
@@ -48,7 +49,6 @@ class NotificationChannelFactory
 
     public function getSlackChannel($slackConfig): NotificationChannelInterface
     {
-
         if (!isset($slackConfig['params'])) {
             throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, "notification.params"));
         }
