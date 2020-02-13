@@ -10,7 +10,7 @@ class NotificationChannelFactory
 {
     public const ERROR_MISSING_CONFIG_KEY = '%s must be provided';
 
-    public static function create($config)
+    public static function create($config): NotificationChannelInterface
     {
         /** ---notification format----
          * [
