@@ -4,6 +4,7 @@ namespace BrighteCapital\QueueClient\queue\factories;
 
 use BrighteCapital\QueueClient\notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\notifications\Channels\SlackNotificationChannel;
+use GuzzleHttp\Client;
 
 class NotificationChannelFactory
 {
@@ -12,62 +13,42 @@ class NotificationChannelFactory
     public static function create($config)
     {
         /** ---notification format----
-         * 'notification' => [
-         * 'channel' => 'slack',
-         * 'driverClass' => SlackNotificationChannel::class,
+         * [
+         * 'provider' => SlackNotificationChannel::class,
          * 'params' => [
-         * 'url' => url,
-         * 'maxBodyCharactersToSend' => 200,
-         * ....
+         * 'url' => $tempEndpoint,
+         * 'maxBodyCharactersToSend' => 200
          * ]
-         * ];
          * */
-        if (!isset($config['notification'])) {
-            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'notification key'));
+        if (!isset($config['provider'])) {
+            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'provider key'));
         }
 
-        if (!isset($config['notification']['channel'])) {
-            throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, 'notification.Channel'));
+        $factory = new NotificationChannelFactory();
+        $provider = $config['provider'];
+
+        if (is_object($provider) && $factory->isValidInstance($provider)) {
+            return $provider;
         }
 
-        $channel = $config['notification']['channel'];
-
-        switch (strtolower($channel)) {
+        switch (strtolower($provider)) {
             case 'slack':
-                return (new NotificationChannelFactory())->getSlackChannel($config['notification']);
+                return $factory->getSlackChannel($config);
+            case strtolower(SlackNotificationChannel::class):
+                return $factory->getSlackChannel($config);
         }
 
         throw new \Exception(
             sprintf(
-                "Failed to create Notification channel. notification.channel %s does not match expected names",
-                $channel
+                "Failed to create Notification channel. notification.provider %s does not match expected names",
+                $provider
             )
         );
     }
 
-    private function getSlackChannel($slackConfig): NotificationChannelInterface
+    public function getSlackChannel($slackConfig): NotificationChannelInterface
     {
-        if (!isset($slackConfig['driverClass'])) {
-            throw new \Exception("notification.DriverClass must be provided");
-        }
 
-        $driverClass = $slackConfig['driverClass'];
-
-        if (is_object($driverClass) && $this->isValidInstance($driverClass)) {
-            return $driverClass;
-        }
-
-        if ($driverClass !== SlackNotificationChannel::class) {
-            throw new \Exception(
-                sprintf(
-                    "DriverClass must either be instance of %s (object) or %s (string)",
-                    NotificationChannelInterface::class,
-                    SlackNotificationChannel::class
-                )
-            );
-        }
-
-        // slack
         if (!isset($slackConfig['params'])) {
             throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, "notification.params"));
         }
@@ -78,10 +59,10 @@ class NotificationChannelFactory
         $defaultBodyChars = SlackNotificationChannel::DEFAULT_MAX_BODY_CHARS_TO_SEND;
         $maxChars = $slackConfig['params']['maxBodyCharactersToSend'] ?? $defaultBodyChars;
 
-        return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars);
+        return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars, new Client());
     }
 
-    private function isValidInstance($driverClass): NotificationChannelInterface
+    public function isValidInstance($driverClass): NotificationChannelInterface
     {
         if ($driverClass instanceof NotificationChannelInterface) {
             return $driverClass;

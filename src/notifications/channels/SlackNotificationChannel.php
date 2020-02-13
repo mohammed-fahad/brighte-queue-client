@@ -24,11 +24,11 @@ class SlackNotificationChannel implements NotificationChannelInterface
      * @param int $maxBodyChars message body character limit
      * @param \GuzzleHttp\Client|null $client client
      */
-    public function __construct(string $url, int $maxBodyChars, Client $client = null)
+    public function __construct(string $url, int $maxBodyChars, Client $client)
     {
         $this->url = $url;
         $this->maxBodyCharsToSend = $maxBodyChars;
-        $this->client = $client ?? new Client();
+        $this->client = $client;
     }
 
     /**
@@ -36,13 +36,17 @@ class SlackNotificationChannel implements NotificationChannelInterface
      * @return void
      * @throws \Exception
      */
-    public function send(array $data)
+    public function send(array $data): void
     {
-        try {
-            $this->client->post($this->url, $this->createMessage($data));
-        } catch (\Exception $e) {
+        $response = $this->client->post($this->url, $this->createMessage($data));
+
+        if ($response->getStatusCode() !== 200) {
             throw new \Exception(
-                sprintf("Failed to send Slack message. %s data= %s", $e->getMessage(), print_r($data, true))
+                sprintf(
+                    "Failed to send Slack message. status code = %s body = %s",
+                    $response->getStatusCode(),
+                    (string)$response->getBody()
+                )
             );
         }
     }
