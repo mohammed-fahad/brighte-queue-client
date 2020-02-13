@@ -6,6 +6,7 @@ interface NotificationChannelInterface
 {
     /**
      * @param array $data
+     * @return void
      */
     public function send(array $data): void;
 }

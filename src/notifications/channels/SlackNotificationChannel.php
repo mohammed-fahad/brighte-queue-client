@@ -22,7 +22,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
      * SlackNotificationChannel constructor.
      * @param string $url slack webHook url
      * @param int $maxBodyChars message body character limit
-     * @param \GuzzleHttp\Client|null $client client
+     * @param \GuzzleHttp\Client $client client
      */
     public function __construct(string $url, int $maxBodyChars, Client $client)
     {
@@ -32,7 +32,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
     }
 
     /**
-     * @param array $data
+     * @param array $data data
      * @return void
      * @throws \Exception
      */

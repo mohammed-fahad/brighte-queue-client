@@ -40,7 +40,7 @@ class NotificationChannelFactory
 
         throw new \Exception(
             sprintf(
-                "Failed to create Notification channel. notification.provider %s does not match expected names",
+                "Failed to create Notification channel. %s does not match expected names",
                 $provider
             )
         );
