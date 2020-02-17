@@ -8,7 +8,7 @@ use BrighteCapital\QueueClient\Storage\StorageInterface;
 use Exception;
 use Interop\Queue\Message;
 
-class StorageRetryStrategy extends AbstractRetryStrategy
+class BlockerStorageStrategy extends AbstractStrategy
 {
     /**
      * @param Message $message

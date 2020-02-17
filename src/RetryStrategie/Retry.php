@@ -5,7 +5,6 @@ namespace BrighteCapital\QueueClient\strategies;
 class Retry
 {
     protected $delay;
-
     protected $maxRetryCount;
 
     protected $strategy;
@@ -38,5 +37,37 @@ class Retry
     public function getErrorMessage()
     {
         return $this->errorMessage;
+    }
+
+    /**
+     * @param int $delay
+     */
+    public function setDelay(int $delay): void
+    {
+        $this->delay = $delay;
+    }
+
+    /**
+     * @param int $maxRetryCount
+     */
+    public function setMaxRetryCount(int $maxRetryCount): void
+    {
+        $this->maxRetryCount = $maxRetryCount;
+    }
+
+    /**
+     * @param string $strategy
+     */
+    public function setStrategy(string $strategy): void
+    {
+        $this->strategy = $strategy;
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    public function setErrorMessage(string $errorMessage): void
+    {
+        $this->errorMessage = $errorMessage;
     }
 }

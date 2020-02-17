@@ -2,30 +2,30 @@
 
 namespace BrighteCapital\QueueClient\queue\factories;
 
-use BrighteCapital\QueueClient\strategies\AbstractRetryStrategy;
-use BrighteCapital\QueueClient\strategies\DefaultRetryStrategy;
+use BrighteCapital\QueueClient\strategies\AbstractStrategy;
+use BrighteCapital\QueueClient\strategies\BlockerStrategy;
 use BrighteCapital\QueueClient\strategies\Retry;
-use BrighteCapital\QueueClient\strategies\StorageRetryStrategy;
+use BrighteCapital\QueueClient\strategies\BlockerStorageStrategy;
 
 class StrategyFactory
 {
     /**
      * @param Retry|null $retry
-     * @return AbstractRetryStrategy
+     * @return AbstractStrategy
      * @throws \Exception
      */
-    public static function create(Retry $retry = null): AbstractRetryStrategy
+    public static function create(Retry $retry = null): AbstractStrategy
     {
         if (!$retry) {
-            $retry = new Retry(0, 0, DefaultRetryStrategy::class);
+            $retry = new Retry(0, 0, BlockerStrategy::class);
         }
 
         switch ($retry->getStrategy()) {
-            case DefaultRetryStrategy::class:
-                return new DefaultRetryStrategy($retry);
+            case BlockerStrategy::class:
+                return new BlockerStrategy($retry);
 
-            case StorageRetryStrategy::class:
-                return new StorageRetryStrategy($retry);
+            case BlockerStorageStrategy::class:
+                return new BlockerStorageStrategy($retry);
         }
     }
 }

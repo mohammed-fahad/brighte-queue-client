@@ -6,7 +6,7 @@ use BrighteCapital\QueueClient\container\Container;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use Interop\Queue\Message;
 
-abstract class AbstractRetryStrategy implements RetryStrategyInterface
+abstract class AbstractStrategy implements StrategyInterface
 {
     /** @var QueueClientInterface */
     protected $client;
@@ -15,7 +15,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     protected $retry;
 
     /**
-     * AbstractRetryStrategy constructor.
+     * AbstractStrategy constructor.
      * @param Retry $retry
      * @throws \Exception
      */

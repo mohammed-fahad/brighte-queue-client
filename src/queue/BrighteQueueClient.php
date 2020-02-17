@@ -29,7 +29,36 @@ class BrighteQueueClient
     public function __construct(array $config)
     {
         Bindings::register($config);
-        $this->client = Container::instance()->get('QueueClient');
+    }
+
+    /**
+     * @param JobManagerInterface $jobManager
+     * @param int $timeout timeout
+     * @return mixed
+     * @throws \Exception
+     */
+    public function processMessage(JobManagerInterface $jobManager, $timeout = 0): void
+    {
+        $message = $this->receive($timeout);
+        /** @var BlockerHandlerInterface $blockerHandler */
+        $blockerHandler = Container::instance()->get('BlockerHandler');
+
+        /** @var Job $job */
+        $job = $jobManager->create($message);
+
+        if ($blockerHandler->checkAndHandle($job) === true) {
+            return;
+        }
+
+        $job = $jobManager->process($job);
+
+        if ($job->getSuccess() === true) {
+            $this->acknowledge($message);
+
+            return;
+        }
+
+        $this->reject($message, new Retry($job->getMaxRetry(), $job->getDelay(), $job->getRetryStrategy()));
     }
 
     /**
@@ -40,11 +69,6 @@ class BrighteQueueClient
     public function receive($timeout = 0): Message
     {
         $message = $this->client->receive($timeout);
-        /** @var BlockerHandlerInterface $blockerHandler */
-        $blockerHandler = Container::instance()->get('BlockerHandler');
-        while ($blockerHandler->checkAndHandle($message) === true) {
-            $this->client->receive($timeout);
-        }
 
         return $message;
     }
