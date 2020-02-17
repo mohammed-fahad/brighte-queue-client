@@ -58,7 +58,7 @@ class BrighteQueueClient
             return;
         }
 
-        $this->reject($message, new Retry($job->getMaxRetry(), $job->getDelay(), $job->getRetryStrategy()));
+        $this->reject($message, $job->getRetry());
     }
 
     /**
