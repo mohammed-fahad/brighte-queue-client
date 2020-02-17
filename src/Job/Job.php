@@ -16,8 +16,6 @@ class Job
         $this->message = $message;
     }
 
-
-
     /**
      * @return mixed
      */

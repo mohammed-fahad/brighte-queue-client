@@ -1,4 +1,5 @@
 <?php
+
 namespace BrighteCapital\QueueClient\queue;
 
 use Interop\Queue\Message;

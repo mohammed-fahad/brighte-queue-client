@@ -60,7 +60,8 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     /**
      * @param $message
      */
-    private function handleStorage($message) {
+    private function handleStorage($message)
+    {
         $entity = new MessageEntity($message);
 
         /** @var MessageEntity $oldEntity */
