@@ -59,6 +59,9 @@ class SqsClient implements QueueClientInterface
 
     /**
      * @param \Interop\Queue\Message $message message
+     * @throws \Interop\Queue\Exception
+     * @throws \Interop\Queue\Exception\InvalidDestinationException
+     * @throws \Interop\Queue\Exception\InvalidMessageException
      */
     public function send(Message $message): void
     {

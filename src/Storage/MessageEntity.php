@@ -5,10 +5,11 @@ namespace BrighteCapital\QueueClient\Storage;
 use BrighteCapital\QueueClient\Utility\StringUtility;
 use Interop\Queue\Message;
 
-class MessageEntity implements EntityInterface
+class MessageEntity
 {
 
-    protected $tableName = 'brighte_queue_messages';
+    const TABLE = 'brighte_queue_messages';
+
     protected $id;
     protected $messageId;
     protected $messageHandle;
@@ -18,8 +19,6 @@ class MessageEntity implements EntityInterface
     protected $alertCount = 1;
     protected $lastErrorMessage = '';
     protected $queueName = '';
-    protected $databaseAttributes = ['id', 'messageId', 'messageHandle', 'groupId', 'message', 'attributes',
-        'alertCount', 'lastErrorMessage', 'queueName'] ;
 
     /**
      * MessageEntity constructor.
@@ -43,33 +42,25 @@ class MessageEntity implements EntityInterface
      */
     public function toArray(): array
     {
-        return array_filter(get_object_vars($this), function ($value, $key) {
-            return !empty($value) && in_array($key, $this->databaseAttributes);
-        }, ARRAY_FILTER_USE_BOTH);
+        return array_filter(get_object_vars($this), function ($value) {
+            return !empty($value);
+        });
     }
 
     /**
      * @param array $data
-     * @return EntityInterface
+     * @return MessageEntity
      */
-    public function toEntity(array $data): EntityInterface
+    public function toEntity(array $data): MessageEntity
     {
         foreach ($data as $key => $value) {
             $key = StringUtility::snakeCaseToCamelCase($key);
-            if (property_exists($this, $key) and in_array($key, $this->databaseAttributes)) {
+            if (property_exists($this, $key)) {
                 $this->$key = $value;
             }
         }
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTableName(): string
-    {
-        return $this->tableName;
     }
 
     /**

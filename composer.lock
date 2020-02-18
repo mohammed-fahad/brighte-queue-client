@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0c8f6c7c284a2e4d66abcb87d5e2ce2",
+    "content-hash": "b41cc37b4dd7989ac387281a23207ef5",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.15",
+            "version": "3.133.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e"
+                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
-                "reference": "18289bf4a3fe68e9a0853f29d82b6cd4b1de2f9e",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/69836088f178890c16f47bc1c67ca36ebcad22f8",
+                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-14T19:09:24+00:00"
+            "time": "2020-02-17T19:13:12+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -174,30 +174,31 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "2.11.x-dev",
+            "version": "v2.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "f9a0563f8aa2929ab0b903c1971c5d11a8ceb209"
+                "reference": "7345cd59edfa2036eb0fa4264b77ae2576842035"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/f9a0563f8aa2929ab0b903c1971c5d11a8ceb209",
-                "reference": "f9a0563f8aa2929ab0b903c1971c5d11a8ceb209",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/7345cd59edfa2036eb0fa4264b77ae2576842035",
+                "reference": "7345cd59edfa2036eb0fa4264b77ae2576842035",
                 "shasum": ""
             },
             "require": {
                 "doctrine/cache": "^1.0",
                 "doctrine/event-manager": "^1.0",
                 "ext-pdo": "*",
-                "php": "^7.2"
+                "php": "^7.1"
             },
             "require-dev": {
-                "doctrine/coding-standard": "^6.0",
-                "jetbrains/phpstorm-stubs": "^2019.1",
-                "phpstan/phpstan": "^0.11.3",
-                "phpunit/phpunit": "^8.4.1",
-                "symfony/console": "^2.0.5|^3.0|^4.0|^5.0"
+                "doctrine/coding-standard": "^5.0",
+                "jetbrains/phpstorm-stubs": "^2018.1.2",
+                "phpstan/phpstan": "^0.10.1",
+                "phpunit/phpunit": "^7.4",
+                "symfony/console": "^2.0.5|^3.0|^4.0",
+                "symfony/phpunit-bridge": "^3.4.5|^4.0.5"
             },
             "suggest": {
                 "symfony/console": "For helpful console commands such as SQL execution and import of files."
@@ -208,7 +209,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.10.x-dev",
+                    "dev-master": "2.9.x-dev",
                     "dev-develop": "3.0.x-dev"
                 }
             },
@@ -244,25 +245,14 @@
             "keywords": [
                 "abstraction",
                 "database",
-                "db2",
                 "dbal",
-                "mariadb",
-                "mssql",
                 "mysql",
-                "oci8",
-                "oracle",
-                "pdo",
+                "persistence",
                 "pgsql",
-                "postgresql",
-                "queryobject",
-                "sasql",
-                "sql",
-                "sqlanywhere",
-                "sqlite",
-                "sqlserver",
-                "sqlsrv"
+                "php",
+                "queryobject"
             ],
-            "time": "2020-01-30T19:46:54+00:00"
+            "time": "2019-11-02T22:19:34+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -1213,12 +1203,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "edea3e869367921987704325b997a80cdaea6d66"
+                "reference": "011b369030b0976f51d94eba8e255a1f66461df5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/edea3e869367921987704325b997a80cdaea6d66",
-                "reference": "edea3e869367921987704325b997a80cdaea6d66",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/011b369030b0976f51d94eba8e255a1f66461df5",
+                "reference": "011b369030b0976f51d94eba8e255a1f66461df5",
                 "shasum": ""
             },
             "require": {
@@ -1258,7 +1248,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-02-12T20:05:04+00:00"
+            "time": "2020-02-17T17:48:35+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -2277,12 +2267,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "6070b6083e0ab6cd3de43dea69ec820884836aac"
+                "reference": "dabf3019abc9aff3d9c864167c19cee226da880a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/6070b6083e0ab6cd3de43dea69ec820884836aac",
-                "reference": "6070b6083e0ab6cd3de43dea69ec820884836aac",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dabf3019abc9aff3d9c864167c19cee226da880a",
+                "reference": "dabf3019abc9aff3d9c864167c19cee226da880a",
                 "shasum": ""
             },
             "require": {
@@ -2320,7 +2310,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-02-09T23:53:48+00:00"
+            "time": "2020-02-17T21:13:56+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2474,8 +2464,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": {
+    "platform": {
         "php": "^7.1"
-    }
+    },
+    "platform-dev": []
 }

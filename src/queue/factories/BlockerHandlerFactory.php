@@ -8,10 +8,6 @@ use BrighteCapital\QueueClient\queue\sqs\SqsBlockerHandler;
 
 class BlockerHandlerFactory
 {
-    public const PROVIDERS_SQS = 'sqs';
-    public const PROVIDERS_KAFKA = 'kafka';
-    public const PROVIDERS_RABBIT_MQ = 'rabbit_mq';
-
     /**
      * @param QueueClientInterface $client
      * @param array $config
@@ -23,10 +19,10 @@ class BlockerHandlerFactory
         $provider = $config['provider'] ?? 'undefined';
 
         switch ($provider) {
-            case self::PROVIDERS_SQS:
+            case QueueClientFactory::PROVIDERS_SQS:
                 return new SqsBlockerHandler($client);
         }
 
-        throw new \Exception(sprintf('Failed to create Queue Client %s', $provider));
+        throw new \Exception(sprintf('Failed to create blocker handler %s', $provider));
     }
 }

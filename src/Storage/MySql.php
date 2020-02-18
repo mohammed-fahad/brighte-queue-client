@@ -5,7 +5,7 @@ namespace BrighteCapital\QueueClient\Storage;
 use BrighteCapital\QueueClient\Utility\StringUtility;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\DriverManager;
+;
 use Doctrine\DBAL\Schema\Table;
 use Exception;
 
@@ -15,62 +15,56 @@ class MySql implements StorageInterface
     protected $connection;
 
     /**
-     * @param array $config
-     * @throws DBALException
+     * @param Connection $connection
      */
-    public function __construct(array $config)
+    public function __construct(Connection $connection)
     {
-        $connectionParams = [
-            'dbname' => $config['dbname'],
-            'user' => $config['user'],
-            'password' => $config['password'],
-            'host' => $config['host'],
-            'driver' => 'pdo_mysql'
-        ];
-        $this->connection = DriverManager::getConnection($connectionParams);
+        $this->connection = $connection;
         $this->connection->connect();
+    }
+
+    public function messageTableExist(): bool
+    {
+        $scm = $this->connection->getSchemaManager();
+
+        return $scm->tablesExist([MessageEntity::TABLE]);
     }
 
     /**
      * Check if table exist or create one
      * @throws DBALException
      */
-    public function checkAndCreateMessageTable(): void
+    public function createMessageTable(): void
     {
-        $entity = new MessageEntity();
         $scm = $this->connection->getSchemaManager();
 
-        if (!$scm->tablesExist($entity->getTableName())) {
-            //TODO: Log table created.
+        $table = new Table(MessageEntity::TABLE);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('message_id', 'string', ['customSchemaOptions' => ['unique' => true]]);
+        $table->addColumn('group_id', 'string', []);
+        $table->addColumn('message', 'text', []);
+        $table->addColumn('attributes', 'text', ['notnull' => false]);
+        $table->addColumn('alert_count', 'integer', ['notnull' => false]);
+        $table->addColumn('last_error_message', 'text', ['notnull' => false]);
+        $table->addColumn('message_handle', 'text', ['notnull' => false]);
+        $table->addColumn('queue_name', 'text');
+        $table->setPrimaryKey(['id']);
 
-            $table = new Table($entity->getTableName());
-            $table->addColumn('id', 'integer', ['autoincrement' => true]);
-            $table->addColumn('message_id', 'string', ['customSchemaOptions' => ['unique' => true]]);
-            $table->addColumn('group_id', 'string', []);
-            $table->addColumn('message', 'text', []);
-            $table->addColumn('attributes', 'text', ['notnull' => false]);
-            $table->addColumn('alert_count', 'integer', ['notnull' => false]);
-            $table->addColumn('last_error_message', 'text', ['notnull' => false]);
-            $table->addColumn('message_handle', 'text', ['notnull' => false]);
-            $table->addColumn('queue_name', 'text');
-            $table->setPrimaryKey(['id']);
-
-            $scm->createTable($table);
-        }
+        $scm->createTable($table);
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param MessageEntity $entity
      * @throws Exception
      */
-    public function store(EntityInterface $entity): void
+    public function store(MessageEntity $entity): void
     {
         $parameters = [];
         $data = $entity->toArray();
         $queryBuilder = $this->connection->createQueryBuilder();
 
         if (empty($data)) {
-            throw new Exception('Data trying to insert in database in empty');
+            throw new Exception('Data trying to insert in database is empty');
         }
 
         foreach ($data as $key => $value) {
@@ -84,14 +78,14 @@ class MySql implements StorageInterface
             $parameters[':' . $key] = $value;
         }
 
-        $queryBuilder->insert($entity->getTableName())->setParameters($parameters)->execute();
+        $queryBuilder->insert(MessageEntity::TABLE)->setParameters($parameters)->execute();
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param MessageEntity $entity
      * @throws Exception
      */
-    public function update(EntityInterface $entity): void
+    public function update(MessageEntity $entity): void
     {
         if (empty($entity->getId())) {
             throw new Exception('Update action requires Id to be set');
@@ -101,7 +95,7 @@ class MySql implements StorageInterface
         $data = $entity->toArray();
 
         if (empty($data)) {
-            throw new Exception('Data trying to insert in database in empty');
+            throw new Exception('Data trying to insert in database is empty');
         }
         $queryBuilder = $this->connection->createQueryBuilder();
 
@@ -117,20 +111,20 @@ class MySql implements StorageInterface
             $parameters[':' . $key] = $value;
         }
 
-        $queryBuilder->update($entity->getTableName())->where('id = :id')->setParameters($parameters)->execute();
+        $queryBuilder->update(MessageEntity::TABLE)->where('id = :id')->setParameters($parameters)->execute();
     }
 
     /**
-     * @param EntityInterface $entity
-     * @return EntityInterface|bool
+     * @param MessageEntity $entity
+     * @return MessageEntity|bool
      */
-    public function messageExist(EntityInterface $entity)
+    public function messageExist(MessageEntity $entity)
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
          $result = $queryBuilder
              ->select('id', 'alert_count')
-             ->from($entity->getTableName())
+             ->from(MessageEntity::TABLE)
              ->where('message_id = :message_id')
              ->setParameter(':message_id', $entity->getMessageId())
              ->execute();

@@ -23,6 +23,12 @@ class SqsProducer extends \Enqueue\Sqs\SqsProducer
         $this->context = $context;
     }
 
+    /**
+     * @param Destination $destination
+     * @param Message $message
+     * @throws InvalidDestinationException
+     * @throws InvalidMessageException
+     */
     public function send(Destination $destination, Message $message): void
     {
         InvalidDestinationException::assertDestinationInstanceOf($destination, SqsDestination::class);

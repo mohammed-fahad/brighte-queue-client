@@ -14,7 +14,7 @@ class QueueClientFactory
 
     /**
      * @param array $config config
-     * @return SqsClient
+     * @return QueueClientInterface
      * @throws \Exception
      */
     public static function create(array $config): QueueClientInterface

@@ -21,7 +21,10 @@ class Bindings
         Container::instance()->bind('Storage', function () use ($config) {
             /** @var StorageInterface $storage */
             $storage = StorageFactory::create($config['database']);
-            $storage->checkAndCreateMessageTable();
+
+            if (!$storage->messageTableExist()) {
+                $storage->createMessageTable();
+            }
 
             return $storage;
         });

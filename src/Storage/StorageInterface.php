@@ -4,13 +4,13 @@ namespace BrighteCapital\QueueClient\Storage;
 
 interface StorageInterface
 {
-    public function __construct(array $config);
+    public function store(MessageEntity $entity): void;
 
-    public function store(EntityInterface $message): void;
+    public function update(MessageEntity $entity): void;
 
-    public function update(EntityInterface $message): void;
+    public function messageExist(MessageEntity $entity);
 
-    public function messageExist(EntityInterface $message);
+    public function createMessageTable(): void;
 
-    public function checkAndCreateMessageTable(): void;
+    public function messageTableExist(): bool;
 }
