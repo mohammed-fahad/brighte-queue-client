@@ -8,9 +8,9 @@ use BrighteCapital\QueueClient\queue\sqs\SqsConnectionFactory;
 
 class QueueClientFactory
 {
-    const PROVIDERS_SQS = 'sqs';
-    const PROVIDERS_KAFKA = 'kafka';
-    const PROVIDERS_RABBIT_MQ = 'rabbit_mq';
+    public const PROVIDERS_SQS = 'sqs';
+    public const PROVIDERS_KAFKA = 'kafka';
+    public const PROVIDERS_RABBIT_MQ = 'rabbit_mq';
 
     /**
      * @param array $config config
