@@ -1,6 +1,6 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue;
+namespace BrighteCapital\QueueClient\Job;
 
 use Interop\Queue\Message;
 

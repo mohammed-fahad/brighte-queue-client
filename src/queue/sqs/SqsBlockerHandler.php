@@ -3,11 +3,11 @@
 namespace BrighteCapital\QueueClient\queue\sqs;
 
 use BrighteCapital\QueueClient\container\Container;
+use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
-use BrighteCapital\QueueClient\queue\Job;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
-use Interop\Queue\Message;
+use BrighteCapital\QueueClient\strategies\NonBlockerStrategy;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
 {
@@ -44,8 +44,14 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     {
         $message = $job->getMessage();
 
-        if ($message->getProperty('ApproximateReceiveCount') <= $job->getMaxRetry()) {
+        if ($message->getProperty('ApproximateReceiveCount') < $job->getRetry()->getMaxRetryCount()) {
             return false;
+        }
+
+        // If non blocker strategy is used and it has reached the maximum, then delete it.
+        if ($job->getRetry()->getStrategy() === NonBlockerStrategy::class) {
+            $this->client->reject($message);
+            return true;
         }
 
         $this->client->delay($message, $this->config['retryStrategy']['storedMessageRetryDelay']);

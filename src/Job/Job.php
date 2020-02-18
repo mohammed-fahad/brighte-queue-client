@@ -1,6 +1,6 @@
 <?php
 
-namespace BrighteCapital\QueueClient\queue;
+namespace BrighteCapital\QueueClient\Job;
 
 use BrighteCapital\QueueClient\strategies\Retry;
 use Interop\Queue\Message;
@@ -19,7 +19,7 @@ class Job
     /**
      * @return mixed
      */
-    public function getMessage()
+    public function getMessage(): Message
     {
         return $this->message;
     }

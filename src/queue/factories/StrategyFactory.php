@@ -4,6 +4,7 @@ namespace BrighteCapital\QueueClient\queue\factories;
 
 use BrighteCapital\QueueClient\strategies\AbstractStrategy;
 use BrighteCapital\QueueClient\strategies\BlockerStrategy;
+use BrighteCapital\QueueClient\strategies\NonBlockerStrategy;
 use BrighteCapital\QueueClient\strategies\Retry;
 use BrighteCapital\QueueClient\strategies\BlockerStorageStrategy;
 
@@ -26,6 +27,9 @@ class StrategyFactory
 
             case BlockerStorageStrategy::class:
                 return new BlockerStorageStrategy($retry);
+
+            case NonBlockerStrategy::class:
+                return new NonBlockerStrategy($retry);
         }
     }
 }

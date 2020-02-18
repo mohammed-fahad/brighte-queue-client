@@ -27,7 +27,7 @@ abstract class AbstractStrategy implements StrategyInterface
 
     public function handle(Message $message): void
     {
-        $attemptCount = (int) $message->getProperty('ApproximateReceiveCount');
+        $attemptCount = $message->getProperty('ApproximateReceiveCount');
         if ($attemptCount >= $this->retry->getMaxRetryCount()) {
             $this->onMaxRetryReached($message);
         }
