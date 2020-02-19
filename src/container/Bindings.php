@@ -41,9 +41,6 @@ class Bindings
 
             return BlockerHandlerFactory::create($client, $config);
         });
-        /*        Container::instance()->bind('StorageConnection', function () use ($config) {
-                    return QueueClientFactory::create($config);
-                });*/
 
         Container::instance()->bind('NotificationChannel', function () use ($config): NotificationChannelInterface {
             return NotificationChannelFactory::create($config);

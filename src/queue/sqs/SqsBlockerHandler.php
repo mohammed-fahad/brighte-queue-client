@@ -51,6 +51,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         // If non blocker strategy is used and it has reached the maximum, then delete it.
         if ($job->getRetry()->getStrategy() === NonBlockerStrategy::class) {
             $this->client->reject($message);
+
             return true;
         }
 
