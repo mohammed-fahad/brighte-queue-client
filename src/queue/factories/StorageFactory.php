@@ -54,6 +54,9 @@ class StorageFactory
 
     private function configValidated($config)
     {
-        return (!empty($config['dbname']) && !empty($config['user']) && !empty($config['password']) && !empty($config['host']));
+        return (!empty($config['dbname'])
+            && !empty($config['user'])
+            && !empty($config['password'])
+            && !empty($config['host']));
     }
 }

@@ -5,7 +5,6 @@ namespace BrighteCapital\QueueClient\Storage;
 use BrighteCapital\QueueClient\Utility\StringUtility;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-;
 use Doctrine\DBAL\Schema\Table;
 use Exception;
 

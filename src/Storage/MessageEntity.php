@@ -8,7 +8,7 @@ use Interop\Queue\Message;
 class MessageEntity
 {
 
-    const TABLE = 'brighte_queue_messages';
+    public const TABLE = 'brighte_queue_messages';
 
     protected $id;
     protected $messageId;
