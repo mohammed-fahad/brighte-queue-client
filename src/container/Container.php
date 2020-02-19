@@ -124,7 +124,6 @@ class Container
         return false;
     }
 
-
     /**
      * @return \BrighteCapital\QueueClient\container\Container
      */

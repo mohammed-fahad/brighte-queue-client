@@ -3,6 +3,8 @@
 namespace BrighteCapital\QueueClient\container;
 
 use BrighteCapital\QueueClient\queue\factories\BlockerHandlerFactory;
+use BrighteCapital\QueueClient\notifications\Channels\NotificationChannelInterface;
+use BrighteCapital\QueueClient\queue\factories\NotificationChannelFactory;
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StorageFactory;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
@@ -29,7 +31,7 @@ class Bindings
             return $storage;
         });
 
-        Container::instance()->bind('QueueClient', function () use ($config) {
+        Container::instance()->bind('QueueClient', function () use ($config): QueueClientInterface {
             return QueueClientFactory::create($config);
         });
 
@@ -38,6 +40,13 @@ class Bindings
             $client = Container::instance()->get('QueueClient');
 
             return BlockerHandlerFactory::create($client, $config);
+        });
+        /*        Container::instance()->bind('StorageConnection', function () use ($config) {
+                    return QueueClientFactory::create($config);
+                });*/
+
+        Container::instance()->bind('NotificationChannel', function () use ($config): NotificationChannelInterface {
+            return NotificationChannelFactory::create($config);
         });
     }
 }
