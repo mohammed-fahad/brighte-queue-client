@@ -32,6 +32,7 @@ class BrighteQueueClient
     {
         Bindings::register($config);
         $this->client = Container::instance()->get('QueueClient');
+        $this->blockerHandler = Container::instance()->get('BlockerHandler');
     }
 
     /**
@@ -43,13 +44,11 @@ class BrighteQueueClient
     public function processMessage(JobManagerInterface $jobManager, $timeout = 0): void
     {
         $message = $this->receive($timeout);
-        /** @var BlockerHandlerInterface $blockerHandler */
-        $blockerHandler = Container::instance()->get('BlockerHandler');
 
         /** @var Job $job */
         $job = $jobManager->create($message);
 
-        if ($blockerHandler->checkAndHandle($job) === true) {
+        if ($this->blockerHandler->checkAndHandle($job) === true) {
             return;
         }
 
@@ -108,7 +107,7 @@ class BrighteQueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\strategies\Retry $retry
+     * @param \BrighteCapital\QueueClient\strategies\Retry|null $retry
      * @throws \Exception
      */
     public function reject(Message $message, Retry $retry = null): void

@@ -11,7 +11,7 @@ class Retry
 
     protected $errorMessage;
 
-    public function __construct(int $delays, int $maxRetryCount, string $strategy, string $errorMessage = null)
+    public function __construct(int $delays, int $maxRetryCount, string $strategy, string $errorMessage = '')
     {
         $this->delay = $delays;
         $this->maxRetryCount = $maxRetryCount;

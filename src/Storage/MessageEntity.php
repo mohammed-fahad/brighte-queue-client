@@ -51,7 +51,7 @@ class MessageEntity
      * @param array $data
      * @return MessageEntity
      */
-    public function toEntity(array $data): MessageEntity
+    public function patch(array $data): MessageEntity
     {
         foreach ($data as $key => $value) {
             $key = StringUtility::snakeCaseToCamelCase($key);
@@ -69,14 +69,6 @@ class MessageEntity
     public function getId(): int
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     */
-    public function setId(int $id): void
-    {
-        $this->id = $id;
     }
 
     /**
@@ -104,14 +96,6 @@ class MessageEntity
     }
 
     /**
-     * @param mixed $messageId
-     */
-    public function setMessageId(string $messageId): void
-    {
-        $this->messageId = $messageId;
-    }
-
-    /**
      * @return mixed
      */
     public function getMessageHandle(): string
@@ -136,14 +120,6 @@ class MessageEntity
     }
 
     /**
-     * @param mixed $groupId
-     */
-    public function setGroupId(string $groupId): void
-    {
-        $this->groupId = $groupId;
-    }
-
-    /**
      * @return mixed
      */
     public function getMessage(): string
@@ -152,27 +128,11 @@ class MessageEntity
     }
 
     /**
-     * @param mixed $message
-     */
-    public function setMessage(string $message): void
-    {
-        $this->message = $message;
-    }
-
-    /**
      * @return mixed
      */
     public function getAttributes(): string
     {
         return $this->attributes;
-    }
-
-    /**
-     * @param mixed $attributes
-     */
-    public function setAttributes(string $attributes): void
-    {
-        $this->attributes = $attributes;
     }
 
     /**

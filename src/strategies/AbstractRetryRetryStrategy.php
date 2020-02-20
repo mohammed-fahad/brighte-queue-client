@@ -4,9 +4,10 @@ namespace BrighteCapital\QueueClient\strategies;
 
 use BrighteCapital\QueueClient\container\Container;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
+use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use Interop\Queue\Message;
 
-abstract class AbstractStrategy implements StrategyInterface
+abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
 {
     /** @var QueueClientInterface */
     protected $client;
@@ -14,15 +15,25 @@ abstract class AbstractStrategy implements StrategyInterface
     /** @var Retry */
     protected $retry;
 
+    /** @var int */
+    protected  $delay;
+
+    /** @var MessageStorageInterface */
+    protected $storage;
+
     /**
-     * AbstractStrategy constructor.
+     * AbstractRetryRetryStrategy constructor.
      * @param Retry $retry
-     * @throws \Exception
+     * @param QueueClientInterface $client
+     * @param int $delay
+     * @param MessageStorageInterface|null $storage
      */
-    public function __construct(Retry $retry)
+    public function __construct(Retry $retry, QueueClientInterface $client, int $delay = 0, MessageStorageInterface $storage = null)
     {
-        $this->client = Container::instance()->get('QueueClient');
+        $this->client = $client;
         $this->retry = $retry;
+        $this->delay = $delay;
+        $this->storage = $storage;
     }
 
     public function handle(Message $message): void

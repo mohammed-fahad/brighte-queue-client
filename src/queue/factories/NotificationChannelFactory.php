@@ -10,6 +10,11 @@ class NotificationChannelFactory
 {
     public const ERROR_MISSING_CONFIG_KEY = '%s must be provided';
 
+    /**
+     * @param $config
+     * @return NotificationChannelInterface
+     * @throws \Exception
+     */
     public static function create($config): NotificationChannelInterface
     {
         /** ---notification format----
@@ -47,6 +52,11 @@ class NotificationChannelFactory
         );
     }
 
+    /**
+     * @param $slackConfig
+     * @return NotificationChannelInterface
+     * @throws \Exception
+     */
     public function getSlackChannel($slackConfig): NotificationChannelInterface
     {
         if (!isset($slackConfig['params'])) {
@@ -62,6 +72,11 @@ class NotificationChannelFactory
         return new SlackNotificationChannel($slackConfig['params']['url'], $maxChars, new Client());
     }
 
+    /**
+     * @param $driverClass
+     * @return NotificationChannelInterface
+     * @throws \Exception
+     */
     public function isValidInstance($driverClass): NotificationChannelInterface
     {
         if ($driverClass instanceof NotificationChannelInterface) {

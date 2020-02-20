@@ -2,6 +2,7 @@
 
 namespace BrighteCapital\QueueClient\queue;
 
+use Interop\Queue\Destination;
 use Interop\Queue\Message;
 
 interface QueueClientInterface
@@ -44,4 +45,9 @@ interface QueueClientInterface
      * @param int $seconds
      */
     public function delay(Message $message, int $seconds = 0): void;
+
+    /**
+     * @return \Enqueue\Sqs\SqsDestination|\Interop\Queue\Queue
+     */
+    public function getDestination();
 }

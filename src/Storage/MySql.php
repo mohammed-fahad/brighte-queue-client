@@ -8,7 +8,7 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Table;
 use Exception;
 
-class MySql implements StorageInterface
+class MySql implements MessageStorageInterface
 {
     /** @var Connection */
     protected $connection;
@@ -121,16 +121,17 @@ class MySql implements StorageInterface
     {
         $queryBuilder = $this->connection->createQueryBuilder();
 
-         $result = $queryBuilder
-             ->select('id', 'alert_count')
-             ->from(MessageEntity::TABLE)
-             ->where('message_id = :message_id')
-             ->setParameter(':message_id', $entity->getMessageId())
-             ->execute();
+        $result = $queryBuilder
+            ->select('id', 'alert_count')
+            ->from(MessageEntity::TABLE)
+            ->where('message_id = :message_id')
+            ->setParameter(':message_id', $entity->getMessageId())
+            ->execute();
 
         if ($row = $result->fetch()) {
             $entity = new MessageEntity();
-            return $entity->toEntity($row);
+
+            return $entity->patch($row);
         }
 
         return false;

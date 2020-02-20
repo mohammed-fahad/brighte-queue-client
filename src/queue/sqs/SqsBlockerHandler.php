@@ -7,32 +7,30 @@ use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
-use BrighteCapital\QueueClient\strategies\NonBlockerStrategy;
+use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
+use BrighteCapital\QueueClient\strategies\NonBlockerRetryStrategy;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
 {
     /** @var QueueClientInterface */
     private $client;
-    /** @var \BrighteCapital\QueueClient\Storage\StorageInterface  */
+    /** @var \BrighteCapital\QueueClient\Storage\MessageStorageInterface  */
     private $storage;
-    /** @var array */
-    private $config;
+    /** @var int */
+    private $delay;
 
     /**
      * BlockerChecker constructor.
      * @param QueueClientInterface $client
+     * @param MessageStorageInterface|null $storage
+     * @param int $delay
      * @throws \Exception
      */
-    public function __construct(QueueClientInterface $client)
+    public function __construct(QueueClientInterface $client, int $delay = 0, MessageStorageInterface $storage = null)
     {
         $this->client = $client;
-        $this->config = Container::instance()->get('Config');
-
-        try {
-            $this->storage = Container::instance()->get('Storage');
-        } catch (\Exception $e) {
-            // Do nothing
-        }
+        $this->delay = $delay;
+        $this->storage = $storage;
     }
 
     /**
@@ -49,13 +47,13 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         }
 
         // If non blocker strategy is used and it has reached the maximum, then delete it.
-        if ($job->getRetry()->getStrategy() === NonBlockerStrategy::class) {
+        if ($job->getRetry()->getStrategy() === NonBlockerRetryStrategy::class) {
             $this->client->reject($message);
 
             return true;
         }
 
-        $this->client->delay($message, $this->config['retryStrategy']['storedMessageRetryDelay']);
+        $this->client->delay($message, $this->delay);
 
         if (!empty($this->storage)) {
             $this->handleStorage($message);
@@ -75,8 +73,10 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         $oldEntity = $this->storage->messageExist($entity);
 
         if ($oldEntity === false) {
-            $entity->setQueueName($this->config['queue']);
+            $entity->setQueueName($this->client->getDestination()->getQueueName());
             $this->storage->store($entity);
+
+            return;
         }
 
         if ($oldEntity !== false) {

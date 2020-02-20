@@ -2,7 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Storage;
 
-interface StorageInterface
+interface MessageStorageInterface
 {
     public function store(MessageEntity $entity): void;
 

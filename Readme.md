@@ -11,7 +11,7 @@ $config = [
     'retryStrategy' => [
       'storedMessageRetryDelay' => 300
     ],
-    'database' => [
+    'storage' => [
         'host' => '',
         'user' => '',
         'password' => '',

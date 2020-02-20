@@ -8,7 +8,7 @@ use BrighteCapital\QueueClient\queue\factories\NotificationChannelFactory;
 use BrighteCapital\QueueClient\queue\factories\QueueClientFactory;
 use BrighteCapital\QueueClient\queue\factories\StorageFactory;
 use BrighteCapital\QueueClient\queue\QueueClientInterface;
-use BrighteCapital\QueueClient\Storage\StorageInterface;
+use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 
 class Bindings
 {
@@ -21,14 +21,19 @@ class Bindings
         });
 
         Container::instance()->bind('Storage', function () use ($config) {
-            /** @var StorageInterface $storage */
-            $storage = StorageFactory::create($config['database']);
-
-            if (!$storage->messageTableExist()) {
-                $storage->createMessageTable();
+            $storage = null;
+            /** @var MessageStorageInterface $storage */
+            try {
+                $storage = StorageFactory::create($config['storage']);
+                if (!$storage->messageTableExist()) {
+                    $storage->createMessageTable();
+                }
+            } catch (\Exception $e) {
+                //TODO:: logger
             }
 
             return $storage;
+
         });
 
         Container::instance()->bind('QueueClient', function () use ($config): QueueClientInterface {
