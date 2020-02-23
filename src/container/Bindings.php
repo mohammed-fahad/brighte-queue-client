@@ -33,7 +33,6 @@ class Bindings
             }
 
             return $storage;
-
         });
 
         Container::instance()->bind('QueueClient', function () use ($config): QueueClientInterface {

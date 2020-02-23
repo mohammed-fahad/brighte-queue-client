@@ -16,7 +16,7 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
     protected $retry;
 
     /** @var int */
-    protected  $delay;
+    protected $delay;
 
     /** @var MessageStorageInterface */
     protected $storage;
@@ -28,8 +28,12 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
      * @param int $delay
      * @param MessageStorageInterface|null $storage
      */
-    public function __construct(Retry $retry, QueueClientInterface $client, int $delay = 0, MessageStorageInterface $storage = null)
-    {
+    public function __construct(
+        Retry $retry,
+        QueueClientInterface $client,
+        int $delay = 0,
+        MessageStorageInterface $storage = null
+    ) {
         $this->client = $client;
         $this->retry = $retry;
         $this->delay = $delay;
