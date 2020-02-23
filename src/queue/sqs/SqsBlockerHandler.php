@@ -80,9 +80,9 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         }
 
         if ($oldEntity !== false) {
-            $entity->setId($oldEntity->getId());
-            $entity->setAlertCount($oldEntity->getAlertCount() + 1);
-            $this->storage->update($entity);
+            $oldEntity->setMessageHandle($entity->getMessageHandle());
+            $oldEntity->setAlertCount($oldEntity->getAlertCount() + 1);
+            $this->storage->update($oldEntity);
         }
     }
 }

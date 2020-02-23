@@ -20,7 +20,7 @@ class StorageFactory
      */
     public static function create(array $config): MessageStorageInterface
     {
-        if (empty($config($config['provider']))) {
+        if (empty($config['provider'])) {
             throw new \Exception(sprintf(self::ERROR_MISSING_CONFIG_KEY, "storage.provider"));
         }
 

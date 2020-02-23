@@ -34,7 +34,7 @@ class MessageEntity
         $this->messageHandle = $message->getReceiptHandle();
         $this->groupId = $message->getProperty('MessageGroupId');
         $this->message = $message->getBody();
-        $this->attributes = json_encode($message->getProperties());
+        $this->attributes = json_encode($message->getAttributes());
     }
 
     /**
