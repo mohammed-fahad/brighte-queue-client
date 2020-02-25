@@ -2,8 +2,8 @@
 
 namespace tests\unit;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;

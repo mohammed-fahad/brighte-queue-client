@@ -9,8 +9,4 @@ interface MessageStorageInterface
     public function update(MessageEntity $entity): void;
 
     public function messageExist(MessageEntity $entity);
-
-    public function createMessageTable(): void;
-
-    public function messageTableExist(): bool;
 }

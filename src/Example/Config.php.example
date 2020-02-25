@@ -1,0 +1,17 @@
+<?php
+
+// Copy to .src/Example/Config.php and fill the keys
+$config = [
+    'key' => 'key',
+    'secret' => 'secret',
+    'region' => 'region',
+    'Queue' => 'queue',
+    'provider' => 'sqs',
+    'defaultMaxDelay' => 5,
+    'storage' => [
+        'host' => 'host',
+        'user' => 'user',
+        'password' => 'password',
+        'dbname' => 'dbname',
+    ]
+];

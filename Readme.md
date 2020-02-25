@@ -8,15 +8,14 @@ $config = [
     'region' => 'ap-southeast-2',
     'queue' => 'fahad-queue.fifo',
     'provider' => 'sqs',
-    'retryStrategy' => [
-      'storedMessageRetryDelay' => 300
-    ],
-    'storage' => [
-        'host' => '',
-        'user' => '',
-        'password' => '',
-        'dbname' => '',
-        'provider' => 'MySql', // object/MySql
-    ]
+    'storedMessageRetryDelay' => 300
 ];
+</pre>
+
+#### Examples
+##### Copy config files 
+<pre> cp ./src/Example/Configconfig.php.example ./src/Example/config.php</pre>
+Fill Config.php
+<pre>
+php ./src/Example/
 </pre>

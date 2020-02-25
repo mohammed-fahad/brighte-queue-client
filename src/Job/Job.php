@@ -2,7 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Job;
 
-use BrighteCapital\QueueClient\strategies\Retry;
+use BrighteCapital\QueueClient\Strategies\Retry;
 use Interop\Queue\Message;
 
 class Job

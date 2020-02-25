@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b41cc37b4dd7989ac387281a23207ef5",
+    "content-hash": "c98db3e4aff44a7bac4cb9e2539b1c5d",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.16",
+            "version": "3.133.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8"
+                "reference": "3501468a7ef894703141d1c4d68caa3b914cbd96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/69836088f178890c16f47bc1c67ca36ebcad22f8",
-                "reference": "69836088f178890c16f47bc1c67ca36ebcad22f8",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3501468a7ef894703141d1c4d68caa3b914cbd96",
+                "reference": "3501468a7ef894703141d1c4d68caa3b914cbd96",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-02-17T19:13:12+00:00"
+            "time": "2020-02-24T19:15:07+00:00"
         },
         {
             "name": "doctrine/cache",
@@ -174,16 +174,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "v2.9.3",
+            "version": "2.9.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "7345cd59edfa2036eb0fa4264b77ae2576842035"
+                "reference": "ed9ca3f1408a3d42b913f54074311a5e0d7b1c00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/7345cd59edfa2036eb0fa4264b77ae2576842035",
-                "reference": "7345cd59edfa2036eb0fa4264b77ae2576842035",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/ed9ca3f1408a3d42b913f54074311a5e0d7b1c00",
+                "reference": "ed9ca3f1408a3d42b913f54074311a5e0d7b1c00",
                 "shasum": ""
             },
             "require": {
@@ -252,7 +252,7 @@
                 "php",
                 "queryobject"
             ],
-            "time": "2019-11-02T22:19:34+00:00"
+            "time": "2019-12-06T23:33:52+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -432,44 +432,37 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "dev-master",
+            "version": "6.5.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "1cdd69a0cd361ee8b6ba5584e45db80c0ea8b31c"
+                "reference": "400cefd25a23a3098486bfb52685b5367a464171"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/1cdd69a0cd361ee8b6ba5584e45db80c0ea8b31c",
-                "reference": "1cdd69a0cd361ee8b6ba5584e45db80c0ea8b31c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/400cefd25a23a3098486bfb52685b5367a464171",
+                "reference": "400cefd25a23a3098486bfb52685b5367a464171",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/promises": "^1.0",
                 "guzzlehttp/psr7": "^1.6.1",
-                "php": "^7.2.5",
-                "psr/http-client": "^1.0"
-            },
-            "provide": {
-                "psr/http-client-implementation": "1.0"
+                "php": ">=5.5"
             },
             "require-dev": {
-                "ergebnis/composer-normalize": "^2.0",
                 "ext-curl": "*",
-                "php-http/client-integration-tests": "dev-phpunit8",
-                "phpunit/phpunit": "^8.5",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
                 "psr/log": "^1.1"
             },
             "suggest": {
-                "ext-curl": "Required for CURL handler support",
                 "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.0-dev"
+                    "dev-master": "6.5-dev"
                 }
             },
             "autoload": {
@@ -489,11 +482,6 @@
                     "name": "Michael Dowling",
                     "email": "mtdowling@gmail.com",
                     "homepage": "https://github.com/mtdowling"
-                },
-                {
-                    "name": "Márk Sági-Kazár",
-                    "email": "mark.sagikazar@gmail.com",
-                    "homepage": "https://sagikazarmark.hu"
                 }
             ],
             "description": "Guzzle is a PHP HTTP client library",
@@ -507,7 +495,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2020-01-25T11:19:56+00:00"
+            "time": "2019-12-30T04:52:42+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -689,55 +677,6 @@
             "time": "2019-12-30T18:03:34+00:00"
         },
         {
-            "name": "psr/http-client",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/http-client.git",
-                "reference": "fd5d37ae5a76ee3c5301a762faf66bf9519132ef"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-client/zipball/fd5d37ae5a76ee3c5301a762faf66bf9519132ef",
-                "reference": "fd5d37ae5a76ee3c5301a762faf66bf9519132ef",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^7.0",
-                "psr/http-message": "^1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Http\\Client\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for HTTP clients",
-            "homepage": "https://github.com/php-fig/http-client",
-            "keywords": [
-                "http",
-                "http-client",
-                "psr",
-                "psr-18"
-            ],
-            "time": "2019-09-04T06:46:09+00:00"
-        },
-        {
             "name": "psr/http-message",
             "version": "dev-master",
             "source": {
@@ -786,6 +725,53 @@
                 "response"
             ],
             "time": "2019-08-29T13:16:46+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/5628725d0e4d687e29575eb41f9d5ee7de33a84c",
+                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2019-11-12T16:45:05+00:00"
         },
         {
             "name": "queue-interop/queue-interop",
@@ -1041,27 +1027,23 @@
         },
         {
             "name": "phar-io/manifest",
-            "version": "dev-master",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/manifest.git",
-                "reference": "3d94e3b6eb309e921a100a4992f72314299bb03f"
+                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/manifest/zipball/3d94e3b6eb309e921a100a4992f72314299bb03f",
-                "reference": "3d94e3b6eb309e921a100a4992f72314299bb03f",
+                "url": "https://api.github.com/repos/phar-io/manifest/zipball/7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
+                "reference": "7761fcacf03b4d4f16e7ccb606d4879ca431fcf4",
                 "shasum": ""
             },
             "require": {
                 "ext-dom": "*",
                 "ext-phar": "*",
-                "ext-xmlwriter": "*",
                 "phar-io/version": "^2.0",
-                "php": "^7.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^8.2"
+                "php": "^5.6 || ^7.0"
             },
             "type": "library",
             "extra": {
@@ -1096,7 +1078,7 @@
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
-            "time": "2019-12-29T10:29:09+00:00"
+            "time": "2018-07-08T19:23:20+00:00"
         },
         {
             "name": "phar-io/version",
@@ -1147,16 +1129,16 @@
         },
         {
             "name": "phpdocumentor/reflection-common",
-            "version": "dev-master",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionCommon.git",
-                "reference": "b0843c8cbcc2dc5eda5158e583c7199a5e44c86d"
+                "reference": "63a995caa1ca9e5590304cd845c15ad6d482a62a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/b0843c8cbcc2dc5eda5158e583c7199a5e44c86d",
-                "reference": "b0843c8cbcc2dc5eda5158e583c7199a5e44c86d",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionCommon/zipball/63a995caa1ca9e5590304cd845c15ad6d482a62a",
+                "reference": "63a995caa1ca9e5590304cd845c15ad6d482a62a",
                 "shasum": ""
             },
             "require": {
@@ -1195,27 +1177,25 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2019-12-20T12:45:35+00:00"
+            "time": "2018-08-07T13:53:10+00:00"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
-            "version": "dev-master",
+            "version": "5.0.0-alpha5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "011b369030b0976f51d94eba8e255a1f66461df5"
+                "reference": "8fcadfe5f85c38705151c9ab23b4781f23e6a70e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/011b369030b0976f51d94eba8e255a1f66461df5",
-                "reference": "011b369030b0976f51d94eba8e255a1f66461df5",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/8fcadfe5f85c38705151c9ab23b4781f23e6a70e",
+                "reference": "8fcadfe5f85c38705151c9ab23b4781f23e6a70e",
                 "shasum": ""
             },
             "require": {
-                "ext-filter": "^7.1",
-                "php": "^7.2",
-                "phpdocumentor/reflection-common": "^2.0",
-                "phpdocumentor/type-resolver": "^1.0",
+                "php": ">=7.1",
+                "phpdocumentor/type-resolver": "^0",
                 "webmozart/assert": "^1"
             },
             "require-dev": {
@@ -1241,41 +1221,37 @@
                 {
                     "name": "Mike van Riel",
                     "email": "me@mikevanriel.com"
-                },
-                {
-                    "name": "Jaap van Otterdijk",
-                    "email": "account@ijaap.nl"
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-02-17T17:48:35+00:00"
+            "time": "2019-06-15T20:45:01+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
-            "version": "dev-master",
+            "version": "0.7.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/TypeResolver.git",
-                "reference": "70d7abb1fdad964379676d629923de0dd1918f4f"
+                "reference": "e424cdf9bbab5bccdede5f123f706083b11bcef9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/70d7abb1fdad964379676d629923de0dd1918f4f",
-                "reference": "70d7abb1fdad964379676d629923de0dd1918f4f",
+                "url": "https://api.github.com/repos/phpDocumentor/TypeResolver/zipball/e424cdf9bbab5bccdede5f123f706083b11bcef9",
+                "reference": "e424cdf9bbab5bccdede5f123f706083b11bcef9",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2",
-                "phpdocumentor/reflection-common": "^2.0"
+                "php": ">=7.1",
+                "phpdocumentor/reflection-common": "~2.0.0-beta1"
             },
             "require-dev": {
-                "ext-tokenizer": "^7.2",
-                "mockery/mockery": "~1"
+                "mockery/mockery": "~1",
+                "phpunit/phpunit": "~6"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.x-dev"
+                    "dev-master": "0.x-dev"
                 }
             },
             "autoload": {
@@ -1294,7 +1270,7 @@
                 }
             ],
             "description": "A PSR-5 based resolver of Class names, Types and Structural Element Names",
-            "time": "2020-02-14T12:50:24+00:00"
+            "time": "2019-12-20T14:34:12+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2267,12 +2243,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "dabf3019abc9aff3d9c864167c19cee226da880a"
+                "reference": "b154f0224cdfb6479374321c27f2442c88861603"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dabf3019abc9aff3d9c864167c19cee226da880a",
-                "reference": "dabf3019abc9aff3d9c864167c19cee226da880a",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/b154f0224cdfb6479374321c27f2442c88861603",
+                "reference": "b154f0224cdfb6479374321c27f2442c88861603",
                 "shasum": ""
             },
             "require": {
@@ -2310,7 +2286,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-02-17T21:13:56+00:00"
+            "time": "2020-02-24T21:17:08+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -2461,7 +2437,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "psr/log": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
