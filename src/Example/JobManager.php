@@ -1,4 +1,5 @@
 <?php
+
 namespace BrighteCapital\QueueClient\Example;
 
 use BrighteCapital\QueueClient\Job\Job;

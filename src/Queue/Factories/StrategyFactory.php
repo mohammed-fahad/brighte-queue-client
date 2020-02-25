@@ -21,8 +21,12 @@ class StrategyFactory
     /** @var int */
     protected $defaultDelay;
 
-    public function __construct(QueueClientInterface $client, Retry $retry, MessageStorageInterface $storage, $defaultDelay = 3600)
-    {
+    public function __construct(
+        QueueClientInterface $client,
+        Retry $retry,
+        MessageStorageInterface $storage,
+        $defaultDelay = 3600
+    ) {
         $this->client = $client;
         $this->retry = $retry;
         $this->storage = $storage;

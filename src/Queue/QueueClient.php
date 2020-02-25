@@ -53,7 +53,7 @@ class QueueClient
         LoggerInterface $logger = null,
         NotificationChannelInterface $notification = null,
         MessageStorageInterface $storage = null
-    ){
+    ) {
         $clientFactor = new QueueClientFactory();
         $this->client = $clientFactor->create($config);
 

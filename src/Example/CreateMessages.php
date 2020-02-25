@@ -1,6 +1,6 @@
 <?php
 
-Require_once 'Setup.php';
+require_once 'Setup.php';
 
 /** @var \Enqueue\Sqs\SqsMessage $messagePassed */
 $messagePassed = $client->createMessage('Passing Message', ['type' => 'success']);
