@@ -63,6 +63,8 @@ class QueueClient
 
         $blockerHandlerFactory = new BlockerHandlerFactory($this->client, $this->storage);
         $this->blockerHandler = $blockerHandlerFactory->create($config);
+
+        $this->defaultDelay = $config['defaultMaxDelay'];
     }
 
     /**
@@ -142,7 +144,7 @@ class QueueClient
      */
     public function reject(Message $message, Retry $retry): void
     {
-        $strategyFactory = new StrategyFactory($this->client, $retry, $this->storage);
+        $strategyFactory = new StrategyFactory($this->client, $retry, $this->storage, $this->defaultDelay);
         $strategy = $strategyFactory->create();
         $strategy->handle($message);
     }
