@@ -40,13 +40,13 @@ class StrategyFactory
     {
         switch ($this->retry->getStrategy()) {
             case BlockerRetryStrategy::class:
-                return new BlockerRetryStrategy($this->retry, $this->client);
+                return new BlockerRetryStrategy($this->retry, $this->client, $this->defaultDelay);
 
             case BlockerStorageRetryStrategy::class:
-                return new BlockerStorageRetryStrategy($this->retry, $this->client, $this->defaultDelay);
+                return new BlockerStorageRetryStrategy($this->retry, $this->client, $this->defaultDelay, $this->storage);
 
             case NonBlockerRetryStrategy::class:
-                return new NonBlockerRetryStrategy($this->retry, $this->client, $this->defaultDelay, $this->storage);
+                return new NonBlockerRetryStrategy($this->retry, $this->client);
         }
     }
 }
