@@ -16,6 +16,7 @@ $config = [
 ##### Copy config files 
 <pre> cp ./src/Example/Configconfig.php.example ./src/Example/config.php</pre>
 Fill Config.php
+
+#### Example files in 
 <pre>
-php ./src/Example/
-</pre>
+.src/Example/
