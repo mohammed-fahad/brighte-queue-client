@@ -18,6 +18,7 @@ use Psr\Log\NullLogger;
 
 class QueueClient
 {
+    public const DEFAULT_DELAY = 60;
     /**
      * @var \BrighteCapital\QueueClient\Queue\QueueClientInterface
      */
@@ -40,19 +41,25 @@ class QueueClient
 
     /** @var int */
     protected $defaultDelay;
+
+    /** @var StrategyFactory */
+    protected $strategyFactory;
+
     /**
      * QueueClient constructor.
      * @param array $config
      * @param LoggerInterface $logger
      * @param NotificationChannelInterface|null $notification
      * @param MessageStorageInterface|null $storage
+     * @param StrategyFactory|null $strategyFactory
      * @throws \Exception
      */
     public function __construct(
         array $config,
         LoggerInterface $logger = null,
         NotificationChannelInterface $notification = null,
-        MessageStorageInterface $storage = null
+        MessageStorageInterface $storage = null,
+        StrategyFactory $strategyFactory = null
     ) {
         $clientFactor = new QueueClientFactory();
         $this->client = $clientFactor->create($config);
@@ -64,7 +71,11 @@ class QueueClient
         $blockerHandlerFactory = new BlockerHandlerFactory($this->client, $this->storage);
         $this->blockerHandler = $blockerHandlerFactory->create($config);
 
-        $this->defaultDelay = $config['defaultMaxDelay'];
+        $this->defaultDelay = $config['defaultMaxDelay'] ?? self::DEFAULT_DELAY;
+
+        $this->strategyFactory = $strategyFactory ??
+            new StrategyFactory($this->client, $this->storage, $this->defaultDelay);
+        ;
     }
 
     /**
@@ -102,9 +113,7 @@ class QueueClient
      */
     public function receive($timeout = 0): Message
     {
-        $message = $this->client->receive($timeout);
-
-        return $message;
+        return $this->client->receive($timeout);
     }
 
     /**
@@ -144,8 +153,7 @@ class QueueClient
      */
     public function reject(Message $message, Retry $retry): void
     {
-        $strategyFactory = new StrategyFactory($this->client, $retry, $this->storage, $this->defaultDelay);
-        $strategy = $strategyFactory->create();
+        $strategy = $this->strategyFactory->create($retry);
         $strategy->handle($message);
     }
 }

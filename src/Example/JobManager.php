@@ -18,8 +18,8 @@ class JobManager implements JobManagerInterface
     public function create(Message $message): Job
     {
         /** @var \Interop\Queue\Message $message*/
-        $job = new Job($message);
         $retry = new Retry(5, 5, BlockerStorageRetryStrategy::class);
+        $job = new Job($message, $retry);
         $job->setRetry($retry);
         return $job;
     }

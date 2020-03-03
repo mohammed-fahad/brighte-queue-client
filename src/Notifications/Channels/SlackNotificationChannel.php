@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 
 class SlackNotificationChannel implements NotificationChannelInterface
 {
-    public const DEFAULT_MAX_BODY_CHARS_TO_SEND = 100;
+    public const DEFAULT_MAX_BODY_CHARS_TO_SEND = 200;
     /** @var \GuzzleHttp\ClientInterface */
     private $client;
     /** @var string */
@@ -17,14 +17,17 @@ class SlackNotificationChannel implements NotificationChannelInterface
     /**
      * SlackNotificationChannel constructor.
      * @param string $url slack webHook url
-     * @param int $maxBodyChars message body character limit
      * @param \GuzzleHttp\Client $client client
+     * @param int $maxBodyChars message body character limit
      */
-    public function __construct(string $url, int $maxBodyChars, Client $client)
-    {
+    public function __construct(
+        string $url,
+        Client $client = null,
+        int $maxBodyChars = self::DEFAULT_MAX_BODY_CHARS_TO_SEND
+    ) {
         $this->url = $url;
+        $this->client = $client ?? new Client();
         $this->maxBodyCharsToSend = $maxBodyChars;
-        $this->client = $client;
     }
 
     /**

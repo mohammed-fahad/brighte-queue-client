@@ -14,8 +14,6 @@ class StrategyFactory
 {
     /** @var QueueClientInterface */
     protected $client;
-    /** @var Retry */
-    protected $retry;
     /** @var MessageStorageInterface */
     protected $storage;
     /** @var int */
@@ -23,33 +21,32 @@ class StrategyFactory
 
     public function __construct(
         QueueClientInterface $client,
-        Retry $retry,
         MessageStorageInterface $storage,
         $defaultDelay = 3600
     ) {
         $this->client = $client;
-        $this->retry = $retry;
         $this->storage = $storage;
         $this->defaultDelay = $defaultDelay;
     }
 
     /**
+     * @param Retry $retry
      * @return AbstractRetryRetryStrategy
      */
-    public function create(): AbstractRetryRetryStrategy
+    public function create(Retry $retry): AbstractRetryRetryStrategy
     {
-        switch ($this->retry->getStrategy()) {
+        switch ($retry->getStrategy()) {
             case BlockerRetryStrategy::class:
-                return new BlockerRetryStrategy($this->retry, $this->client, $this->defaultDelay);
+                return new BlockerRetryStrategy($retry, $this->client, $this->defaultDelay);
             case BlockerStorageRetryStrategy::class:
                 return new BlockerStorageRetryStrategy(
-                    $this->retry,
+                    $retry,
                     $this->client,
                     $this->defaultDelay,
                     $this->storage
                 );
             case NonBlockerRetryStrategy::class:
-                return new NonBlockerRetryStrategy($this->retry, $this->client);
+                return new NonBlockerRetryStrategy($retry, $this->client);
         }
     }
 }

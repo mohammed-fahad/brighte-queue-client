@@ -7,6 +7,7 @@ use BrighteCapital\QueueClient\Queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
+use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
@@ -54,16 +55,19 @@ class SqsBlockerHandler implements BlockerHandlerInterface
 
         $this->client->delay($message, $this->delay);
 
-        $this->handleStorage($message);
+        if ($job->getRetry()->getStrategy() === BlockerStorageRetryStrategy::class) {
+            $this->handleStorage($job);
+        }
 
         return true;
     }
 
     /**
-     * @param $message
+     * @param Job $job
      */
-    private function handleStorage($message)
+    private function handleStorage(Job $job)
     {
+        $message = $job->getMessage();
         $entity = new MessageEntity($message);
 
         /** @var MessageEntity $oldEntity */
@@ -76,9 +80,12 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             return;
         }
 
+        $currentReciveCount = $message->getProperty('ApproximateReceiveCount');
+        $maxRetry = $job->getRetry()->getMaxRetryCount();
+
         if ($oldEntity !== false) {
             $oldEntity->setMessageHandle($entity->getMessageHandle());
-            $oldEntity->setAlertCount($oldEntity->getAlertCount() + 1);
+            $oldEntity->setAlertCount($currentReciveCount - $maxRetry);
             $this->storage->update($oldEntity);
         }
     }

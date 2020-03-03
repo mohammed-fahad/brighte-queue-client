@@ -42,9 +42,17 @@ class MessageEntity
      */
     public function toArray(): array
     {
-        return array_filter(get_object_vars($this), function ($value) {
+        $formattedData = [];
+
+        $data = array_filter(get_object_vars($this), function ($value, &$key) {
             return !empty($value);
+        }, ARRAY_FILTER_USE_BOTH);
+
+        array_walk($data, function ($value, $key) use (&$formattedData) {
+            $formattedData[StringUtility::camelCaseToSnakeCase($key)] = $value;
         });
+
+        return $formattedData;
     }
 
     /**

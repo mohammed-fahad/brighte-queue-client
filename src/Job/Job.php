@@ -11,9 +11,10 @@ class Job
     protected $success = false;
     protected $retry = null;
 
-    public function __construct(Message $message)
+    public function __construct(Message $message, Retry $retry)
     {
         $this->message = $message;
+        $this->retry = $retry;
     }
 
     /**

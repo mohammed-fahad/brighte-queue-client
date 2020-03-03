@@ -8,7 +8,7 @@ use BrighteCapital\QueueClient\Queue\Sqs\SqsConnectionFactory;
 
 class QueueClientFactory
 {
-    public const PROVIDERS_SQS = 'Sqs';
+    public const PROVIDERS_SQS = 'sqs';
     public const PROVIDERS_KAFKA = 'kafka';
     public const PROVIDERS_RABBIT_MQ = 'rabbit_mq';
 

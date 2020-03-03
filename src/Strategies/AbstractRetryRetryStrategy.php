@@ -42,11 +42,13 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
     public function handle(Message $message): void
     {
         $attemptCount = $message->getProperty('ApproximateReceiveCount');
-        if ($attemptCount >= $this->retry->getMaxRetryCount()) {
-            $this->onMaxRetryReached($message);
-        }
         if ($attemptCount < $this->retry->getMaxRetryCount()) {
             $this->client->delay($message, $this->retry->getDelay());
+
+            return;
+        }
+        if ($attemptCount >= $this->retry->getMaxRetryCount()) {
+            $this->onMaxRetryReached($message);
         }
     }
 

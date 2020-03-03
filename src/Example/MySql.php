@@ -4,7 +4,6 @@ namespace BrighteCapital\QueueClient\Example;
 
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
-use BrighteCapital\QueueClient\Utility\StringUtility;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\Table;
@@ -69,8 +68,6 @@ class MySql implements MessageStorageInterface
         }
 
         foreach ($data as $key => $value) {
-            $key = StringUtility::camelCaseToSnakeCase($key);
-
             if ($key === 'id') {
                 continue;
             }
@@ -101,8 +98,6 @@ class MySql implements MessageStorageInterface
         $queryBuilder = $this->connection->createQueryBuilder();
 
         foreach ($data as $key => $value) {
-            $key = StringUtility::camelCaseToSnakeCase($key);
-
             if ($key === 'id') {
                 $parameters[':' . $key] = $value;
                 continue;
