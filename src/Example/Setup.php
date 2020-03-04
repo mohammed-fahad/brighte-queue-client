@@ -8,10 +8,10 @@ use BrighteCapital\QueueClient\Queue\QueueClient;
 use Doctrine\DBAL\DriverManager;
 
 $connectionParams = [
-    'dbname' => $config['dbname'],
-    'user' => $config['user'],
-    'password' => $config['password'],
-    'host' => $config['host'],
+    'dbname' => $config['storage']['dbname'],
+    'user' => $config['storage']['user'],
+    'password' => $config['storage']['password'],
+    'host' => $config['storage']['host'],
     'driver' => 'pdo_mysql'
 ];
 $storage = new MySql(DriverManager::getConnection($connectionParams));
@@ -20,5 +20,6 @@ if (!$storage->messageTableExist()) {
     $storage->createMessageTable();
 }
 
-$client = new QueueClient($config, null, null, $storage);
+$notification = new \BrighteCapital\QueueClient\Notifications\Channels\SlackNotificationChannel($config['notification']['slack']['url']);
+$client = new QueueClient($config, null, $notification, $storage);
 /** @var \BrighteCapital\QueueClient\Queue\QueueClient $client */

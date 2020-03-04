@@ -1,4 +1,3 @@
 vendor/
 .idea/*
-/src/Example/Config.php
-.phpunit.result.cache
+src/Example/Config.php

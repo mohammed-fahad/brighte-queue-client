@@ -13,5 +13,10 @@ $config = [
         'user' => 'user',
         'password' => 'password',
         'dbname' => 'dbname',
+    ],
+    'notification' => [
+        'slack' => [
+            'url' => 'url'
+        ]
     ]
 ];

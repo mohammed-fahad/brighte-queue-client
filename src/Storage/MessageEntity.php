@@ -7,9 +7,6 @@ use Interop\Queue\Message;
 
 class MessageEntity
 {
-
-    public const TABLE = 'brighte_queue_messages';
-
     protected $id;
     protected $messageId;
     protected $messageHandle;
@@ -34,7 +31,7 @@ class MessageEntity
         $this->messageHandle = $message->getReceiptHandle();
         $this->groupId = $message->getProperty('MessageGroupId');
         $this->message = $message->getBody();
-        $this->attributes = json_encode($message->getAttributes());
+        $this->attributes = json_encode($message->getProperties());
     }
 
     /**
@@ -44,9 +41,9 @@ class MessageEntity
     {
         $formattedData = [];
 
-        $data = array_filter(get_object_vars($this), function ($value, &$key) {
+        $data = array_filter(get_object_vars($this), function ($value) {
             return !empty($value);
-        }, ARRAY_FILTER_USE_BOTH);
+        });
 
         array_walk($data, function ($value, $key) use (&$formattedData) {
             $formattedData[StringUtility::camelCaseToSnakeCase($key)] = $value;

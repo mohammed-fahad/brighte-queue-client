@@ -13,6 +13,7 @@ class MySql implements MessageStorageInterface
 {
     /** @var Connection */
     protected $connection;
+    public const TABLE = 'brighte_queue_messages';
 
     /**
      * @param Connection $connection
@@ -27,7 +28,7 @@ class MySql implements MessageStorageInterface
     {
         $scm = $this->connection->getSchemaManager();
 
-        return $scm->tablesExist([MessageEntity::TABLE]);
+        return $scm->tablesExist([self::TABLE]);
     }
 
     /**
@@ -38,7 +39,7 @@ class MySql implements MessageStorageInterface
     {
         $scm = $this->connection->getSchemaManager();
 
-        $table = new Table(MessageEntity::TABLE);
+        $table = new Table(self::TABLE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('message_id', 'string', ['customSchemaOptions' => ['unique' => true]]);
         $table->addColumn('group_id', 'string', []);
@@ -76,7 +77,7 @@ class MySql implements MessageStorageInterface
             $parameters[':' . $key] = $value;
         }
 
-        $queryBuilder->insert(MessageEntity::TABLE)->setParameters($parameters)->execute();
+        $queryBuilder->insert(self::TABLE)->setParameters($parameters)->execute();
     }
 
     /**
@@ -107,7 +108,7 @@ class MySql implements MessageStorageInterface
             $parameters[':' . $key] = $value;
         }
 
-        $queryBuilder->update(MessageEntity::TABLE)->where('id = :id')->setParameters($parameters)->execute();
+        $queryBuilder->update(self::TABLE)->where('id = :id')->setParameters($parameters)->execute();
     }
 
     /**
@@ -120,7 +121,7 @@ class MySql implements MessageStorageInterface
 
         $result = $queryBuilder
             ->select('id', 'alert_count')
-            ->from(MessageEntity::TABLE)
+            ->from(self::TABLE)
             ->where('message_id = :message_id')
             ->setParameter(':message_id', $entity->getMessageId())
             ->execute();
