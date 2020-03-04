@@ -28,9 +28,9 @@ class StrategyFactory
     public function __construct(
         QueueClientInterface $client,
         MessageStorageInterface $storage,
-        $defaultDelay = 3600,
         LoggerInterface $logger,
-        NotificationChannelInterface $notification
+        NotificationChannelInterface $notification,
+        $defaultDelay = 3600
     ) {
         $this->client = $client;
         $this->storage = $storage;
@@ -52,7 +52,8 @@ class StrategyFactory
                     $this->client,
                     $this->defaultDelay,
                     $this->logger,
-                    $this->notification);
+                    $this->notification
+                );
             case BlockerStorageRetryStrategy::class:
                 return new BlockerStorageRetryStrategy(
                     $retry,

@@ -40,7 +40,7 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
     public function __construct(
         Retry $retry,
         QueueClientInterface $client,
-        int $delay = 0,
+        int $delay,
         LoggerInterface $logger,
         NotificationChannelInterface $notification,
         MessageStorageInterface $storage = null

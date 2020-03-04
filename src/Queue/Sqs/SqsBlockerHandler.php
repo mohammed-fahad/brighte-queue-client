@@ -33,8 +33,13 @@ class SqsBlockerHandler implements BlockerHandlerInterface
      * @param NotificationChannelInterface $notification
      * @param MessageStorageInterface|null $storage
      */
-    public function __construct(QueueClientInterface $client, int $delay = 0, LoggerInterface $logger, NotificationChannelInterface $notification, MessageStorageInterface $storage = null)
-    {
+    public function __construct(
+        QueueClientInterface $client,
+        int $delay,
+        LoggerInterface $logger,
+        NotificationChannelInterface $notification,
+        MessageStorageInterface $storage = null
+    ) {
         $this->client = $client;
         $this->delay = $delay;
         $this->storage = $storage;

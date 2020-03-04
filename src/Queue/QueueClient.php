@@ -68,13 +68,19 @@ class QueueClient
         $this->logger = $logger ?: new NullLogger();
         $this->notification = $notification ?: new NullNotificationChannel();
 
-        $blockerHandlerFactory = new BlockerHandlerFactory($this->client, $this->logger, $this->notification, $this->storage);
+        $blockerHandlerFactory = new BlockerHandlerFactory(
+            $this->client,
+            $this->logger,
+            $this->notification,
+            $this->storage
+        );
+
         $this->blockerHandler = $blockerHandlerFactory->create($config);
 
         $this->defaultDelay = $config['defaultMaxDelay'] ?? self::DEFAULT_DELAY;
 
         $this->strategyFactory = $strategyFactory ??
-            new StrategyFactory($this->client, $this->storage, $this->defaultDelay, $this->logger, $this->notification);
+            new StrategyFactory($this->client, $this->storage, $this->logger, $this->notification, $this->defaultDelay);
     }
 
     /**

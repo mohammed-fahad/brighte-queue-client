@@ -20,8 +20,12 @@ class BlockerHandlerFactory
     /** @var NotificationChannelInterface */
     protected $notification;
 
-    public function __construct(QueueClientInterface $client, LoggerInterface $logger, NotificationChannelInterface $notification, MessageStorageInterface $storage)
-    {
+    public function __construct(
+        QueueClientInterface $client,
+        LoggerInterface $logger,
+        NotificationChannelInterface $notification,
+        MessageStorageInterface $storage
+    ) {
         $this->client = $client;
         $this->storage = $storage;
         $this->logger = $logger;
@@ -39,7 +43,13 @@ class BlockerHandlerFactory
 
         switch ($provider) {
             case QueueClientFactory::PROVIDERS_SQS:
-                return new SqsBlockerHandler($this->client, $config['defaultMaxDelay'], $this->logger, $this->notification, $this->storage);
+                return new SqsBlockerHandler(
+                    $this->client,
+                    $config['defaultMaxDelay'],
+                    $this->logger,
+                    $this->notification,
+                    $this->storage
+                );
         }
 
         throw new \Exception(sprintf('Failed to create blocker handler %s', $provider));
