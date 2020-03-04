@@ -2,8 +2,8 @@
 
 namespace tests\unit;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
-use BrighteCapital\QueueClient\queue\sqs\SqsProducer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsProducer;
 use Enqueue\Sqs\SqsClient;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
@@ -12,11 +12,11 @@ use PHPUnit\Framework\TestCase;
 class SqsProducerTest extends TestCase
 {
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsProducer
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsProducer
      */
     private $producer;
     /**
@@ -42,8 +42,8 @@ class SqsProducerTest extends TestCase
         $msg = $this->createMock(SqsMessage::class);
         $region = 'ap-east-2';
         $delay = 10;
-        $queueName = 'queue.name.fifo';
-        $queueUrl = 'queue.url.abc.com.amazon';
+        $queueName = 'Queue.name.fifo';
+        $queueUrl = 'Queue.url.abc.com.amazon';
         $deDupId = '1';
         $groupId = '1';
         $messageBody = 'this is the messageBody';

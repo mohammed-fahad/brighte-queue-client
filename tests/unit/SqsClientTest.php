@@ -2,10 +2,10 @@
 
 namespace tests\unit;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsClient;
-use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
-use BrighteCapital\QueueClient\queue\sqs\SqsProducer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsProducer;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
@@ -18,15 +18,15 @@ class SqsClientTest extends TestCase
      */
     private $sqsClient;
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $sqsContext;
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsProducer|\PHPUnit\Framework\MockObject\MockObject
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsProducer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $producer;
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsConsumer|\PHPUnit\Framework\MockObject\MockObject
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer|\PHPUnit\Framework\MockObject\MockObject
      */
     private $consumer;
     /**
@@ -40,8 +40,8 @@ class SqsClientTest extends TestCase
             'key' => 'key',
             'secret' => 'secret',
             'region' => 'ap-east-2',
-            "provider" => "sqs",
-            'queue' => 'queue name here',
+            "provider" => "Sqs",
+            'Queue' => 'Queue name here',
         ];
 
         parent::setUp();
@@ -56,7 +56,7 @@ class SqsClientTest extends TestCase
             ->method('createQueue')
             ->willReturn($this->createMock(SqsDestination::class));
 
-        $this->sqsClient = new SqsClient($config['queue'], $this->sqsContext);
+        $this->sqsClient = new SqsClient($config['Queue'], $this->sqsContext);
     }
 
     public function testReceiveMessage()

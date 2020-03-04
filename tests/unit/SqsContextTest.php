@@ -2,9 +2,9 @@
 
 namespace tests\unit;
 
-use BrighteCapital\QueueClient\queue\sqs\SqsConsumer;
-use BrighteCapital\QueueClient\queue\sqs\SqsContext;
-use BrighteCapital\QueueClient\queue\sqs\SqsProducer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
+use BrighteCapital\QueueClient\Queue\Sqs\SqsProducer;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +13,7 @@ class SqsContextTest extends TestCase
 {
 
     /**
-     * @var \BrighteCapital\QueueClient\queue\sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
+     * @var \BrighteCapital\QueueClient\Queue\Sqs\SqsContext|\PHPUnit\Framework\MockObject\MockObject
      */
     private $context;
 
