@@ -25,7 +25,7 @@ class BlockerStorageRetryStrategy extends BlockerRetryStrategy
             /** @var MessageStorageInterface $storage */
             $storage->store($messageEntity);
         } catch (Exception $e) {
-            // log critical
+            $this->logger->alert($e->getMessage(), ['messageId' => $message->getMessageId()]);
         }
     }
 }
