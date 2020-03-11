@@ -63,13 +63,13 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         $this->notification->send([
             'messageId' => $message->getMessageId(),
             'level' =>  $this->alertCount($job),
-            'body' => json_encode($message->getBody())
+            'body' => $message->getBody()
         ]);
 
         $this->logger->critical('Queue message have reached maximum retry and need attention', [
             'messageId' => $message->getMessageId(),
             'level' => $this->alertCount($job),
-            'body' => json_encode($message->getBody())
+            'body' => $message->getBody()
         ]);
 
         // If non blocker strategy is used and it has reached the maximum, then delete it.
@@ -116,10 +116,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
 
     private function reachedMaxRetry(Job $job): bool
     {
-        $attemptCount = $job->getMessage()->getProperty('ApproximateReceiveCount');
-        $maxRetry = $job->getRetry()->getMaxRetryCount();
-
-        return $attemptCount >= $maxRetry;
+        return $this->alertCount($job) > 0;
     }
 
     private function alertCount(Job $job): int
