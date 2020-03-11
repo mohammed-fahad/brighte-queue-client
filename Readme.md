@@ -8,7 +8,7 @@ $config = [
     'region' => 'ap-southeast-2',
     'queue' => 'fahad-queue.fifo',
     'provider' => 'sqs',
-    'storedMessageRetryDelay' => 300
+    'defaultMaxDelay' => 300
 ];
 </pre>
 

@@ -3,34 +3,48 @@
 namespace BrighteCapital\QueueClient\Queue\Sqs;
 
 use BrighteCapital\QueueClient\Job\Job;
+use BrighteCapital\QueueClient\Notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\Queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
+use Psr\Log\LoggerInterface;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
 {
     /** @var QueueClientInterface */
-    private $client;
+    protected $client;
     /** @var \BrighteCapital\QueueClient\Storage\MessageStorageInterface  */
-    private $storage;
+    protected $storage;
     /** @var int */
-    private $delay;
+    protected $delay;
+    /** @var LoggerInterface */
+    protected $logger;
+    /** @var NotificationChannelInterface */
+    protected $notification;
 
     /**
      * BlockerChecker constructor.
      * @param QueueClientInterface $client
-     * @param MessageStorageInterface|null $storage
      * @param int $delay
-     * @throws \Exception
+     * @param LoggerInterface $logger
+     * @param NotificationChannelInterface $notification
+     * @param MessageStorageInterface|null $storage
      */
-    public function __construct(QueueClientInterface $client, int $delay = 0, MessageStorageInterface $storage = null)
-    {
+    public function __construct(
+        QueueClientInterface $client,
+        int $delay,
+        LoggerInterface $logger,
+        NotificationChannelInterface $notification,
+        MessageStorageInterface $storage = null
+    ) {
         $this->client = $client;
         $this->delay = $delay;
         $this->storage = $storage;
+        $this->logger = $logger;
+        $this->notification = $notification;
     }
 
     /**
@@ -42,9 +56,21 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     {
         $message = $job->getMessage();
 
-        if ($message->getProperty('ApproximateReceiveCount') < $job->getRetry()->getMaxRetryCount()) {
+        if (!$this->reachedMaxRetry($job)) {
             return false;
         }
+
+        $this->notification->send([
+            'messageId' => $message->getMessageId(),
+            'level' =>  $this->getAlertCount($job),
+            'body' => $message->getBody()
+        ]);
+
+        $this->logger->critical('Queue message have reached maximum retry and need attention', [
+            'messageId' => $message->getMessageId(),
+            'level' => $this->getAlertCount($job),
+            'body' => $message->getBody()
+        ]);
 
         // If non blocker strategy is used and it has reached the maximum, then delete it.
         if ($job->getRetry()->getStrategy() === NonBlockerRetryStrategy::class) {
@@ -76,17 +102,28 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         if ($oldEntity === false) {
             $entity->setQueueName($this->client->getDestination()->getQueueName());
             $this->storage->store($entity);
+            $this->logger->debug('Queue message stored in storage', ['messageId' => $message->getMessageId()]);
 
             return;
         }
 
-        $currentReciveCount = $message->getProperty('ApproximateReceiveCount');
-        $maxRetry = $job->getRetry()->getMaxRetryCount();
-
         if ($oldEntity !== false) {
             $oldEntity->setMessageHandle($entity->getMessageHandle());
-            $oldEntity->setAlertCount($currentReciveCount - $maxRetry);
+            $oldEntity->setAlertCount($this->getAlertCount($job));
             $this->storage->update($oldEntity);
         }
+    }
+
+    private function reachedMaxRetry(Job $job): bool
+    {
+        return $this->getAlertCount($job) > 0;
+    }
+
+    private function getAlertCount(Job $job): int
+    {
+        $attemptCount = $job->getMessage()->getProperty('ApproximateReceiveCount');
+        $maxRetry = $job->getRetry()->getMaxRetryCount();
+
+        return $attemptCount - $maxRetry;
     }
 }

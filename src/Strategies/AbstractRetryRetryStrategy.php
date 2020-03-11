@@ -2,9 +2,11 @@
 
 namespace BrighteCapital\QueueClient\Strategies;
 
+use BrighteCapital\QueueClient\Notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use Interop\Queue\Message;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
 {
@@ -20,34 +22,60 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
     /** @var MessageStorageInterface */
     protected $storage;
 
+    /** @var NotificationChannelInterface */
+    protected $notification;
+
+    /** @var LoggerInterface */
+    protected $logger;
+
     /**
      * AbstractRetryRetryStrategy constructor.
      * @param Retry $retry
      * @param QueueClientInterface $client
      * @param int $delay
+     * @param LoggerInterface $logger
+     * @param NotificationChannelInterface $notification
      * @param MessageStorageInterface|null $storage
      */
     public function __construct(
         Retry $retry,
         QueueClientInterface $client,
-        int $delay = 0,
+        int $delay,
+        LoggerInterface $logger,
+        NotificationChannelInterface $notification,
         MessageStorageInterface $storage = null
     ) {
         $this->client = $client;
         $this->retry = $retry;
         $this->delay = $delay;
+        $this->logger = $logger;
         $this->storage = $storage;
+        $this->notification = $notification;
     }
 
     public function handle(Message $message): void
     {
         $attemptCount = $message->getProperty('ApproximateReceiveCount');
         if ($attemptCount < $this->retry->getMaxRetryCount()) {
+            $this->logger->debug('Message Delayed: ' . $message->getMessageId());
             $this->client->delay($message, $this->retry->getDelay());
 
             return;
         }
+
         if ($attemptCount >= $this->retry->getMaxRetryCount()) {
+            $this->notification->send([
+                'messageId' => $message->getMessageId(),
+                'level' => $attemptCount - $this->retry->getMaxRetryCount(),
+                'body' => $message->getBody()
+            ]);
+
+            $this->logger->critical('Message have reached maximum retry and need attention', [
+                'messageId' => $message->getMessageId(),
+                'level' =>  $attemptCount - $this->retry->getMaxRetryCount(),
+                'body' => $message->getBody()
+            ]);
+
             $this->onMaxRetryReached($message);
         }
     }

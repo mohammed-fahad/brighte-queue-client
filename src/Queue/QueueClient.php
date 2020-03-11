@@ -68,14 +68,19 @@ class QueueClient
         $this->logger = $logger ?: new NullLogger();
         $this->notification = $notification ?: new NullNotificationChannel();
 
-        $blockerHandlerFactory = new BlockerHandlerFactory($this->client, $this->storage);
+        $blockerHandlerFactory = new BlockerHandlerFactory(
+            $this->client,
+            $this->logger,
+            $this->notification,
+            $this->storage
+        );
+
         $this->blockerHandler = $blockerHandlerFactory->create($config);
 
         $this->defaultDelay = $config['defaultMaxDelay'] ?? self::DEFAULT_DELAY;
 
         $this->strategyFactory = $strategyFactory ??
-            new StrategyFactory($this->client, $this->storage, $this->defaultDelay);
-        ;
+            new StrategyFactory($this->client, $this->storage, $this->logger, $this->notification, $this->defaultDelay);
     }
 
     /**
@@ -95,7 +100,9 @@ class QueueClient
             return;
         }
 
+        $this->logger->debug('Queue message start processing', ['messageId' => $message->getMessageId()]);
         $job = $jobManager->process($job);
+        $this->logger->debug('Queue message end processing', ['messageId' => $message->getMessageId()]);
 
         if ($job->getSuccess() === true) {
             $this->acknowledge($message);
@@ -113,7 +120,11 @@ class QueueClient
      */
     public function receive($timeout = 0): Message
     {
-        return $this->client->receive($timeout);
+        $message = $this->client->receive($timeout);
+
+        $this->logger->alert('Queue message received', ['messageId' => $message->getMessageId()]);
+
+        return $message;
     }
 
     /**
@@ -143,6 +154,7 @@ class QueueClient
      */
     public function acknowledge(Message $message): void
     {
+        $this->logger->debug('Queue message Deleted', ['messageId' => $message->getMessageId()]);
         $this->client->acknowledge($message);
     }
 
@@ -153,6 +165,7 @@ class QueueClient
      */
     public function reject(Message $message, Retry $retry): void
     {
+        $this->logger->debug('Queue message rejected', ['messageId' => $message->getMessageId()]);
         $strategy = $this->strategyFactory->create($retry);
         $strategy->handle($message);
     }
