@@ -52,6 +52,7 @@ class QueueClient
      * @param NotificationChannelInterface|null $notification
      * @param MessageStorageInterface|null $storage
      * @param StrategyFactory|null $strategyFactory
+     * @param QueueClientFactory $clientFactory|null $clientFactory
      * @throws \Exception
      */
     public function __construct(
@@ -59,10 +60,10 @@ class QueueClient
         LoggerInterface $logger = null,
         NotificationChannelInterface $notification = null,
         MessageStorageInterface $storage = null,
-        StrategyFactory $strategyFactory = null
+        StrategyFactory $strategyFactory = null,
+        QueueClientFactory $clientFactory = null
     ) {
-        $clientFactor = new QueueClientFactory();
-        $this->client = $clientFactor->create($config);
+        $this->client = $clientFactory->create($config);
 
         $this->storage = $storage ?: new NullStorage();
         $this->logger = $logger ?: new NullLogger();
