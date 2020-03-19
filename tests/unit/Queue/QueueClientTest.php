@@ -8,6 +8,7 @@ use BrighteCapital\QueueClient\Example\MySql;
 use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Job\JobManagerInterface;
 use BrighteCapital\QueueClient\Queue\BlockerHandlerInterface;
+use BrighteCapital\QueueClient\Queue\Factories\BlockerHandlerFactory;
 use BrighteCapital\QueueClient\Queue\Factories\QueueClientFactory;
 use BrighteCapital\QueueClient\Queue\Factories\StrategyFactory;
 use BrighteCapital\QueueClient\Queue\QueueClient;
@@ -146,9 +147,16 @@ class QueueClientTest extends TestCase
 
     public function testProcessMessage()
     {
+
+        $blockerHandlerMock = $this->getMockBuilder(BlockerHandlerFactory::class)->setMethods(['checkAndHandle'])->getMock();
+        $blockerHandlerMock
+            ->expects($this->at(0))
+            ->method('checkAndHandle')
+            ->willReturn(true);
+
         $this->client = $this
             ->getMockBuilder(QueueClient::class)
-            ->setConstructorArgs([$this->config, $this->logger, null, $this->connection, null, $this->factory])
+            ->setConstructorArgs([$this->config, $this->logger, null, $this->connection, null, $this->factory, $blockerHandlerMock])
             ->setMethods(['receive'])
             ->getMock();
 
@@ -165,18 +173,6 @@ class QueueClientTest extends TestCase
         $job->setRetry($retry);
 
         $this->logger = $this->createMock(NullLogger::class);
-
-        $blockerHandlerMock = $this->createMock(BlockerHandlerInterface::class);
-        $blockerHandlerMock
-            ->expects($this->once())
-            ->method('checkAndHandle')
-            ->with([$job])
-            ->willReturn(true);
-
-        $class = new ReflectionClass($this->client);
-        $property = $class->getProperty('blockerHandler');
-        $property->setAccessible(true);
-        $property->setValue($this->client->blockerHandler, $blockerHandlerMock);
 
         $jobManager = $this->createMock(JobManagerInterface::class);
         $jobManager
