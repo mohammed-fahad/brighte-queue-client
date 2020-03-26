@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\unit;
+namespace App\Test\Queue\Sqs;
 
 use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
@@ -17,6 +17,7 @@ class SqsConsumerTest extends TestCase
         $messageArray = [
             'Body' => 'message body',
             'ReceiptHandle' => 'handle123',
+            'MessageId' => 'message-id-1',
             'Attributes' => [
                 'ApproximateReceiveCount' => 2,
             ]
@@ -33,6 +34,7 @@ class SqsConsumerTest extends TestCase
         $messageArray = [
             'Body' => 'message body',
             'ReceiptHandle' => 'handle123',
+            'MessageId' => 'message-id-1',
             'MessageAttributes' => [
                 'service' => [
                     'DataType' => 'String',
@@ -58,6 +60,7 @@ class SqsConsumerTest extends TestCase
         $messageArray = [
             'Body' => 'message body',
             'ReceiptHandle' => 'handle123',
+            'MessageId' => 'message-id-1',
             'MessageAttributes' => [
                 'Headers' => [
                     'StringValue' =>

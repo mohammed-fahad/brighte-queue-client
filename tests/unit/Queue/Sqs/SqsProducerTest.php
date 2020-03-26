@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\unit;
+namespace App\Test\Queue\Sqs;
 
 use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsProducer;

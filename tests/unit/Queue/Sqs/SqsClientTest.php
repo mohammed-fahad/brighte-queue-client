@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\unit;
+namespace App\Test\Queue\Sqs;
 
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
@@ -105,7 +105,13 @@ class SqsClientTest extends TestCase
 
     public function testReject()
     {
-        /*TODO*/
+        $this->sqsContext
+            ->expects($this->once())
+            ->method('createConsumer')
+            ->willReturn($this->consumer);
+        $msg = new SqsMessage();
+        $this->consumer->expects($this->once())->method('reject')->with($msg);
+        $this->sqsClient->reject($msg);
     }
 
     public function testDelay()

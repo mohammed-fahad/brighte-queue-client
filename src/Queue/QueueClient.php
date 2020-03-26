@@ -65,6 +65,7 @@ class QueueClient
         QueueClientFactory $clientFactory = null,
         BlockerHandlerFactory $blockerHandlerFactory = null
     ) {
+        $clientFactory = $clientFactory ?? new QueueClientFactory();
         $this->client = $clientFactory->create($config);
 
         $this->storage = $storage ?: new NullStorage();
@@ -98,7 +99,6 @@ class QueueClient
         if ($this->blockerHandler->checkAndHandle($job) === true) {
             return;
         }
-
         $this->logger->debug('Queue message start processing', ['messageId' => $message->getMessageId()]);
         $job = $jobManager->process($job);
         $this->logger->debug('Queue message end processing', ['messageId' => $message->getMessageId()]);
