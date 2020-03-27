@@ -2,6 +2,7 @@
 
 namespace App\Test\Queue\Sqs;
 
+use Aws\Result;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsProducer;
 use Enqueue\Sqs\SqsClient;
@@ -107,5 +108,31 @@ class SqsProducerTest extends TestCase
 
         $this->sqsClient->expects($this->once())->method('sendMessage')->with($expectedArgumentFormat);
         $this->producer->send($this->destination, $msg);
+    }
+
+    public function testSendBodyEmpty()
+    {
+        $msg = $this->createMock(SqsMessage::class);
+        $msg->expects($this->once())->method('getBody')->willReturn('');
+        try {
+            $this->producer->send($this->destination, $msg);
+        } catch (\Exception $e) {
+            $this->assertEquals('The message body must be a non-empty string.', $e->getMessage());
+        }
+    }
+
+    public function testSendMessageNotSent()
+    {
+        $msg = $this->createMock(SqsMessage::class);
+        $msg->expects($this->once())->method('getBody')->willReturn('test');
+        $this->context->expects($this->once())->method('getSqsClient')->willReturn($this->sqsClient);
+        $result = new Result(['test' => 'test']);
+        $this->sqsClient->expects($this->once())->method('sendMessage')->willReturn($result);
+
+        try {
+            $this->producer->send($this->destination, $msg);
+        } catch (\Exception $e) {
+            $this->assertEquals('Message was not sent', $e->getMessage());
+        }
     }
 }

@@ -12,7 +12,7 @@ use BrighteCapital\QueueClient\Queue\QueueClient;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsBlockerHandler;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
 use BrighteCapital\QueueClient\Storage\NullStorage;
-use BrighteCapital\QueueClient\Strategies\AbstractRetryRetryStrategy;
+use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
@@ -81,7 +81,15 @@ class QueueClientTest extends TestCase
 
         $this->storage = $this->createMock(NullStorage::class);
 
-        $this->client = new QueueClient($this->config, $this->logger, $notification, $this->storage, $this->strategyFactory, $this->clientFactory, $this->blockerHandlerFactory);
+        $this->client = new QueueClient(
+            $this->config,
+            $this->logger,
+            $notification,
+            $this->storage,
+            $this->strategyFactory,
+            $this->clientFactory,
+            $this->blockerHandlerFactory
+        );
     }
 
     /**
@@ -116,7 +124,11 @@ class QueueClientTest extends TestCase
 
     public function testAcknowledge()
     {
-        $this->logger->expects($this->once())->method('debug')->with('Queue message Deleted', $this->anything());
+        $this->logger
+            ->expects($this->once())
+            ->method('debug')
+            ->with('Queue message Deleted', $this->anything());
+
         $message = $this->client->createMessage('One ring to bring them all', [], []);
 
         $this->sqsClient
@@ -132,7 +144,7 @@ class QueueClientTest extends TestCase
         /** @var \Interop\Queue\Message $message*/
         $retry = new Retry(5, 5, BlockerStorageRetryStrategy::class);
 
-        $strategy = $this->createMock(AbstractRetryRetryStrategy::class);
+        $strategy = $this->createMock(AbstractRetryStrategy::class);
         $strategy
             ->expects($this->once())
             ->method('handle');
@@ -144,10 +156,30 @@ class QueueClientTest extends TestCase
             ->with($retry)
             ->willReturn($strategy);
 
-        $this->client = new QueueClient($this->config, $this->logger, null, $this->storage, $strategyFactory, $this->clientFactory);
+        $this->client = new QueueClient(
+            $this->config,
+            $this->logger,
+            null,
+            $this->storage,
+            $strategyFactory,
+            $this->clientFactory
+        );
         $message = $this->client->createMessage('One ring to find them', [], []);
 
         $this->client->reject($message, $retry);
+    }
+
+    public function testConstruct()
+    {
+        $client = new QueueClient(
+            $this->config,
+            $this->logger,
+            null,
+            $this->storage,
+            null,
+            $this->clientFactory
+        );
+        $this->assertInstanceOf(QueueClient::class, $client);
     }
 
     public function testProcessMessage()

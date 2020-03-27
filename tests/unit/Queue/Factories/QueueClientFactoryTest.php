@@ -25,7 +25,10 @@ class QueueClientFactoryTest extends BaseTestCase
     public function testCreateFailed()
     {
         try {
-            $this->assertInstanceOf(SqsClient::class, $this->factory->create(['provider' => 'test', 'queue' => 'queue']));
+            $this->assertInstanceOf(
+                SqsClient::class,
+                $this->factory->create(['provider' => 'test', 'queue' => 'queue'])
+            );
         } catch (\Exception $e) {
             $this->assertStringContainsString('Failed to create Queue Client test', $e->getMessage());
         }

@@ -27,7 +27,10 @@ class BlockerHandlerFactoryTest extends BaseTestCase
 
     public function testCreate()
     {
-        $this->assertInstanceOf(SqsBlockerHandler::class, $this->factory->create(['provider' => 'sqs', 'defaultMaxDelay' => 2]));
+        $this->assertInstanceOf(
+            SqsBlockerHandler::class,
+            $this->factory->create(['provider' => 'sqs', 'defaultMaxDelay' => 2])
+        );
     }
 
     public function testCreateFailed()
@@ -38,5 +41,4 @@ class BlockerHandlerFactoryTest extends BaseTestCase
             $this->assertStringContainsString('Failed to create blocker handler', $e->getMessage());
         }
     }
-
 }

@@ -5,7 +5,7 @@ namespace BrighteCapital\QueueClient\Queue\Factories;
 use BrighteCapital\QueueClient\Notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
-use BrighteCapital\QueueClient\Strategies\AbstractRetryRetryStrategy;
+use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
@@ -41,9 +41,10 @@ class StrategyFactory
 
     /**
      * @param Retry $retry
-     * @return AbstractRetryRetryStrategy
+     * @return AbstractRetryStrategy
+     * @throws \Exception
      */
-    public function create(Retry $retry): AbstractRetryRetryStrategy
+    public function create(Retry $retry): AbstractRetryStrategy
     {
         switch ($retry->getStrategy()) {
             case BlockerRetryStrategy::class:
@@ -72,5 +73,7 @@ class StrategyFactory
                     $this->notification
                 );
         }
+
+        throw new \Exception('Given Strategy is not defined : ' . $retry->getStrategy());
     }
 }

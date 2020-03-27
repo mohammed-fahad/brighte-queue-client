@@ -104,7 +104,7 @@ class SqsConnectionFactory extends \Enqueue\Sqs\SqsConnectionFactory
     {
         $dsn = Dsn::parseFirst($dsn);
 
-        if ('Sqs' !== $dsn->getSchemeProtocol()) {
+        if ('sqs' !== $dsn->getSchemeProtocol()) {
             throw new \LogicException(sprintf(
                 'The given scheme protocol "%s" is not supported. It must be "Sqs"',
                 $dsn->getSchemeProtocol()

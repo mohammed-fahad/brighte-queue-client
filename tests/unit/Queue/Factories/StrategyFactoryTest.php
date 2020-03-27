@@ -58,4 +58,14 @@ class StrategyFactoryTest extends BaseTestCase
             $this->factory->create($this->retry)
         );
     }
+
+    public function testCreateFailed()
+    {
+        $this->retry->setStrategy('test');
+        try {
+            $this->factory->create($this->retry);
+        } catch (\Exception $e) {
+            $this->assertEquals('Given Strategy is not defined : test', $e->getMessage());
+        }
+    }
 }
