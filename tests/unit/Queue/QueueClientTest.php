@@ -2,7 +2,7 @@
 
 namespace App\Test\Queue;
 
-use BrighteCapital\QueueClient\Example\JobManager;
+use App\Test\AnonymousClasses\JobManager;
 use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Factories\BlockerHandlerFactory;
@@ -17,6 +17,7 @@ use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
+use Interop\Queue\Exception\Exception;
 use Interop\Queue\Message;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -213,5 +214,20 @@ class QueueClientTest extends TestCase
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(true);
         $this->client->processMessage($jobManager);
+    }
+
+    public function testProcessThrowException()
+    {
+        $message = new SqsMessage('test');
+        $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
+        $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
+        $jobManager->expects($this->once())->method('create')->willReturn($job);
+        $jobManager->expects($this->once())->method('process')->willThrowException(new Exception('processFailedJobManager'));
+        $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(false);
+        try {
+            $this->client->processMessage($jobManager);
+        } catch (\Exception $exception) {
+            $this->assertEquals('processFailedJobManager', $exception->getMessage());
+        }
     }
 }
