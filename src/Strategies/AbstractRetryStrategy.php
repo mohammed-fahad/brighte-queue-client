@@ -8,7 +8,7 @@ use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use Interop\Queue\Message;
 use Psr\Log\LoggerInterface;
 
-abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
+abstract class AbstractRetryStrategy implements RetryStrategyInterface
 {
     /** @var QueueClientInterface */
     protected $client;
@@ -29,7 +29,7 @@ abstract class AbstractRetryRetryStrategy implements RetryStrategyInterface
     protected $logger;
 
     /**
-     * AbstractRetryRetryStrategy constructor.
+     * AbstractRetryStrategy constructor.
      * @param Retry $retry
      * @param QueueClientInterface $client
      * @param int $delay

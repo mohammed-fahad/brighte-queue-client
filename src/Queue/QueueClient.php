@@ -52,6 +52,8 @@ class QueueClient
      * @param NotificationChannelInterface|null $notification
      * @param MessageStorageInterface|null $storage
      * @param StrategyFactory|null $strategyFactory
+     * @param QueueClientFactory $clientFactory |null $clientFactory
+     * @param BlockerHandlerFactory|null $blockerHandlerFactory
      * @throws \Exception
      */
     public function __construct(
@@ -59,21 +61,19 @@ class QueueClient
         LoggerInterface $logger = null,
         NotificationChannelInterface $notification = null,
         MessageStorageInterface $storage = null,
-        StrategyFactory $strategyFactory = null
+        StrategyFactory $strategyFactory = null,
+        QueueClientFactory $clientFactory = null,
+        BlockerHandlerFactory $blockerHandlerFactory = null
     ) {
-        $clientFactor = new QueueClientFactory();
-        $this->client = $clientFactor->create($config);
+        $clientFactory = $clientFactory ?? new QueueClientFactory();
+        $this->client = $clientFactory->create($config);
 
         $this->storage = $storage ?: new NullStorage();
         $this->logger = $logger ?: new NullLogger();
         $this->notification = $notification ?: new NullNotificationChannel();
 
-        $blockerHandlerFactory = new BlockerHandlerFactory(
-            $this->client,
-            $this->logger,
-            $this->notification,
-            $this->storage
-        );
+        $blockerHandlerFactory = $blockerHandlerFactory ??
+            new BlockerHandlerFactory($this->client, $this->logger, $this->notification, $this->storage);
 
         $this->blockerHandler = $blockerHandlerFactory->create($config);
 
@@ -99,7 +99,6 @@ class QueueClient
         if ($this->blockerHandler->checkAndHandle($job) === true) {
             return;
         }
-
         $this->logger->debug('Queue message start processing', ['messageId' => $message->getMessageId()]);
         $job = $jobManager->process($job);
         $this->logger->debug('Queue message end processing', ['messageId' => $message->getMessageId()]);

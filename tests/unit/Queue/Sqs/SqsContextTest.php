@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\unit;
+namespace App\Test\Queue\Sqs;
 
 use BrighteCapital\QueueClient\Queue\Sqs\SqsConsumer;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsContext;
@@ -33,7 +33,7 @@ class SqsContextTest extends TestCase
         $this->assertEquals("test body", $msg->getBody());
     }
 
-    public function createProducer()
+    public function testCreateProducer()
     {
         $this->assertInstanceOf(SqsProducer::class, $this->context->createProducer());
     }

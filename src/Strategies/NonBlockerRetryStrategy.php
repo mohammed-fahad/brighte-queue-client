@@ -4,7 +4,7 @@ namespace BrighteCapital\QueueClient\Strategies;
 
 use Interop\Queue\Message;
 
-class NonBlockerRetryStrategy extends AbstractRetryRetryStrategy
+class NonBlockerRetryStrategy extends AbstractRetryStrategy
 {
     /**
      * @param Message $message

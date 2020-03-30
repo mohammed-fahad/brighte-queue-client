@@ -38,7 +38,8 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function send(array $data): void
     {
-        $response = $this->client->post($this->url, $this->createMessage($data));
+        $message = $this->createMessage($data);
+        $response = $this->postMessage($message);
 
         if ($response->getStatusCode() !== 200) {
             throw new \Exception(
@@ -49,6 +50,15 @@ class SlackNotificationChannel implements NotificationChannelInterface
                 )
             );
         }
+    }
+
+    /**
+     * @param array $message
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function postMessage(array $message)
+    {
+        return $this->client->post($this->url, $this->createMessage($message));
     }
 
     /**

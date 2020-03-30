@@ -1,5 +1,7 @@
 #Brighte Queue Package
+
 ## Sample code
+
 #### Config
 <pre>
 $config = [
@@ -13,6 +15,7 @@ $config = [
 </pre>
 
 #### Examples
+
 ##### Copy config files 
 <pre> cp ./src/Example/Config.php.example ./src/Example/Config.php</pre>
 
