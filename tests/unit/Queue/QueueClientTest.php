@@ -222,7 +222,8 @@ class QueueClientTest extends TestCase
         $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
-        $jobManager->expects($this->once())->method('process')->willThrowException(new Exception('processFailedJobManager'));
+        $jobManager->expects($this->once())->method('process')
+            ->willThrowException(new Exception('processFailedJobManager'));
         $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(false);
         try {
             $this->client->processMessage($jobManager);
