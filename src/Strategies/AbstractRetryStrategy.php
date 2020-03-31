@@ -67,13 +67,15 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
             $this->notification->send([
                 'messageId' => $message->getMessageId(),
                 'level' => $attemptCount - $this->retry->getMaxRetryCount(),
-                'body' => $message->getBody()
+                'body' => $message->getBody(),
+                'lastError' => $this->retry->getErrorMessage()
             ]);
 
             $this->logger->critical('Message have reached maximum retry and need attention', [
                 'messageId' => $message->getMessageId(),
                 'level' =>  $attemptCount - $this->retry->getMaxRetryCount(),
-                'body' => $message->getBody()
+                'body' => $message->getBody(),
+                'lastError' => $this->retry->getErrorMessage()
             ]);
 
             $this->onMaxRetryReached($message);
