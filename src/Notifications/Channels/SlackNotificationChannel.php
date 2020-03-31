@@ -58,7 +58,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function postMessage(array $message)
     {
-        return $this->client->post($this->url, $this->createMessage($message));
+        return $this->client->post($this->url, $message);
     }
 
     /**
