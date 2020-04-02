@@ -96,12 +96,24 @@ class QueueClient
         /** @var Job $job */
         $job = $jobManager->create($message);
 
+        $this->logger->debug('Queue message start processing', [
+            'messageId' => $message->getMessageId(),
+            'job' => print_r($job, true)
+        ]);
+
         if ($this->blockerHandler->checkAndHandle($job) === true) {
+            $this->logger->debug('Message Hans been handled and skipped processing.', [
+                'messageId' => $message->getMessageId()
+            ]);
             return;
         }
-        $this->logger->debug('Queue message start processing', ['messageId' => $message->getMessageId()]);
+
         $job = $jobManager->process($job);
-        $this->logger->debug('Queue message end processing', ['messageId' => $message->getMessageId()]);
+
+        $this->logger->debug('Queue message end processing', [
+            'messageId' => $message->getMessageId(),
+            'job' => print_r($job, true)
+        ]);
 
         if ($job->getSuccess() === true) {
             $this->acknowledge($message);
@@ -121,7 +133,7 @@ class QueueClient
     {
         $message = $this->client->receive($timeout);
 
-        $this->logger->alert('Queue message received', ['messageId' => $message->getMessageId()]);
+        $this->logger->debug('Queue message received', ['messageId' => $message->getMessageId()]);
 
         return $message;
     }
@@ -164,7 +176,7 @@ class QueueClient
      */
     public function reject(Message $message, Retry $retry): void
     {
-        $this->logger->debug('Queue message rejected', ['messageId' => $message->getMessageId()]);
+        $this->logger->debug('Queue message rejected.', ['messageId' => $message->getMessageId()]);
         $strategy = $this->strategyFactory->create($retry);
         $strategy->handle($message);
     }

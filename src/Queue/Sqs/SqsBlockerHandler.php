@@ -114,6 +114,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         if ($oldEntity !== false) {
             $oldEntity->setMessageHandle($entity->getMessageHandle());
             $oldEntity->setAlertCount($this->getAlertCount($job));
+            $this->logger->debug('Queue message updated in storage', ['messageId' => $message->getMessageId()]);
             $this->storage->update($oldEntity);
         }
     }
