@@ -12,7 +12,7 @@ class BlockerRetryStrategy extends AbstractRetryStrategy
      */
     protected function onMaxRetryReached(Message $message): void
     {
-        $this->logger->debug(printf('%s: Message blocked & delayed.', __METHOD__), [
+        $this->logger->debug('On Max Retry Reached, Message blocked & delayed.', [
             'messageId' => $message->getMessageId(),
             'delayInSecond' => $this->delay
         ]);

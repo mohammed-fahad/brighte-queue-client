@@ -12,7 +12,7 @@ class NonBlockerRetryStrategy extends AbstractRetryStrategy
      */
     protected function onMaxRetryReached(Message $message): void
     {
-        $this->logger->debug(printf('%s: Message deleted.', __METHOD__), [
+        $this->logger->debug('On Max Retry Reached, Message deleted.', [
             'messageId' => $message->getMessageId()
         ]);
         $this->client->reject($message);
