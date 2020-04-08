@@ -108,7 +108,14 @@ class QueueClient
             return;
         }
 
-        $job = $jobManager->process($job);
+        try {
+            $job = $jobManager->process($job);
+        } catch (\Exception $e) {
+            $this->logger->critical('Job manager process Failed.', [
+                'exception' => print_r($e, true)
+            ]);
+            $job->setSuccess(false);
+        }
 
         $this->logger->debug('Queue message end processing', [
             'messageId' => $message->getMessageId(),
