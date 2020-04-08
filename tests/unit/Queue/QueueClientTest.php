@@ -225,10 +225,6 @@ class QueueClientTest extends TestCase
         $jobManager->expects($this->once())->method('process')
             ->willThrowException(new Exception('processFailedJobManager'));
         $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(false);
-        try {
-            $this->client->processMessage($jobManager);
-        } catch (\Exception $exception) {
-            $this->assertEquals('processFailedJobManager', $exception->getMessage());
-        }
+        $this->client->processMessage($jobManager);
     }
 }
