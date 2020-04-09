@@ -114,6 +114,7 @@ class QueueClient
             $this->logger->critical('Job manager process Failed.', [
                 'exception' => print_r($e, true)
             ]);
+            $job->getRetry()->setErrorMessage($e->getMessage());
             $job->setSuccess(false);
         }
 
