@@ -60,21 +60,18 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             return false;
         }
 
-        $this->notification->send([
-            'messageId' => $message->getMessageId(),
-            'level' =>  $this->getAlertCount($job),
-            'body' => $message->getBody(),
-            'lastError' => $job->getRetry()->getErrorMessage(),
-            'messageHandle' => $message->getReceiptHandle()
-        ]);
-
-        $this->logger->critical('Queue message have reached maximum retry and need attention', [
+        $issue = static::class . ': Message have reached maximum retry and need attention';
+        $info = [
             'messageId' => $message->getMessageId(),
             'level' => $this->getAlertCount($job),
             'body' => $message->getBody(),
             'lastError' => $job->getRetry()->getErrorMessage(),
             'messageHandle' => $message->getReceiptHandle()
-        ]);
+        ];
+
+        $this->notification->send(['issue' => $issue] + $info);
+
+        $this->logger->critical($issue, $info);
 
         // If non blocker strategy is used and it has reached the maximum, then delete it.
         if ($job->getRetry()->getStrategy() === NonBlockerRetryStrategy::class) {
