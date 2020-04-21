@@ -60,17 +60,21 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             return false;
         }
 
-        $issue = static::class . ': Message have reached maximum retry and need attention';
+        $issue = sprintf(
+            '[%s][%s] %s: Message have reached maximum retry and need attention',
+            $this->client->getDestination()->getQueueName(),
+            $this->getAlertCount($job), //level
+            static::class
+        );
         $info = [
             'messageId' => $message->getMessageId(),
             'retryCount' => $message->getProperty('ApproximateReceiveCount'),
-            'level' => $this->getAlertCount($job),
             'body' => $message->getBody(),
             'lastError' => $job->getRetry()->getErrorMessage(),
-            'messageHandle' => $message->getReceiptHandle()
+            'messageHandle' => $message->getReceiptHandle(),
         ];
 
-        $this->notification->send(['issue' => $issue] + $info);
+        $this->notification->send(['title' => $issue] + $info);
 
         $this->logger->critical($issue, $info);
 

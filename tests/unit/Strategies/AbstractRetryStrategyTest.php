@@ -10,6 +10,7 @@ use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Message;
+use Interop\Queue\Queue;
 use Psr\Log\NullLogger;
 
 class AbstractRetryStrategyTest extends BaseTestCase
@@ -25,7 +26,10 @@ class AbstractRetryStrategyTest extends BaseTestCase
     protected function setUp()
     {
         parent::setUp();
+        $this->queue = $this->createMock(Queue::class);
+        $this->queue->method('getQueueName')->willReturn('test');
         $this->client = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->getMock();
+        $this->client->method('getDestination')->willReturn($this->queue);
         $this->retry = $this->getMockBuilder(Retry::class)->disableOriginalConstructor()->getMock();
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
