@@ -2,6 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Notifications\Channels;
 
+use DateTime;
 use GuzzleHttp\Client;
 
 class SlackNotificationChannel implements NotificationChannelInterface
@@ -38,6 +39,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function send(array $data): void
     {
+        $data['time'] = (new DateTime())->format(DateTime::ATOM);
         $message = $this->createMessage($data);
         $response = $this->postMessage($message);
 
@@ -68,6 +70,12 @@ class SlackNotificationChannel implements NotificationChannelInterface
     public function createMessage(array $data): array
     {
         $text = '';
+
+        if (isset($data['title'])) {
+            $text = '*' . $data['title'] . '*' . PHP_EOL;
+            unset($data['title']);
+        }
+
         foreach ($data as $key => $value) {
             $newKey = strtolower($key);
             if ($newKey == 'body') {

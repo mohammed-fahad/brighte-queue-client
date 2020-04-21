@@ -14,10 +14,12 @@ use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
+use Interop\Queue\Queue;
 use Psr\Log\NullLogger;
 
 class SqsBlockerHandlerTest extends BaseTestCase
 {
+    protected $queue;
     protected $sqsClient;
     protected $storage;
     protected $logger;
@@ -28,7 +30,10 @@ class SqsBlockerHandlerTest extends BaseTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->queue = $this->createMock(Queue::class);
+        $this->queue->method('getQueueName')->willReturn('test');
         $this->sqsClient = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->getMock();
+        $this->sqsClient->method('getDestination')->willReturn($this->queue);
         $this->storage = $this->getMockBuilder(NullStorage::class)->getMock();
         $this->logger = $this->getMockBuilder(NullLogger::class)->getMock();
         $this->notification = new NullNotificationChannel();
@@ -57,8 +62,6 @@ class SqsBlockerHandlerTest extends BaseTestCase
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
         $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
         $destination = $this->getMockBuilder(SqsDestination::class)->disableOriginalConstructor()->getMock();
-        $destination->expects($this->once())->method('getQueueName')->willReturn('test');
-        $this->sqsClient->expects($this->once())->method('getDestination')->willReturn($destination);
         $this->storage->expects($this->once())->method('messageExist')->willReturn(false);
         $this->blockerHandler->checkAndHandle($job);
     }
