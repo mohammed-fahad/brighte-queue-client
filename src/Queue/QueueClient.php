@@ -98,7 +98,8 @@ class QueueClient
 
         $this->logger->debug('Queue message start processing', [
             'messageId' => $message->getMessageId(),
-            'job' => print_r($job, true)
+            'body' => $message->getBody(),
+            'retry' => $job->getRetry(),
         ]);
 
         if ($this->blockerHandler->checkAndHandle($job) === true) {
@@ -112,7 +113,8 @@ class QueueClient
             $job = $jobManager->process($job);
         } catch (\Exception $e) {
             $this->logger->critical('Job manager process Failed.', [
-                'exception' => print_r($e, true)
+                'exception' => $e->getMessage(),
+                'messageId' => $message->getMessageId(),
             ]);
             $job->getRetry()->setErrorMessage($e->getMessage());
             $job->setSuccess(false);
@@ -120,7 +122,7 @@ class QueueClient
 
         $this->logger->debug('Queue message end processing', [
             'messageId' => $message->getMessageId(),
-            'job' => print_r($job, true)
+            'retry' => $job->getRetry(),
         ]);
 
         if ($job->getSuccess() === true) {

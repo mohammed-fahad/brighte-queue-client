@@ -39,7 +39,6 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function send(array $data): void
     {
-        $data['time'] = (new DateTime())->format(DateTime::ATOM);
         $message = $this->createMessage($data);
         $response = $this->postMessage($message);
 
@@ -69,24 +68,65 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function createMessage(array $data): array
     {
-        $text = '';
+        $blocks = [];
+        $fields = [];
+        $data['time'] = (new DateTime())->format(DateTime::ISO8601);
+        if (isset($data['body'])) {
+            $length = strlen($data['body']) - $this->getMaxBodyCharsToSend();
+            $data['body'] = substr($data['body'], 0, $this->getMaxBodyCharsToSend());
+            if ($length > 0) {
+                $data['body'] .= "\n...+" . $length . ' characters';
+            }
+        }
+        if (isset($data['retryCount'])) {
+            $data['retryCount'] = str_repeat(':o:', (int)$data['retryCount']);
+        }
 
-        if (isset($data['title'])) {
-            $text = '*' . $data['title'] . '*' . PHP_EOL;
-            unset($data['title']);
+        $title = $data['title'] ?? 'Queue Client Notification';
+        unset($data['title']);
+        $blocks[] = [
+            'type' => 'section',
+            'text' => [
+                'type' => 'mrkdwn',
+                'text' =>  '*' . $title . '*',
+            ],
+        ];
+
+        $fieldNames = ['time', 'messageId', 'retryCount', 'class'];
+        foreach ($fieldNames as $field) {
+            if (!isset($data[$field])) {
+                continue;
+            }
+
+            $fields[] = [
+                'type' => 'mrkdwn',
+                'text' => '*' . $field . "*:\n" . $data[$field],
+            ];
+            unset($data[$field]);
+        }
+
+        if ($fields) {
+            $blocks[] = [
+                'type' => 'section',
+                'fields' => $fields
+            ];
         }
 
         foreach ($data as $key => $value) {
-            $newKey = strtolower($key);
-            if ($newKey == 'body') {
-                $value = substr($value, 0, $this->getMaxBodyCharsToSend());
-            }
-            $text .= $key . ': ' . $value . PHP_EOL;
+            $blocks[] = [
+                'type' => 'section',
+                'text' => [
+                    'type' => 'mrkdwn',
+                    'text' =>  '*' . $key . "*:\n```" . $value . '```',
+                ],
+            ];
         }
+
+        $blocks[] = ['type' => 'divider'];
 
         return [
             'json' => [
-                'text' => $text,
+                'blocks' => $blocks,
             ]
         ];
     }

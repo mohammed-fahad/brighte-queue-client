@@ -61,12 +61,12 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         }
 
         $issue = sprintf(
-            '[%s][%s] %s: Message have reached maximum retry and need attention',
+            '[%s][%s] Message have reached maximum retry and need attention',
             $this->client->getDestination()->getQueueName(),
-            $this->getAlertCount($job), //level
-            static::class
+            $this->getAlertCount($job) //level
         );
         $info = [
+            'class' => static::class,
             'messageId' => $message->getMessageId(),
             'retryCount' => $message->getProperty('ApproximateReceiveCount'),
             'body' => $message->getBody(),
