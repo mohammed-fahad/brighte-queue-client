@@ -59,7 +59,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
         if ($attemptCount < $this->retry->getMaxRetryCount()) {
             $this->logger->debug('Message Delayed', [
                 'messageId' => $message->getMessageId(),
-                'retry' => print_r($this->retry, true)
+                'retry' => $this->retry
             ]);
             $this->client->delay($message, $this->retry->getDelay());
 
