@@ -8,6 +8,10 @@ use GuzzleHttp\Client;
 class SlackNotificationChannel implements NotificationChannelInterface
 {
     public const DEFAULT_MAX_BODY_CHARS_TO_SEND = 200;
+    public const FIELDS = ['time', 'messageId', 'retryCount', 'class'];
+    public const EXCLUDE = ['messageHandle'];
+    public const LIMIT_SIZE = ['body', 'lastError'];
+
     /** @var \GuzzleHttp\ClientInterface */
     private $client;
     /** @var string */
@@ -71,13 +75,23 @@ class SlackNotificationChannel implements NotificationChannelInterface
         $blocks = [];
         $fields = [];
         $data['time'] = (new DateTime())->format(DateTime::ISO8601);
-        if (isset($data['body'])) {
-            $length = strlen($data['body']) - $this->getMaxBodyCharsToSend();
-            $data['body'] = substr($data['body'], 0, $this->getMaxBodyCharsToSend());
+
+        foreach (self::EXCLUDE as $field) {
+            unset($data[$field]);
+        }
+
+        foreach (self::LIMIT_SIZE as $field) {
+            if (!isset($data[$field])) {
+                continue;
+            }
+
+            $length = strlen($data[$field]) - $this->getMaxBodyCharsToSend();
+            $data[$field] = substr($data[$field], 0, $this->getMaxBodyCharsToSend());
             if ($length > 0) {
-                $data['body'] .= "\n...+" . $length . ' characters';
+                $data[$field] .= "\n...+" . $length . ' characters';
             }
         }
+
         if (isset($data['retryCount'])) {
             $data['retryCount'] = str_repeat(':o:', (int)$data['retryCount']);
         }
@@ -92,8 +106,7 @@ class SlackNotificationChannel implements NotificationChannelInterface
             ],
         ];
 
-        $fieldNames = ['time', 'messageId', 'retryCount', 'class'];
-        foreach ($fieldNames as $field) {
+        foreach (self::FIELDS as $field) {
             if (!isset($data[$field])) {
                 continue;
             }
