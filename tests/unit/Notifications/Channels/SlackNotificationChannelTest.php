@@ -66,7 +66,14 @@ class SlackNotificationChannelTest extends TestCase
     public function testCreateMessage()
     {
         $message = $this->notification->createMessage(['body' => 'testBody']);
-        $this->assertStringContainsString('testBody', $message['json']['text']);
+        $expected = [
+            'type' => 'section',
+            'text' => [
+                'type' => 'mrkdwn',
+                'text' => "*body*:\n```testBody```",
+            ],
+        ];
+        $this->assertStringContainsString(json_encode($expected), json_encode($message));
     }
 
     public function testPostMessage()
