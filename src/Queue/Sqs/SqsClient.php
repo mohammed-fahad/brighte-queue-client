@@ -41,7 +41,7 @@ class SqsClient implements QueueClientInterface
      * @param int $timeout timeout
      * @return \Interop\Queue\Message
      */
-    public function receive($timeout = 0): Message
+    public function receive($timeout = 0): ?Message
     {
         return $this->getConsumer()->receive($timeout);
     }

@@ -91,6 +91,11 @@ class QueueClientTest extends TestCase
             $this->clientFactory,
             $this->blockerHandlerFactory
         );
+
+        $message = $this->sqsClient->createMessage('One ring to find them');
+        $this->sqsClient
+            ->method('receive')
+            ->willReturn($message);
     }
 
     /**

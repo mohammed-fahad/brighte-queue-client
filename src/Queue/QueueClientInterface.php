@@ -11,7 +11,7 @@ interface QueueClientInterface
      * @param int $timeout timeout
      * @return \Interop\Queue\Message
      */
-    public function receive($timeout = 0): Message;
+    public function receive($timeout = 0): ?Message;
 
     /**
      * @param string $body body

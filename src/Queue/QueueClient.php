@@ -93,6 +93,10 @@ class QueueClient
     {
         $message = $this->receive($timeout);
 
+        if (!$message) {
+            return;
+        }
+
         /** @var Job $job */
         $job = $jobManager->create($message);
 
@@ -139,11 +143,13 @@ class QueueClient
      * @return \Interop\Queue\Message
      * @throws \Exception
      */
-    public function receive($timeout = 0): Message
+    public function receive($timeout = 0): ?Message
     {
         $message = $this->client->receive($timeout);
 
-        $this->logger->debug('Queue message received', ['messageId' => $message->getMessageId()]);
+        if ($message) {
+            $this->logger->debug('Queue message received', ['messageId' => $message->getMessageId()]);
+        }
 
         return $message;
     }
