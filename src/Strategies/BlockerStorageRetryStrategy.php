@@ -26,7 +26,7 @@ class BlockerStorageRetryStrategy extends BlockerRetryStrategy
                 'delayInSecond' => $this->delay
             ]);
             /** @var MessageStorageInterface $storage */
-            $this->storage->store($messageEntity);
+            $this->storage->save($messageEntity);
         } catch (Exception $e) {
             $this->logger->alert('On Max Retry Reached, Storing failed.', [
                 'messageId' => $message->getMessageId(), 'exception' => $e->getMessage()

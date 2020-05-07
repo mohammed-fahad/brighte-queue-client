@@ -107,7 +107,7 @@ class QueueClient
         ]);
 
         if ($this->blockerHandler->checkAndHandle($job) === true) {
-            $this->logger->debug('Message Hans been handled and skipped processing.', [
+            $this->logger->debug('Message has been handled and skipped processing.', [
                 'messageId' => $message->getMessageId()
             ]);
             return;
@@ -120,7 +120,7 @@ class QueueClient
                 'exception' => $e->getMessage(),
                 'messageId' => $message->getMessageId(),
             ]);
-            $job->getRetry()->setErrorMessage($e->getMessage());
+            $job->getRetry()->pushErrorMessage($e->getMessage());
             $job->setSuccess(false);
         }
 
@@ -181,8 +181,8 @@ class QueueClient
      */
     public function acknowledge(Message $message): void
     {
-        $this->logger->debug('Queue message Deleted', ['messageId' => $message->getMessageId()]);
         $this->client->acknowledge($message);
+        $this->logger->debug('Queue message Deleted', ['messageId' => $message->getMessageId()]);
     }
 
     /**
@@ -192,8 +192,20 @@ class QueueClient
      */
     public function reject(Message $message, Retry $retry): void
     {
-        $this->logger->debug('Queue message rejected.', ['messageId' => $message->getMessageId()]);
         $strategy = $this->strategyFactory->create($retry);
         $strategy->handle($message);
+        $this->logger->debug('Queue message rejected.', ['messageId' => $message->getMessageId()]);
+    }
+
+    /**
+     * Directly remove a message from queue
+     *
+     * @param \Interop\Queue\Message $message
+     * @return void
+     */
+    public function remove(Message $message): void
+    {
+        $this->client->reject($message);
+        $this->logger->debug('Queue meesge removed.', ['messageId' => $message->getMessageId()]);
     }
 }

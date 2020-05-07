@@ -20,18 +20,23 @@ class NullStorageTest extends BaseTestCase
         $this->storage = new NullStorage();
     }
 
-    public function testStore()
+    public function testSave()
     {
-        $this->assertEmpty($this->storage->store($this->messageEntity));
+        $this->assertEmpty($this->storage->save($this->messageEntity));
     }
 
-    public function testUpdate()
+    public function testGet()
     {
-        $this->assertEmpty($this->storage->update($this->messageEntity));
+        $this->assertNull($this->storage->get('123'));
     }
 
-    public function testMessageExist()
+    public function testDelete()
     {
-        $this->assertFalse($this->storage->messageExist($this->messageEntity));
+        $this->assertEmpty($this->storage->delete('123'));
+    }
+
+    public function testFindByStatus()
+    {
+        $this->assertEmpty($this->storage->findByStatus(MessageEntity::STATUS_EDITED));
     }
 }

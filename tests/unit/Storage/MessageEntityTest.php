@@ -4,6 +4,7 @@ namespace App\Test\Storage;
 
 use App\Test\BaseTestCase;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
+use DateTime;
 use Enqueue\Sqs\SqsMessage;
 
 class MessageEntityTest extends BaseTestCase
@@ -45,16 +46,17 @@ class MessageEntityTest extends BaseTestCase
     public function testPatch()
     {
         $this->messageEntity->patch([
-            'id' => 1,
             'message_id' => 'patchedMessageId',
             'group_id' => 'patchedGroupId',
             'attributes' => 'patchedAttributes',
             'message' => 'patchedMessage',
+            'created' => '2020-05-12T03:42:13+0000'
         ]);
-        $this->assertEquals(1, $this->messageEntity->getId());
         $this->assertEquals('patchedMessageId', $this->messageEntity->getMessageId());
         $this->assertEquals('patchedGroupId', $this->messageEntity->getGroupId());
         $this->assertEquals('patchedAttributes', $this->messageEntity->getAttributes());
         $this->assertEquals('patchedMessage', $this->messageEntity->getMessage());
+        $this->assertInstanceOf(DateTime::class, $this->messageEntity->getCreated());
+        $this->assertEquals('2020-05-12T03:42:13+0000', $this->messageEntity->getCreated()->format(DateTime::ISO8601));
     }
 }

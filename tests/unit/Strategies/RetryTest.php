@@ -4,6 +4,7 @@ namespace App\Test\Strategies;
 
 use App\Test\BaseTestCase;
 use BrighteCapital\QueueClient\Strategies\Retry;
+use DateTime;
 
 class RetryTest extends BaseTestCase
 {
@@ -28,5 +29,14 @@ class RetryTest extends BaseTestCase
         $this->assertEquals(2, $this->retry->getMaxRetryCount());
         $this->assertEquals('strategy', $this->retry->getStrategy());
         $this->assertEquals('error', $this->retry->getErrorMessage());
+    }
+
+    public function testPushErrorMessage()
+    {
+        $this->retry->pushErrorMessage('error 1');
+        $this->retry->pushErrorMessage('error 2');
+        $lines = explode("\n", $this->retry->getErrorMessage());
+        $this->assertCount(2, $lines);
+        $this->assertContains((new DateTime())->format('Y-m-d'), $lines[0]);
     }
 }

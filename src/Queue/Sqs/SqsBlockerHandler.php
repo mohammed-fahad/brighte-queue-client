@@ -10,6 +10,7 @@ use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
+use Enqueue\Sqs\SqsMessage;
 use Psr\Log\LoggerInterface;
 
 class SqsBlockerHandler implements BlockerHandlerInterface
@@ -54,6 +55,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
      */
     public function checkAndHandle(Job $job): bool
     {
+        /** @var SqsMessage */
         $message = $job->getMessage();
 
         if (!$this->reachedMaxRetry($job)) {
@@ -99,26 +101,22 @@ class SqsBlockerHandler implements BlockerHandlerInterface
      */
     private function handleStorage(Job $job)
     {
+        /** @var SqsMessage */
         $message = $job->getMessage();
-        $entity = new MessageEntity($message);
 
-        /** @var MessageEntity $oldEntity */
-        $oldEntity = $this->storage->messageExist($entity);
+        /** @var MessageEntity */
+        $entity = $this->storage->get($message->getMessageId());
 
-        if ($oldEntity === false) {
+        if ($entity) {
+            $entity->setMessageHandle($message->getReceiptHandle());
+            $entity->setAlertCount($this->getAlertCount($job));
+        } else {
+            $entity = new MessageEntity($message);
             $entity->setQueueName($this->client->getDestination()->getQueueName());
-            $this->storage->store($entity);
-            $this->logger->debug('Queue message stored in storage', ['messageId' => $message->getMessageId()]);
-
-            return;
         }
 
-        if ($oldEntity !== false) {
-            $oldEntity->setMessageHandle($entity->getMessageHandle());
-            $oldEntity->setAlertCount($this->getAlertCount($job));
-            $this->logger->debug('Queue message updated in storage', ['messageId' => $message->getMessageId()]);
-            $this->storage->update($oldEntity);
-        }
+        $this->storage->save($entity);
+        $this->logger->debug('Queue message stored in storage', ['messageId' => $entity->getMessageId()]);
     }
 
     private function reachedMaxRetry(Job $job): bool

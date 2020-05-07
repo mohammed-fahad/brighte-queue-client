@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c54e677ca77023a470e19afca2e29710",
+    "content-hash": "d4ab2b04189b9277808f40c467031661",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.133.29",
+            "version": "3.137.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ec8f628041e0d1de4fad76ac041c6025bd38d2da"
+                "reference": "af91c2fc467a326e5bcb5665e4e2ad3d84d28be2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ec8f628041e0d1de4fad76ac041c6025bd38d2da",
-                "reference": "ec8f628041e0d1de4fad76ac041c6025bd38d2da",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/af91c2fc467a326e5bcb5665e4e2ad3d84d28be2",
+                "reference": "af91c2fc467a326e5bcb5665e4e2ad3d84d28be2",
                 "shasum": ""
             },
             "require": {
@@ -88,7 +88,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2020-03-04T19:10:59+00:00"
+            "time": "2020-05-04T18:13:52+00:00"
         },
         {
             "name": "enqueue/dsn",
@@ -2437,11 +2437,14 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "aws/aws-sdk-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.1"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
 }
