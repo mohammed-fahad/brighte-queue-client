@@ -80,9 +80,15 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
                 'lastError' => $this->retry->getErrorMessage(),
                 'messageHandle' => $message->getReceiptHandle(),
             ];
-            $this->notification->send(['title' => $issue] + $info);
 
             $this->logger->critical($issue, $info);
+            try {
+                $this->notification->send(['title' => $issue] + $info);
+            } catch (\Exception $e) {
+                $this->logger->error(__METHOD__ . ': failed to notify on maximum retry reached', [
+                    'exception' => $e,
+                ]);
+            }
 
             $this->onMaxRetryReached($message);
         }
