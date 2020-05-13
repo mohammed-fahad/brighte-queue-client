@@ -3,19 +3,30 @@
 namespace BrighteCapital\QueueClient\Storage;
 
 use BrighteCapital\QueueClient\Utility\StringUtility;
+use DateTime;
+use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Message;
 
 class MessageEntity
 {
-    protected $id;
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_EDITED = 'edited';
+    public const STATUS_PROCESSING = 'processing';
+    public const STATUS_FAILED = 'failed';
+    public const STATUS_PROCESSED = 'processed';
+
     protected $messageId;
     protected $messageHandle;
     protected $groupId;
     protected $message;
+    protected $originalMessage;
     protected $attributes;
     protected $alertCount = 1;
     protected $lastErrorMessage = '';
     protected $queueName = '';
+    protected $status = self::STATUS_PENDING;
+    protected $created;
+    protected $modified;
 
     /**
      * MessageEntity constructor.
@@ -27,10 +38,13 @@ class MessageEntity
             return;
         }
 
-        $this->messageId = $message->getMessageId();
-        $this->messageHandle = $message->getReceiptHandle();
+        $this->messageId = $message->getMessageId() ?: '__' . uniqid();
+        $this->messageHandle = ($message instanceof SqsMessage)
+            ? $message->getReceiptHandle()
+            : '';
         $this->groupId = $message->getProperty('MessageGroupId');
         $this->message = $message->getBody();
+        $this->originalMessage = $this->message;
         $this->attributes = json_encode($message->getProperties());
     }
 
@@ -46,6 +60,10 @@ class MessageEntity
         });
 
         array_walk($data, function ($value, $key) use (&$formattedData) {
+            if ($value instanceof DateTime) {
+                $value = $value->format(DateTime::ISO8601);
+            }
+
             $formattedData[StringUtility::camelCaseToSnakeCase($key)] = $value;
         });
 
@@ -66,14 +84,6 @@ class MessageEntity
         }
 
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**
@@ -133,6 +143,14 @@ class MessageEntity
     }
 
     /**
+     * @return string
+     */
+    public function getOriginalMessage(): string
+    {
+        return $this->originalMessage ?? '';
+    }
+
+    /**
      * @return mixed
      */
     public function getAttributes(): string
@@ -170,5 +188,35 @@ class MessageEntity
     public function setLastErrorMessage(string $lastErrorMessage): void
     {
         $this->lastErrorMessage = $lastErrorMessage;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
+    public function setCreated(DateTime $created): void
+    {
+        $this->created = $created;
+    }
+
+    public function getCreated(): ?DateTime
+    {
+        return is_string($this->created) ? new DateTime($this->created) : $this->created;
+    }
+
+    public function setModifed(DateTime $modifed): void
+    {
+        $this->modified = $modifed;
+    }
+
+    public function getModifed(): ?DateTime
+    {
+        return is_string($this->modified) ? new DateTime($this->modified) : $this->modified;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace BrighteCapital\QueueClient\Strategies;
 
+use DateTime;
+
 class Retry
 {
     protected $delay;
@@ -69,5 +71,24 @@ class Retry
     public function setErrorMessage(string $errorMessage): void
     {
         $this->errorMessage = $errorMessage;
+    }
+
+    /**
+     * @param string $errorMessage
+     * @param string $separater
+     * @param boolean $withTime
+     * @return void
+     */
+    public function pushErrorMessage(string $errorMessage, string $separater = "\n", bool $withTime = true): void
+    {
+        if ($this->errorMessage) {
+            $this->errorMessage = $separater . $this->errorMessage;
+        }
+
+        if ($withTime) {
+            $errorMessage = (new DateTime())->format(DateTime::ISO8601) . ' ' . $errorMessage;
+        }
+
+        $this->errorMessage = $errorMessage . $this->errorMessage;
     }
 }

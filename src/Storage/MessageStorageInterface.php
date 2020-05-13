@@ -4,9 +4,11 @@ namespace BrighteCapital\QueueClient\Storage;
 
 interface MessageStorageInterface
 {
-    public function store(MessageEntity $entity): void;
+    public function get(string $id): ?MessageEntity;
 
-    public function update(MessageEntity $entity): void;
+    public function save(MessageEntity $entity): void;
 
-    public function messageExist(MessageEntity $entity);
+    public function delete(string $id): void;
+
+    public function findByStatus(string $status, int $limit = 1): array;
 }

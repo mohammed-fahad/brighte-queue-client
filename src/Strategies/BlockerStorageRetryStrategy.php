@@ -21,15 +21,16 @@ class BlockerStorageRetryStrategy extends BlockerRetryStrategy
         $messageEntity->setLastErrorMessage($this->retry->getErrorMessage());
         $messageEntity->setQueueName($this->client->getDestination()->getQueueName());
         try {
-            $this->logger->debug('On Max Retry Reached, Message is being stored.', [
+            /** @var MessageStorageInterface $storage */
+            $this->storage->save($messageEntity);
+            $this->logger->debug('On Max Retry Reached, Message is stored.', [
                 'messageId' => $message->getMessageId(),
                 'delayInSecond' => $this->delay
             ]);
-            /** @var MessageStorageInterface $storage */
-            $this->storage->store($messageEntity);
         } catch (Exception $e) {
             $this->logger->alert('On Max Retry Reached, Storing failed.', [
-                'messageId' => $message->getMessageId(), 'exception' => $e->getMessage()
+                'exception' => $e->getMessage(),
+                'messageId' => $message->getMessageId(),
             ]);
         }
     }

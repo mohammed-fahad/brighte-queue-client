@@ -37,7 +37,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
         $this->storage = $this->getMockBuilder(NullStorage::class)->getMock();
         $this->logger = $this->getMockBuilder(NullLogger::class)->getMock();
         $this->notification = new NullNotificationChannel();
-        $this->sqsMessage = new SqsMessage('text');
+        $this->sqsMessage = new SqsMessage('text', [], ['message_id' => '123']);
         $this->blockerHandler =
             new SqsBlockerHandler($this->sqsClient, 2, $this->logger, $this->notification, $this->storage);
     }
@@ -61,8 +61,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
         $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
-        $destination = $this->getMockBuilder(SqsDestination::class)->disableOriginalConstructor()->getMock();
-        $this->storage->expects($this->once())->method('messageExist')->willReturn(false);
+        $this->storage->expects($this->once())->method('get')->willReturn(null);
         $this->blockerHandler->checkAndHandle($job);
     }
 
@@ -70,9 +69,9 @@ class SqsBlockerHandlerTest extends BaseTestCase
     {
         $this->sqsMessage->setReceiptHandle('test');
         $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
-        $messageEntity = new MessageEntity();
+        $messageEntity = new MessageEntity($this->sqsMessage);
         $messageEntity->setMessageHandle('testHandle');
-        $this->storage->expects($this->once())->method('messageExist')->willReturn($messageEntity);
+        $this->storage->expects($this->once())->method('get')->willReturn($messageEntity);
         $this->invokeHiddenMethod($this->blockerHandler, 'handleStorage', [$job]);
     }
 }

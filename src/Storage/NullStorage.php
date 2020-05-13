@@ -2,6 +2,8 @@
 
 namespace BrighteCapital\QueueClient\Storage;
 
+use BrighteCapital\QueueClient\Storage\MessageEntity;
+
 /**
  * This Logger can be used to avoid conditional storage calls.
  *
@@ -11,18 +13,23 @@ namespace BrighteCapital\QueueClient\Storage;
  */
 class NullStorage implements MessageStorageInterface
 {
-    public function store(MessageEntity $entity): void
+    public function get(string $id): ?MessageEntity
+    {
+        return null;
+    }
+
+    public function save(MessageEntity $entity): void
     {
         // Do Nothing
     }
 
-    public function update(MessageEntity $entity): void
+    public function delete(string $messageId): void
     {
-        //Do Nothing
+        // Do Nothing
     }
 
-    public function messageExist(MessageEntity $entity)
+    public function findByStatus(string $status, int $limit = 1): array
     {
-        return false;
+        return [];
     }
 }

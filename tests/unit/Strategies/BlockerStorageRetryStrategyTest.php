@@ -52,7 +52,7 @@ class BlockerStorageRetryStrategyTest extends BaseTestCase
         $this->client->expects($this->once())->method('delay')->with($this->message, self::MAX_DELAY);
         $this->client->expects($this->once())->method('getDestination')->willReturn($destination);
         $this->retry->expects($this->once())->method('getErrorMessage')->willReturn('failedMessage');
-        $this->storage->expects($this->once())->method('store')->willThrowException(new \Exception('testFailed'));
+        $this->storage->expects($this->once())->method('save')->willThrowException(new \Exception('testFailed'));
         $this->logger->expects($this->once())->method('alert');
 
         $this->invokeHiddenMethod($this->strategy, 'onMaxRetryReached', [$this->message]);
