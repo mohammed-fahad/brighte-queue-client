@@ -2,16 +2,14 @@
 
 namespace BrighteCapital\QueueClient\Strategies;
 
-use BrighteCapital\QueueClient\Storage\MessageEntity;
-use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
-use Exception;
+use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use Interop\Queue\Message;
 
-class BlockerStorageRetryStrategy extends BlockerRetryStrategy
+class NonBlockerStorageRetryStrategy extends NonBlockerRetryStrategy
 {
     /**
      * @param Message $message
-     * @throws Exception
+     * @throws \Exception
      */
     protected function onMaxRetryReached(Message $message): void
     {
