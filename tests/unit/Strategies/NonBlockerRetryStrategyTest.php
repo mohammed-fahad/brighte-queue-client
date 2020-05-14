@@ -5,6 +5,7 @@ namespace App\Test\Strategies;
 use App\Test\BaseTestCase;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
+use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
@@ -17,6 +18,7 @@ class NonBlockerRetryStrategyTest extends BaseTestCase
     protected $retry;
     protected $logger;
     protected $notification;
+    protected $storage;
     protected $message;
     /** @var NonBlockerRetryStrategy */
     protected $strategy;
@@ -29,13 +31,15 @@ class NonBlockerRetryStrategyTest extends BaseTestCase
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
             ->getMockBuilder(NullNotificationChannel::class)->disableOriginalConstructor()->getMock();
+        $this->storage = $this->createMock(MessageStorageInterface::class);
         $this->message = $this->getMockBuilder(SqsMessage::class)->disableOriginalConstructor()->getMock();
         $this->strategy = new NonBlockerRetryStrategy(
             $this->retry,
             $this->client,
             self::MAX_DELAY,
             $this->logger,
-            $this->notification
+            $this->notification,
+            $this->storage
         );
     }
 

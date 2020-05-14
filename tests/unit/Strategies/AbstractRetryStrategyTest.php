@@ -5,10 +5,12 @@ namespace App\Test\Strategies;
 use App\Test\BaseTestCase;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
+use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Storage\NullStorage;
 use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
+use Exception;
 use Interop\Queue\Message;
 use Interop\Queue\Queue;
 use Psr\Log\NullLogger;
@@ -31,9 +33,11 @@ class AbstractRetryStrategyTest extends BaseTestCase
         $this->client = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->getMock();
         $this->client->method('getDestination')->willReturn($this->queue);
         $this->retry = $this->getMockBuilder(Retry::class)->disableOriginalConstructor()->getMock();
+        $this->retry->method('getErrorMessage')->willReturn('something went wrong');
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
             ->getMockBuilder(NullNotificationChannel::class)->disableOriginalConstructor()->getMock();
+        $this->storage = $this->createMock(MessageStorageInterface::class);
         $this->message = $this->getMockBuilder(SqsMessage::class)->disableOriginalConstructor()->getMock();
 
         $anonymousClass = new class (
@@ -41,7 +45,8 @@ class AbstractRetryStrategyTest extends BaseTestCase
             $this->client,
             1,
             $this->logger,
-            $this->notification
+            $this->notification,
+            $this->storage
         ) extends AbstractRetryStrategy {
             public function getClass()
             {
@@ -72,5 +77,19 @@ class AbstractRetryStrategyTest extends BaseTestCase
         $this->notification->expects($this->once())->method('send');
         $this->logger->expects($this->once())->method('critical');
         $this->strategy->handle($this->message);
+    }
+
+    public function testStoreMessage()
+    {
+        $this->storage->expects($this->once())->method('save');
+        $this->logger->expects($this->once())->method('debug');
+        $this->strategy->storeMessage($this->message);
+    }
+
+    public function testStoreMessageWithError()
+    {
+        $this->storage->expects($this->once())->method('save')->willThrowException(new Exception('oops'));
+        $this->logger->expects($this->once())->method('alert');
+        $this->strategy->storeMessage($this->message);
     }
 }

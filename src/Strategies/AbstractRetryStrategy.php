@@ -4,7 +4,9 @@ namespace BrighteCapital\QueueClient\Strategies;
 
 use BrighteCapital\QueueClient\Notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
+use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
+use Exception;
 use Interop\Queue\Message;
 use Psr\Log\LoggerInterface;
 
@@ -43,7 +45,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
         int $delay,
         LoggerInterface $logger,
         NotificationChannelInterface $notification,
-        MessageStorageInterface $storage = null
+        MessageStorageInterface $storage
     ) {
         $this->client = $client;
         $this->retry = $retry;
@@ -95,4 +97,24 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     }
 
     abstract protected function onMaxRetryReached(Message $message): void;
+
+    public function storeMessage(Message $message): void
+    {
+        $messageEntity = new MessageEntity($message);
+        $messageEntity->setLastErrorMessage($this->retry->getErrorMessage());
+        $messageEntity->setQueueName($this->client->getDestination()->getQueueName());
+        try {
+            /** @var MessageStorageInterface $storage */
+            $this->storage->save($messageEntity);
+            $this->logger->debug('On Max Retry Reached, Message is stored.', [
+                'messageId' => $message->getMessageId(),
+                'delayInSecond' => $this->delay
+            ]);
+        } catch (Exception $e) {
+            $this->logger->alert('On Max Retry Reached, Storing failed.', [
+                'exception' => $e->getMessage(),
+                'messageId' => $message->getMessageId(),
+            ]);
+        }
+    }
 }

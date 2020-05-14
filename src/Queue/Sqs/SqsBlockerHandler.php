@@ -10,6 +10,7 @@ use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
+use BrighteCapital\QueueClient\Strategies\NonBlockerStorageRetryStrategy;
 use Enqueue\Sqs\SqsMessage;
 use Psr\Log\LoggerInterface;
 
@@ -94,7 +95,12 @@ class SqsBlockerHandler implements BlockerHandlerInterface
 
         $this->client->delay($message, $this->delay);
 
-        if ($job->getRetry()->getStrategy() === BlockerStorageRetryStrategy::class) {
+        if (
+            in_array($job->getRetry()->getStrategy(), [
+            BlockerStorageRetryStrategy::class,
+            NonBlockerStorageRetryStrategy::class,
+            ])
+        ) {
             $this->handleStorage($job);
         }
 

@@ -10,6 +10,7 @@ use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
+use BrighteCapital\QueueClient\Strategies\NonBlockerStorageRetryStrategy;
 use Psr\Log\LoggerInterface;
 
 class StrategyFactory
@@ -46,31 +47,19 @@ class StrategyFactory
      */
     public function create(Retry $retry): AbstractRetryStrategy
     {
-        switch ($retry->getStrategy()) {
+        $strategry = $retry->getStrategy();
+        switch ($strategry) {
             case BlockerRetryStrategy::class:
-                return new BlockerRetryStrategy(
-                    $retry,
-                    $this->client,
-                    $this->defaultDelay,
-                    $this->logger,
-                    $this->notification
-                );
             case BlockerStorageRetryStrategy::class:
-                return new BlockerStorageRetryStrategy(
+            case NonBlockerRetryStrategy::class:
+            case NonBlockerStorageRetryStrategy::class:
+                return new $strategry(
                     $retry,
                     $this->client,
                     $this->defaultDelay,
                     $this->logger,
                     $this->notification,
                     $this->storage
-                );
-            case NonBlockerRetryStrategy::class:
-                return new NonBlockerRetryStrategy(
-                    $retry,
-                    $this->client,
-                    $this->defaultDelay,
-                    $this->logger,
-                    $this->notification
                 );
         }
 
