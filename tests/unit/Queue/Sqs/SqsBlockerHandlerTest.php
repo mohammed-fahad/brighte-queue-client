@@ -9,10 +9,11 @@ use BrighteCapital\QueueClient\Queue\Sqs\SqsBlockerHandler;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\NullStorage;
+use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
+use BrighteCapital\QueueClient\Strategies\NonBlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\Retry;
-use Enqueue\Sqs\SqsDestination;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Queue;
 use Psr\Log\NullLogger;
@@ -54,15 +55,37 @@ class SqsBlockerHandlerTest extends BaseTestCase
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
         $job = new Job($this->sqsMessage, new Retry(0, 0, NonBlockerRetryStrategy::class));
         $this->sqsClient->expects($this->once())->method('reject');
+        $this->storage->expects($this->never())->method('save');
+        $this->assertTrue($this->blockerHandler->checkAndHandle($job));
+    }
+
+    public function testCheckAndHandlerHandledBlockerStrategy()
+    {
+        $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
+        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerRetryStrategy::class));
+        $this->sqsClient->expects($this->once())->method('delay');
+        $this->storage->expects($this->never())->method('save');
         $this->assertTrue($this->blockerHandler->checkAndHandle($job));
     }
 
     public function testCheckAndHandlerStorageStrategy()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
+        $job = new Job($this->sqsMessage, new Retry(0, 0, NonBlockerStorageRetryStrategy::class));
+        $this->sqsClient->expects($this->once())->method('reject');
+        $this->storage->expects($this->once())->method('get');
+        $this->storage->expects($this->once())->method('save');
+        $this->assertTrue($this->blockerHandler->checkAndHandle($job));
+    }
+
+    public function testCheckAndHandlerBlockerStorageStrategy()
+    {
+        $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
         $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
-        $this->storage->expects($this->once())->method('get')->willReturn(null);
-        $this->blockerHandler->checkAndHandle($job);
+        $this->sqsClient->expects($this->once())->method('delay');
+        $this->storage->expects($this->once())->method('get');
+        $this->storage->expects($this->once())->method('save');
+        $this->assertTrue($this->blockerHandler->checkAndHandle($job));
     }
 
     public function testHandleStorage()
