@@ -8,6 +8,7 @@ use BrighteCapital\QueueClient\Queue\BlockerHandlerInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
+use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerStorageRetryStrategy;
@@ -86,22 +87,24 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             ]);
         }
 
-        // If non blocker strategy is used and it has reached the maximum, then delete it.
-        if ($job->getRetry()->getStrategy() === NonBlockerRetryStrategy::class) {
-            $this->client->reject($message);
-
-            return true;
-        }
-
-        $this->client->delay($message, $this->delay);
-
-        if (
-            in_array($job->getRetry()->getStrategy(), [
+        $useStorage = in_array($job->getRetry()->getStrategy(), [
             BlockerStorageRetryStrategy::class,
             NonBlockerStorageRetryStrategy::class,
-            ])
-        ) {
+        ]);
+
+        $isBlocker = in_array($job->getRetry()->getStrategy(), [
+            BlockerRetryStrategy::class,
+            BlockerStorageRetryStrategy::class,
+        ]);
+
+        if ($useStorage) {
             $this->handleStorage($job);
+        }
+
+        if ($isBlocker) {
+            $this->client->delay($message, $this->delay);
+        } else {
+            $this->client->reject($message);
         }
 
         return true;
