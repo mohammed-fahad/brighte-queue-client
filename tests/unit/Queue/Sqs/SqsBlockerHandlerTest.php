@@ -95,6 +95,18 @@ class SqsBlockerHandlerTest extends BaseTestCase
         $messageEntity = new MessageEntity($this->sqsMessage);
         $messageEntity->setMessageHandle('testHandle');
         $this->storage->expects($this->once())->method('get')->willReturn($messageEntity);
+        $this->logger->expects($this->once())->method('debug')
+            ->with('Queue message stored in storage');
+        $this->invokeHiddenMethod($this->blockerHandler, 'handleStorage', [$job]);
+    }
+
+    public function testHandleStorageWithStorageException()
+    {
+        $this->sqsMessage->setReceiptHandle('test');
+        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
+        $this->storage->expects($this->once())->method('get')->willThrowException(new \Exception('error'));
+        $this->logger->expects($this->once())->method('error')
+            ->with(SqsBlockerHandler::class . '::handleStorage: failed to save message');
         $this->invokeHiddenMethod($this->blockerHandler, 'handleStorage', [$job]);
     }
 }

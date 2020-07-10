@@ -120,7 +120,10 @@ class SqsBlockerHandler implements BlockerHandlerInterface
 
         try {
             /** @var MessageEntity */
-            $entity = $this->storage->get($message->getMessageId());
+            $entity = $message->getMessageId()
+                ? $this->storage->get($message->getMessageId())
+                : null;
+
             if ($entity) {
                 $entity->setMessageHandle($message->getReceiptHandle());
                 $entity->setAlertCount($this->getAlertCount($job));
@@ -136,7 +139,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
         } catch (\Exception $e) {
             $this->logger->error(__METHOD__ . ': failed to save message', [
                 'exception' => $e,
-                'messageId' => $entity->getMessageId()
+                'messageId' => $message->getMessageId()
             ]);
         }
     }
