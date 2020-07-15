@@ -1,0 +1,42 @@
+{
+    "AttributeDefinitions": [{
+            "AttributeName": "message_id",
+            "AttributeType": "S"
+        },
+        {
+            "AttributeName": "status",
+            "AttributeType": "S"
+        }
+    ],
+    "BillingMode": "PROVISIONED",
+    "KeySchema": [{
+        "AttributeName": "message_id",
+        "KeyType": "HASH"
+    }],
+    "ProvisionedThroughput": {
+        "NumberOfDecreasesToday": 0,
+        "ReadCapacityUnits": 5,
+        "WriteCapacityUnits": 5
+    },
+    "GlobalSecondaryIndexes": [{
+        "IndexName": "status-index",
+        "KeySchema": [{
+            "AttributeName": "status",
+            "KeyType": "HASH"
+        }],
+        "Projection": {
+            "ProjectionType": "ALL"
+        },
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "ReadCapacityUnits": 5,
+            "WriteCapacityUnits": 5
+        }
+    }],
+    "Tags": [
+        {
+            "Key": "Usage",
+            "Value": "Storage failed to process queue messages"
+        }
+    ]
+}
