@@ -3,7 +3,10 @@
 namespace App\Test\Storage;
 
 use App\Test\BaseTestCase;
+use Aws\CommandInterface;
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Exception\DynamoDbException;
+use Aws\Result;
 use BrighteCapital\QueueClient\Storage\DynamoDbStorage;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use DateTime;
@@ -30,6 +33,8 @@ class DynamoDbStorageTest extends BaseTestCase
             'deleteItem',
             'query',
             'getItem',
+            'describeTable',
+            'createTable',
         ]);
 
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -188,5 +193,31 @@ class DynamoDbStorageTest extends BaseTestCase
             'alert_count' => 1,
             'status' => 'pending',
         ], $entity->toArray());
+    }
+
+    public function testMigrateTable(): void
+    {
+        $exception = new DynamoDbException('ResourceNotFoundException', $this->createMock(CommandInterface::class));
+        $this->dynamodbClient->expects($this->exactly(3))->method('describeTable')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException($exception),
+                new Result(['Table' => ['TableStatus' => 'CREATING']]),
+                new Result(['Table' => ['TableStatus' => 'ACTIVE']])
+            ));
+
+        $this->dynamodbClient->expects($this->once())->method('createTable')
+            ->willReturn(new Result(['Table' => ['TableStatus' => 'CREATING']]));
+
+        $this->storage->migrateTable();
+    }
+
+    public function testMigrateTableWithExistingTable(): void
+    {
+        $this->dynamodbClient->expects($this->once())->method('describeTable')
+            ->willReturn(new Result(['Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->dynamodbClient->expects($this->never())->method('createTable');
+
+        $this->storage->migrateTable();
     }
 }

@@ -32,4 +32,9 @@ class NullStorage implements MessageStorageInterface
     {
         return [];
     }
+
+    public function migrateTable(array $schema = []): void
+    {
+        // Do Nothing
+    }
 }

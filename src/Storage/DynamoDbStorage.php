@@ -3,6 +3,7 @@
 namespace BrighteCapital\QueueClient\Storage;
 
 use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
 use DateTime;
@@ -126,5 +127,45 @@ class DynamoDbStorage implements MessageStorageInterface
             $data = $this->marshaler->unmarshalItem($item);
             return (new MessageEntity())->patch($data);
         }, $items);
+    }
+
+    /**
+     * @param array $schema
+     * @return void
+     */
+    public function migrateTable(array $schema = []): void
+    {
+        $exist = true;
+        try {
+            $this->dynamodb->describeTable(['TableName' => $this->tableName]);
+        } catch (DynamoDbException $e) {
+            if (strpos($e->getMessage(), 'ResourceNotFoundException') !== false) {
+                $exist = false;
+            } else {
+                throw $e;
+            }
+        }
+
+        if ($exist) {
+            $this->logger->debug(sprintf('%s: table %s exists', __METHOD__, $this->tableName));
+            return;
+        }
+
+        $this->logger->debug(sprintf('%s: creating table %s', __METHOD__, $this->tableName));
+
+        if (!$schema) {
+            $schema = json_decode(file_get_contents(__DIR__ . '/dynamodb_schema.json'), true);
+        }
+        $schema["TableName"] = $this->tableName;
+
+        $result = $this->dynamodb->createTable($schema);
+        $tableStatus = $result->getPath('TableDescription.TableStatus');
+
+        while ($tableStatus !== 'ACTIVE') {
+            sleep(2);
+            $result = $this->dynamodb->describeTable(['TableName' => $this->tableName]);
+            $tableStatus = $result->getPath('Table.TableStatus');
+            $this->logger->debug(__METHOD__ . ': table status - ' . $tableStatus);
+        }
     }
 }
