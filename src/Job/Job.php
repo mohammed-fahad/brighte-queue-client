@@ -10,6 +10,7 @@ class Job
     protected $message;
     protected $success = false;
     protected $retry = null;
+    protected $result = null;
 
     public function __construct(Message $message, Retry $retry)
     {
@@ -63,5 +64,22 @@ class Job
     public function setRetry(Retry $retry): void
     {
         $this->retry = $retry;
+    }
+
+    /**
+     * @param mixed $result
+     * @return void
+     */
+    public function setResult($result): void
+    {
+        $this->result = $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResult()
+    {
+        return $this->result;
     }
 }
