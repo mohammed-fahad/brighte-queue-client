@@ -1,0 +1,8 @@
+coverage:
+    status:
+      diff:
+        default:
+          target: 90
+      project:
+        default:
+          target: 90
