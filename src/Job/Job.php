@@ -4,6 +4,7 @@ namespace BrighteCapital\QueueClient\Job;
 
 use BrighteCapital\QueueClient\Strategies\Retry;
 use Interop\Queue\Message;
+use stdClass;
 
 class Job
 {
@@ -11,6 +12,7 @@ class Job
     protected $success = false;
     protected $retry = null;
     protected $result = null;
+    protected $json = null;
 
     public function __construct(Message $message, Retry $retry)
     {
@@ -81,5 +83,14 @@ class Job
     public function getResult()
     {
         return $this->result;
+    }
+
+    public function getJson(): ?stdClass
+    {
+        if ($this->json === null && $this->message) {
+            $this->json = \json_decode($this->message->getBody());
+        }
+
+        return $this->json;
     }
 }
