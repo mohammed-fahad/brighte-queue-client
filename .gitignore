@@ -2,3 +2,5 @@ vendor/
 .idea/*
 src/Example/Config.php
 coverage/
+coverage.xml
+results-unit.xml

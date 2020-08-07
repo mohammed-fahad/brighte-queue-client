@@ -16,7 +16,7 @@ class JobTest extends TestCase
         $message = new SqsMessage('test');
         $retry = new Retry(0, 0, NonBlockerRetryStrategy::class, 'error');
         $job = new Job($message, $retry);
-        
+
         $this->assertEquals('test', $job->getMessage()->getBody());
         $this->assertEquals(NonBlockerRetryStrategy::class, $job->getRetry()->getStrategy());
         $this->assertFalse($job->getSuccess());
@@ -26,9 +26,11 @@ class JobTest extends TestCase
         $job->setMessage($message);
         $job->setRetry($retry);
         $job->setSuccess(true);
+        $job->setResult('record updated');
 
         $this->assertEquals('test2', $job->getMessage()->getBody());
         $this->assertEquals(BlockerStorageRetryStrategy::class, $job->getRetry()->getStrategy());
         $this->assertTrue($job->getSuccess());
+        $this->assertEquals('record updated', $job->getResult());
     }
 }
