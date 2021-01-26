@@ -7,17 +7,14 @@ use GuzzleHttp\Client;
 
 class SlackNotificationChannel implements NotificationChannelInterface
 {
-    public const DEFAULT_MAX_BODY_CHARS_TO_SEND = 200;
-    public const FIELDS = ['time', 'messageId', 'retryCount', 'class'];
+    public const FIELDS = ['time', 'messageId', 'retryCount'];
     public const EXCLUDE = ['messageHandle'];
-    public const LIMIT_SIZE = ['body', 'lastError'];
+    public const LIMIT_SIZE = ['body' => 200, 'lastError' => 1000];
 
     /** @var \GuzzleHttp\ClientInterface */
     private $client;
     /** @var string */
     private $url;
-    /** @var int */
-    private $maxBodyCharsToSend;
 
     /**
      * SlackNotificationChannel constructor.
@@ -27,12 +24,10 @@ class SlackNotificationChannel implements NotificationChannelInterface
      */
     public function __construct(
         string $url,
-        Client $client = null,
-        int $maxBodyChars = self::DEFAULT_MAX_BODY_CHARS_TO_SEND
+        Client $client = null
     ) {
         $this->url = $url;
         $this->client = $client ?? new Client();
-        $this->maxBodyCharsToSend = $maxBodyChars;
     }
 
     /**
@@ -80,13 +75,13 @@ class SlackNotificationChannel implements NotificationChannelInterface
             unset($data[$field]);
         }
 
-        foreach (self::LIMIT_SIZE as $field) {
+        foreach (self::LIMIT_SIZE as $field => $charLimit) {
             if (!isset($data[$field])) {
                 continue;
             }
 
-            $length = strlen($data[$field]) - $this->getMaxBodyCharsToSend();
-            $data[$field] = substr($data[$field], 0, $this->getMaxBodyCharsToSend());
+            $length = strlen($data[$field]) - $charLimit;
+            $data[$field] = substr($data[$field], 0, $charLimit);
             if ($length > 0) {
                 $data[$field] .= "\n...+" . $length . ' characters';
             }
@@ -142,21 +137,5 @@ class SlackNotificationChannel implements NotificationChannelInterface
                 'blocks' => $blocks,
             ]
         ];
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxBodyCharsToSend(): int
-    {
-        return $this->maxBodyCharsToSend;
-    }
-
-    /**
-     * @param int $maxBodyCharsToSend
-     */
-    public function setMaxBodyCharsToSend(int $maxBodyCharsToSend): void
-    {
-        $this->maxBodyCharsToSend = $maxBodyCharsToSend;
     }
 }

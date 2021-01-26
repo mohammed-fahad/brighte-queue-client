@@ -15,7 +15,6 @@ use BrighteCapital\QueueClient\Storage\NullStorage;
 use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Exception\Exception;
 use Interop\Queue\Message;
@@ -148,7 +147,7 @@ class QueueClientTest extends TestCase
     public function testReject()
     {
         /** @var \Interop\Queue\Message $message*/
-        $retry = new Retry(5, 5, BlockerStorageRetryStrategy::class);
+        $job = new Job(new SqsMessage('test'), 5, 5, BlockerStorageRetryStrategy::class);
 
         $strategy = $this->createMock(AbstractRetryStrategy::class);
         $strategy
@@ -159,7 +158,7 @@ class QueueClientTest extends TestCase
         $strategyFactory
             ->expects($this->any())
             ->method('create')
-            ->with($retry)
+            ->with($job)
             ->willReturn($strategy);
 
         $this->client = new QueueClient(
@@ -172,7 +171,7 @@ class QueueClientTest extends TestCase
         );
         $message = $this->client->createMessage('One ring to find them', [], []);
 
-        $this->client->reject($message, $retry);
+        $this->client->reject($message, $job);
     }
 
     public function testConstruct()
@@ -186,12 +185,13 @@ class QueueClientTest extends TestCase
             $this->clientFactory
         );
         $this->assertInstanceOf(QueueClient::class, $client);
+        $this->assertInstanceOf(QueueClient::class, $client);
     }
 
     public function testProcessMessage()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
         $job->setSuccess(true);
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
@@ -203,7 +203,7 @@ class QueueClientTest extends TestCase
     public function testProcessMessageRetry()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $jobManager->expects($this->once())->method('process')->willReturn($job);
@@ -214,7 +214,7 @@ class QueueClientTest extends TestCase
     public function testProcessHandled()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(true);
@@ -224,7 +224,7 @@ class QueueClientTest extends TestCase
     public function testProcessThrowException()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, new Retry(0, 0, NonBlockerRetryStrategy::class, 'testError'));
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $jobManager->expects($this->once())->method('process')

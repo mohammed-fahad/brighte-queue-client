@@ -3,12 +3,11 @@
 namespace App\Test\Strategies;
 
 use App\Test\BaseTestCase;
+use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
-use BrighteCapital\QueueClient\Storage\NullStorage;
 use BrighteCapital\QueueClient\Strategies\AbstractRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use Exception;
 use Interop\Queue\Message;
@@ -18,7 +17,7 @@ use Psr\Log\NullLogger;
 class AbstractRetryStrategyTest extends BaseTestCase
 {
     protected $client;
-    protected $retry;
+    protected $job;
     protected $logger;
     protected $notification;
     protected $message;
@@ -32,8 +31,9 @@ class AbstractRetryStrategyTest extends BaseTestCase
         $this->queue->method('getQueueName')->willReturn('test');
         $this->client = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->getMock();
         $this->client->method('getDestination')->willReturn($this->queue);
-        $this->retry = $this->getMockBuilder(Retry::class)->disableOriginalConstructor()->getMock();
-        $this->retry->method('getErrorMessage')->willReturn('something went wrong');
+        $this->job = $this->getMockBuilder(Job::class)->disableOriginalConstructor()->getMock();
+        $this->job->method('getErrorMessage')->willReturn('something went wrong');
+        $this->job->method('getNotify')->willReturn(true);
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
             ->getMockBuilder(NullNotificationChannel::class)->disableOriginalConstructor()->getMock();
@@ -41,7 +41,7 @@ class AbstractRetryStrategyTest extends BaseTestCase
         $this->message = $this->getMockBuilder(SqsMessage::class)->disableOriginalConstructor()->getMock();
 
         $anonymousClass = new class (
-            $this->retry,
+            $this->job,
             $this->client,
             1,
             $this->logger,
@@ -64,7 +64,7 @@ class AbstractRetryStrategyTest extends BaseTestCase
     public function testHandle()
     {
         $this->message->expects($this->once())->method('getProperty')->willReturn(1);
-        $this->retry->expects($this->once())->method('getMaxRetryCount')->willReturn(2);
+        $this->job->expects($this->once())->method('getMaxRetryCount')->willReturn(2);
         $this->client->expects($this->once())->method('delay');
         $this->strategy->handle($this->message);
     }
@@ -72,7 +72,7 @@ class AbstractRetryStrategyTest extends BaseTestCase
     public function testHandleReachMax()
     {
         $this->message->expects($this->once())->method('getProperty')->willReturn(2);
-        $this->retry->expects($this->atLeast(2))->method('getMaxRetryCount')->willReturn(1);
+        $this->job->expects($this->atLeast(2))->method('getMaxRetryCount')->willReturn(1);
         $this->client->expects($this->never())->method('delay');
         $this->notification->expects($this->once())->method('send');
         $this->logger->expects($this->once())->method('critical');

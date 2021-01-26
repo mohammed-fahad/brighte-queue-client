@@ -2,7 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Job;
 
-use BrighteCapital\QueueClient\Strategies\Retry;
+use DateTime;
 use Interop\Queue\Message;
 use stdClass;
 
@@ -10,14 +10,29 @@ class Job
 {
     protected $message;
     protected $success = false;
-    protected $retry = null;
     protected $result = null;
     protected $json = null;
 
-    public function __construct(Message $message, Retry $retry)
-    {
+    protected $delay;
+    protected $maxRetryCount;
+    protected $strategy;
+    protected $errorMessage;
+    protected $notify;
+
+    public function __construct(
+        Message $message,
+        int $delays,
+        int $maxRetryCount,
+        string $strategy,
+        string $errorMessage = '',
+        bool $notify = true
+    ) {
         $this->message = $message;
-        $this->retry = $retry;
+        $this->delay = $delays;
+        $this->maxRetryCount = $maxRetryCount;
+        $this->strategy = $strategy;
+        $this->errorMessage = $errorMessage ?? '';
+        $this->notify = $notify;
     }
 
     /**
@@ -53,22 +68,6 @@ class Job
     }
 
     /**
-     * @return Retry|null
-     */
-    public function getRetry(): ?Retry
-    {
-        return $this->retry;
-    }
-
-    /**
-     * @param Retry $retry
-     */
-    public function setRetry(Retry $retry): void
-    {
-        $this->retry = $retry;
-    }
-
-    /**
      * @param mixed $result
      * @return void
      */
@@ -92,5 +91,87 @@ class Job
         }
 
         return $this->json;
+    }
+
+
+    public function getDelay(): int
+    {
+        return $this->delay;
+    }
+
+    public function getMaxRetryCount(): int
+    {
+        return $this->maxRetryCount;
+    }
+
+    public function getStrategy(): string
+    {
+        return $this->strategy;
+    }
+
+    public function getErrorMessage()
+    {
+        return $this->errorMessage;
+    }
+
+    public function getNotify()
+    {
+        return $this->notify;
+    }
+
+    /**
+     * @param int $delay
+     */
+    public function setDelay(int $delay): void
+    {
+        $this->delay = $delay;
+    }
+
+    /**
+     * @param int $maxRetryCount
+     */
+    public function setMaxRetryCount(int $maxRetryCount): void
+    {
+        $this->maxRetryCount = $maxRetryCount;
+    }
+
+    /**
+     * @param string $strategy
+     */
+    public function setStrategy(string $strategy): void
+    {
+        $this->strategy = $strategy;
+    }
+
+    /**
+     * @param string $errorMessage
+     */
+    public function setErrorMessage(string $errorMessage): void
+    {
+        $this->errorMessage = $errorMessage;
+    }
+
+    public function setNotify(bool $notify): void
+    {
+        $this->notify = $notify;
+    }
+
+    /**
+     * @param string $errorMessage
+     * @param string $separater
+     * @param boolean $withTime
+     * @return void
+     */
+    public function pushErrorMessage(string $errorMessage, string $separater = "\n", bool $withTime = true): void
+    {
+        if ($this->errorMessage) {
+            $this->errorMessage = $separater . $this->errorMessage;
+        }
+
+        if ($withTime) {
+            $errorMessage = (new DateTime())->format(DateTime::ISO8601) . ' ' . $errorMessage;
+        }
+
+        $this->errorMessage = $errorMessage . $this->errorMessage;
     }
 }

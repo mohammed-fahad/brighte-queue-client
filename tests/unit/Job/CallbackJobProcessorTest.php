@@ -5,7 +5,6 @@ namespace App\Test\Job;
 use BrighteCapital\QueueClient\Job\CallbackJobProcessor;
 use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
 
@@ -18,10 +17,7 @@ class CallbackJobProcessorTest extends TestCase
             $job->setResult(['id' => 1]);
         });
 
-        $job = new Job(
-            new SqsMessage('test'),
-            new Retry(60, 3, NonBlockerRetryStrategy::class)
-        );
+        $job = new Job(new SqsMessage('test'), 60, 3, NonBlockerRetryStrategy::class);
 
         $processor->process($job);
         $this->assertTrue($job->getSuccess());

@@ -74,7 +74,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             'messageId' => $message->getMessageId(),
             'retryCount' => $message->getProperty('ApproximateReceiveCount'),
             'body' => $message->getBody(),
-            'lastError' => $job->getRetry()->getErrorMessage(),
+            'lastError' => $job->getErrorMessage(),
             'messageHandle' => $message->getReceiptHandle(),
         ];
 
@@ -87,12 +87,12 @@ class SqsBlockerHandler implements BlockerHandlerInterface
             ]);
         }
 
-        $useStorage = in_array($job->getRetry()->getStrategy(), [
+        $useStorage = in_array($job->getStrategy(), [
             BlockerStorageRetryStrategy::class,
             NonBlockerStorageRetryStrategy::class,
         ]);
 
-        $isBlocker = in_array($job->getRetry()->getStrategy(), [
+        $isBlocker = in_array($job->getStrategy(), [
             BlockerRetryStrategy::class,
             BlockerStorageRetryStrategy::class,
         ]);
@@ -152,7 +152,7 @@ class SqsBlockerHandler implements BlockerHandlerInterface
     private function getAlertCount(Job $job): int
     {
         $attemptCount = $job->getMessage()->getProperty('ApproximateReceiveCount');
-        $maxRetry = $job->getRetry()->getMaxRetryCount();
+        $maxRetry = $job->getMaxRetryCount();
 
         return $attemptCount - $maxRetry;
     }

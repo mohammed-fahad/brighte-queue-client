@@ -3,11 +3,11 @@
 namespace App\Test\Strategies;
 
 use App\Test\BaseTestCase;
+use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Sqs\SqsClient;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use Psr\Log\NullLogger;
 
@@ -15,7 +15,7 @@ class BlockerRetryStrategyTest extends BaseTestCase
 {
     protected const MAX_DELAY = 2;
     protected $client;
-    protected $retry;
+    protected $job;
     protected $logger;
     protected $notification;
     protected $storage;
@@ -27,14 +27,14 @@ class BlockerRetryStrategyTest extends BaseTestCase
     {
         parent::setUp();
         $this->client = $this->getMockBuilder(SqsClient::class)->disableOriginalConstructor()->getMock();
-        $this->retry = $this->getMockBuilder(Retry::class)->disableOriginalConstructor()->getMock();
+        $this->job = $this->getMockBuilder(Job::class)->disableOriginalConstructor()->getMock();
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
             ->getMockBuilder(NullNotificationChannel::class)->disableOriginalConstructor()->getMock();
         $this->storage = $this->createMock(MessageStorageInterface::class);
         $this->message = $this->getMockBuilder(SqsMessage::class)->disableOriginalConstructor()->getMock();
         $this->strategy = new BlockerRetryStrategy(
-            $this->retry,
+            $this->job,
             $this->client,
             self::MAX_DELAY,
             $this->logger,

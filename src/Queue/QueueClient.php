@@ -11,7 +11,6 @@ use BrighteCapital\QueueClient\Queue\Factories\QueueClientFactory;
 use BrighteCapital\QueueClient\Queue\Factories\StrategyFactory;
 use BrighteCapital\QueueClient\Storage\MessageStorageInterface;
 use BrighteCapital\QueueClient\Storage\NullStorage;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Interop\Queue\Message;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -103,7 +102,7 @@ class QueueClient
         $this->logger->debug('Queue message start processing', [
             'messageId' => $message->getMessageId(),
             'body' => $message->getBody(),
-            'retry' => $job->getRetry(),
+            'job' => $job,
         ]);
 
         if ($this->blockerHandler->checkAndHandle($job) === true) {
@@ -120,13 +119,13 @@ class QueueClient
                 'exception' => $e->getMessage(),
                 'messageId' => $message->getMessageId(),
             ]);
-            $job->getRetry()->pushErrorMessage($e->getMessage());
+            $job->pushErrorMessage($e->getMessage());
             $job->setSuccess(false);
         }
 
         $this->logger->debug('Queue message end processing', [
             'messageId' => $message->getMessageId(),
-            'retry' => $job->getRetry(),
+            'job' => $job,
         ]);
 
         if ($job->getSuccess() === true) {
@@ -135,7 +134,7 @@ class QueueClient
             return;
         }
 
-        $this->reject($message, $job->getRetry());
+        $this->reject($message, $job);
     }
 
     /**
@@ -187,12 +186,12 @@ class QueueClient
 
     /**
      * @param \Interop\Queue\Message $message message
-     * @param \BrighteCapital\QueueClient\Strategies\Retry|null $retry
+     * @param Job $job
      * @throws \Exception
      */
-    public function reject(Message $message, Retry $retry): void
+    public function reject(Message $message, Job $job): void
     {
-        $strategy = $this->strategyFactory->create($retry);
+        $strategy = $this->strategyFactory->create($job);
         $strategy->handle($message);
         $this->logger->debug('Queue message rejected.', ['messageId' => $message->getMessageId()]);
     }

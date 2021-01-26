@@ -5,7 +5,6 @@ namespace BrighteCapital\QueueClient\Example;
 use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Job\JobManagerInterface;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Interop\Queue\Message;
 
 class JobManager implements JobManagerInterface
@@ -18,9 +17,8 @@ class JobManager implements JobManagerInterface
     public function create(Message $message): Job
     {
         /** @var \Interop\Queue\Message $message*/
-        $retry = new Retry(5, 5, BlockerStorageRetryStrategy::class);
-        $job = new Job($message, $retry);
-        $job->setRetry($retry);
+        $job = new Job($message, 5, 5, BlockerStorageRetryStrategy::class);
+
         return $job;
     }
 

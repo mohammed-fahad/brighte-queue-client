@@ -2,6 +2,7 @@
 
 namespace BrighteCapital\QueueClient\Strategies;
 
+use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Notifications\Channels\NotificationChannelInterface;
 use BrighteCapital\QueueClient\Queue\QueueClientInterface;
 use BrighteCapital\QueueClient\Storage\MessageEntity;
@@ -15,8 +16,8 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     /** @var QueueClientInterface */
     protected $client;
 
-    /** @var Retry */
-    protected $retry;
+    /** @var Job */
+    protected $job;
 
     /** @var int */
     protected $delay;
@@ -32,7 +33,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
 
     /**
      * AbstractRetryStrategy constructor.
-     * @param Retry $retry
+     * @param Job $job
      * @param QueueClientInterface $client
      * @param int $delay
      * @param LoggerInterface $logger
@@ -40,7 +41,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
      * @param MessageStorageInterface|null $storage
      */
     public function __construct(
-        Retry $retry,
+        Job $job,
         QueueClientInterface $client,
         int $delay,
         LoggerInterface $logger,
@@ -48,7 +49,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
         MessageStorageInterface $storage
     ) {
         $this->client = $client;
-        $this->retry = $retry;
+        $this->job = $job;
         $this->delay = $delay;
         $this->logger = $logger;
         $this->storage = $storage;
@@ -58,34 +59,36 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     public function handle(Message $message): void
     {
         $attemptCount = $message->getProperty('ApproximateReceiveCount');
-        if ($attemptCount < $this->retry->getMaxRetryCount()) {
+        if ($attemptCount < $this->job->getMaxRetryCount()) {
             $this->logger->debug('Message Delayed', [
                 'messageId' => $message->getMessageId(),
-                'retry' => $this->retry
+                'job' => $this->job
             ]);
-            $this->client->delay($message, $this->retry->getDelay());
+            $this->client->delay($message, $this->job->getDelay());
 
             return;
         }
 
-        if ($attemptCount >= $this->retry->getMaxRetryCount()) {
+        if ($attemptCount >= $this->job->getMaxRetryCount()) {
             $issue = sprintf(
                 '[%s][%s] Message have reached maximum retry and need attention',
                 $this->client->getDestination()->getQueueName(),
-                ($attemptCount - $this->retry->getMaxRetryCount())//level
+                ($attemptCount - $this->job->getMaxRetryCount())//level
             );
             $info = [
                 'class' => static::class,
                 'messageId' => $message->getMessageId(),
                 'retryCount' => $attemptCount,
                 'body' => $message->getBody(),
-                'lastError' => $this->retry->getErrorMessage(),
+                'lastError' => $this->job->getErrorMessage(),
                 'messageHandle' => $message->getReceiptHandle(),
             ];
 
             $this->logger->critical($issue, $info);
             try {
-                $this->notification->send(['title' => $issue] + $info);
+                if ($this->job->getNotify()) {
+                    $this->notification->send(['title' => $issue] + $info);
+                }
             } catch (\Exception $e) {
                 $this->logger->error(__METHOD__ . ': failed to notify on maximum retry reached', [
                     'exception' => $e,
@@ -101,7 +104,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
     public function storeMessage(Message $message): void
     {
         $messageEntity = new MessageEntity($message);
-        $messageEntity->setLastErrorMessage($this->retry->getErrorMessage());
+        $messageEntity->setLastErrorMessage($this->job->getErrorMessage());
         $messageEntity->setQueueName($this->client->getDestination()->getQueueName());
         try {
             /** @var MessageStorageInterface $storage */

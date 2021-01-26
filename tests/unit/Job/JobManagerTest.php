@@ -6,7 +6,6 @@ use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Job\JobDeciderInterface;
 use BrighteCapital\QueueClient\Job\JobManager;
 use BrighteCapital\QueueClient\Job\JobProcessorInterface;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -28,7 +27,6 @@ class JobManagerTest extends TestCase
         $job = $this->jobManager->create($message);
 
         $this->assertInstanceOf(Job::class, $job);
-        $this->assertInstanceOf(Retry::class, $job->getRetry());
 
         $processor = $this->createMock(JobProcessorInterface::class);
         $processor->expects($this->once())->method('process')->with($job)
@@ -39,7 +37,7 @@ class JobManagerTest extends TestCase
 
         $result = $this->jobManager->process($job);
         $this->assertSame($job, $result);
-        $this->assertGreaterThan(0, $job->getRetry()->getMaxRetryCount());
+        $this->assertGreaterThan(0, $job->getMaxRetryCount());
     }
 
     public function testProcessUnsuccessfulWithoutRetry()
@@ -48,7 +46,6 @@ class JobManagerTest extends TestCase
         $job = $this->jobManager->create($message);
 
         $this->assertInstanceOf(Job::class, $job);
-        $this->assertInstanceOf(Retry::class, $job->getRetry());
 
         $processor = $this->createMock(JobProcessorInterface::class);
         $processor->expects($this->once())->method('process')->with($job)
@@ -64,7 +61,7 @@ class JobManagerTest extends TestCase
 
         $result = $this->jobManager->process($job);
         $this->assertSame($job, $result);
-        $this->assertEquals(0, $job->getRetry()->getMaxRetryCount());
+        $this->assertEquals(0, $job->getMaxRetryCount());
     }
 
     public function testProcessWithoutProcessor()
@@ -73,7 +70,6 @@ class JobManagerTest extends TestCase
         $job = $this->jobManager->create($message);
 
         $this->assertInstanceOf(Job::class, $job);
-        $this->assertInstanceOf(Retry::class, $job->getRetry());
 
         $this->logger->expects($this->once())->method('error')
             ->with(
@@ -91,7 +87,6 @@ class JobManagerTest extends TestCase
         $job = $this->jobManager->create($message);
 
         $this->assertInstanceOf(Job::class, $job);
-        $this->assertInstanceOf(Retry::class, $job->getRetry());
 
         $processor = $this->createMock(JobProcessorInterface::class);
         $processor->expects($this->once())->method('process')->with($job)

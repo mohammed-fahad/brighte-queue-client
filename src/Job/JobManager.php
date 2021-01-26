@@ -6,7 +6,6 @@ namespace BrighteCapital\QueueClient\Job;
 
 use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Interop\Queue\Message;
 use Psr\Log\LoggerInterface;
 
@@ -23,17 +22,9 @@ class JobManager implements \BrighteCapital\QueueClient\Job\JobManagerInterface
         $this->logger = $logger;
     }
 
-    public function createRetry(Message $message): Retry
-    {
-        return new Retry(30, 3, NonBlockerRetryStrategy::class);
-    }
-
     public function create(Message $message): Job
     {
-        return new Job(
-            $message,
-            $this->createRetry($message)
-        );
+        return new Job($message, 30, 3, NonBlockerRetryStrategy::class);
     }
 
     public function process(Job $job): Job
@@ -62,8 +53,8 @@ class JobManager implements \BrighteCapital\QueueClient\Job\JobManagerInterface
             $decider = $this->deciders[$type] ?? null;
 
             if ($decider && !$decider->shouldRetry($job)) {
-                $job->getRetry()->setMaxRetryCount(0);
-                $job->getRetry()->setStrategy(NonBlockerRetryStrategy::class);
+                $job->setMaxRetryCount(0);
+                $job->setStrategy(NonBlockerRetryStrategy::class);
             }
         }
 

@@ -53,16 +53,6 @@ class SlackNotificationChannelTest extends TestCase
         }
     }
 
-    public function testMaxBodyCharsToSendGetterAndSetter()
-    {
-        $this->assertEquals(
-            SlackNotificationChannel::DEFAULT_MAX_BODY_CHARS_TO_SEND,
-            $this->notification->getMaxBodyCharsToSend()
-        );
-        $this->notification->setMaxBodyCharsToSend(9);
-        $this->assertEquals(9, $this->notification->getMaxBodyCharsToSend());
-    }
-
     public function testCreateMessage()
     {
         $message = $this->notification->createMessage(['body' => 'testBody']);

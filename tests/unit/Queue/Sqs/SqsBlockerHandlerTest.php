@@ -13,7 +13,6 @@ use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerStorageRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
 use Enqueue\Sqs\SqsMessage;
 use Interop\Queue\Queue;
 use Psr\Log\NullLogger;
@@ -46,14 +45,14 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testCheckAndHandler()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 1);
-        $job = new Job($this->sqsMessage, new Retry(0, 4, NonBlockerRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 4, NonBlockerRetryStrategy::class);
         $this->assertFalse($this->blockerHandler->checkAndHandle($job));
     }
 
     public function testCheckAndHandlerHandled()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
-        $job = new Job($this->sqsMessage, new Retry(0, 0, NonBlockerRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, NonBlockerRetryStrategy::class);
         $this->sqsClient->expects($this->once())->method('reject');
         $this->storage->expects($this->never())->method('save');
         $this->assertTrue($this->blockerHandler->checkAndHandle($job));
@@ -62,7 +61,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testCheckAndHandlerHandledBlockerStrategy()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
-        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, BlockerRetryStrategy::class);
         $this->sqsClient->expects($this->once())->method('delay');
         $this->storage->expects($this->never())->method('save');
         $this->assertTrue($this->blockerHandler->checkAndHandle($job));
@@ -71,7 +70,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testCheckAndHandlerStorageStrategy()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
-        $job = new Job($this->sqsMessage, new Retry(0, 0, NonBlockerStorageRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, NonBlockerStorageRetryStrategy::class);
         $this->sqsClient->expects($this->once())->method('reject');
         $this->storage->expects($this->once())->method('get');
         $this->storage->expects($this->once())->method('save');
@@ -81,7 +80,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testCheckAndHandlerBlockerStorageStrategy()
     {
         $this->sqsMessage->setProperty('ApproximateReceiveCount', 2);
-        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, BlockerStorageRetryStrategy::class);
         $this->sqsClient->expects($this->once())->method('delay');
         $this->storage->expects($this->once())->method('get');
         $this->storage->expects($this->once())->method('save');
@@ -91,7 +90,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testHandleStorage()
     {
         $this->sqsMessage->setReceiptHandle('test');
-        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, BlockerStorageRetryStrategy::class);
         $messageEntity = new MessageEntity($this->sqsMessage);
         $messageEntity->setMessageHandle('testHandle');
         $this->storage->expects($this->once())->method('get')->willReturn($messageEntity);
@@ -103,7 +102,7 @@ class SqsBlockerHandlerTest extends BaseTestCase
     public function testHandleStorageWithStorageException()
     {
         $this->sqsMessage->setReceiptHandle('test');
-        $job = new Job($this->sqsMessage, new Retry(0, 0, BlockerStorageRetryStrategy::class));
+        $job = new Job($this->sqsMessage, 0, 0, BlockerStorageRetryStrategy::class);
         $this->storage->expects($this->once())->method('get')->willThrowException(new \Exception('error'));
         $this->logger->expects($this->once())->method('error')
             ->with(SqsBlockerHandler::class . '::handleStorage: failed to save message');

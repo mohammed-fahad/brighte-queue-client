@@ -3,6 +3,7 @@
 namespace App\Test\Queue\Factories;
 
 use App\Test\BaseTestCase;
+use BrighteCapital\QueueClient\Job\Job;
 use BrighteCapital\QueueClient\Notifications\Channels\NullNotificationChannel;
 use BrighteCapital\QueueClient\Queue\Factories\BlockerHandlerFactory;
 use BrighteCapital\QueueClient\Queue\Factories\StrategyFactory;
@@ -12,13 +13,13 @@ use BrighteCapital\QueueClient\Storage\NullStorage;
 use BrighteCapital\QueueClient\Strategies\BlockerRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\BlockerStorageRetryStrategy;
 use BrighteCapital\QueueClient\Strategies\NonBlockerRetryStrategy;
-use BrighteCapital\QueueClient\Strategies\Retry;
+use Enqueue\Sqs\SqsMessage;
 use Psr\Log\NullLogger;
 
 class StrategyFactoryTest extends BaseTestCase
 {
     /** @var Retry */
-    protected $retry;
+    protected $job;
     protected $factory;
 
     protected function setUp()
@@ -29,41 +30,41 @@ class StrategyFactoryTest extends BaseTestCase
         $logger = new NullLogger();
         $notification = new NullNotificationChannel();
         $this->factory = new StrategyFactory($client, $storage, $logger, $notification);
-        $this->retry = new Retry(0, 0, NonBlockerRetryStrategy::class);
+        $this->job = new Job(new SqsMessage('test'), 0, 0, NonBlockerRetryStrategy::class);
     }
 
     public function testCreateNonBlocker()
     {
-        $this->retry->setStrategy(NonBlockerRetryStrategy::class);
+        $this->job->setStrategy(NonBlockerRetryStrategy::class);
         $this->assertInstanceOf(
             NonBlockerRetryStrategy::class,
-            $this->factory->create($this->retry)
+            $this->factory->create($this->job)
         );
     }
 
     public function testCreateBlocker()
     {
-        $this->retry->setStrategy(BlockerRetryStrategy::class);
+        $this->job->setStrategy(BlockerRetryStrategy::class);
         $this->assertInstanceOf(
             BlockerRetryStrategy::class,
-            $this->factory->create($this->retry)
+            $this->factory->create($this->job)
         );
     }
 
     public function testCreateBlockerStorage()
     {
-        $this->retry->setStrategy(BlockerStorageRetryStrategy::class);
+        $this->job->setStrategy(BlockerStorageRetryStrategy::class);
         $this->assertInstanceOf(
             BlockerStorageRetryStrategy::class,
-            $this->factory->create($this->retry)
+            $this->factory->create($this->job)
         );
     }
 
     public function testCreateFailed()
     {
-        $this->retry->setStrategy('test');
+        $this->job->setStrategy('test');
         try {
-            $this->factory->create($this->retry);
+            $this->factory->create($this->job);
         } catch (\Exception $e) {
             $this->assertEquals('Given Strategy is not defined : test', $e->getMessage());
         }
