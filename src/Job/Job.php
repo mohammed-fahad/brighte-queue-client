@@ -111,7 +111,7 @@ class Job
         return $this->errorMessage;
     }
 
-    public function shouldNotify()
+    public function shouldNotify(): bool
     {
         return $this->notify;
     }
