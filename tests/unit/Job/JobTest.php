@@ -18,7 +18,7 @@ class JobTest extends TestCase
     {
         parent::setUp();
         $this->message = new SqsMessage('test');
-        $this->job = new Job($this->message, 0, 0, NonBlockerRetryStrategy::class, 'error');
+        $this->job = new Job($this->message, 0, 0, NonBlockerRetryStrategy::class, true);
     }
 
     public function testGettersSetters()
@@ -28,7 +28,7 @@ class JobTest extends TestCase
         $this->assertFalse($this->job->getSuccess());
         $this->assertEquals(0, $this->job->getDelay());
         $this->assertEquals(0, $this->job->getMaxRetryCount());
-        $this->assertEquals('error', $this->job->getErrorMessage());
+        $this->assertEquals('', $this->job->getErrorMessage());
 
         $this->message->setBody('test2');
         $this->job->setStrategy(BlockerStorageRetryStrategy::class);

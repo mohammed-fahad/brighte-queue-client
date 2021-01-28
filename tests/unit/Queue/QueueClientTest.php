@@ -191,7 +191,7 @@ class QueueClientTest extends TestCase
     public function testProcessMessage()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class);
         $job->setSuccess(true);
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
@@ -203,7 +203,7 @@ class QueueClientTest extends TestCase
     public function testProcessMessageRetry()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class);
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $jobManager->expects($this->once())->method('process')->willReturn($job);
@@ -214,7 +214,7 @@ class QueueClientTest extends TestCase
     public function testProcessHandled()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class);
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $this->sqsBlockerHandler->expects($this->once())->method('checkAndHandle')->willReturn(true);
@@ -224,7 +224,7 @@ class QueueClientTest extends TestCase
     public function testProcessThrowException()
     {
         $message = new SqsMessage('test');
-        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class, 'testError');
+        $job = new Job($message, 0, 0, NonBlockerRetryStrategy::class);
         $jobManager = $this->getMockBuilder(JobManager::class)->getMock();
         $jobManager->expects($this->once())->method('create')->willReturn($job);
         $jobManager->expects($this->once())->method('process')

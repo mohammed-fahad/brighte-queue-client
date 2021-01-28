@@ -86,7 +86,7 @@ abstract class AbstractRetryStrategy implements RetryStrategyInterface
 
             $this->logger->critical($issue, $info);
             try {
-                if ($this->job->getNotify()) {
+                if ($this->job->shouldNotify()) {
                     $this->notification->send(['title' => $issue] + $info);
                 }
             } catch (\Exception $e) {

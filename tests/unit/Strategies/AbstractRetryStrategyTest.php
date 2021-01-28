@@ -33,7 +33,7 @@ class AbstractRetryStrategyTest extends BaseTestCase
         $this->client->method('getDestination')->willReturn($this->queue);
         $this->job = $this->getMockBuilder(Job::class)->disableOriginalConstructor()->getMock();
         $this->job->method('getErrorMessage')->willReturn('something went wrong');
-        $this->job->method('getNotify')->willReturn(true);
+        $this->job->method('shouldNotify')->willReturn(true);
         $this->logger = $this->getMockBuilder(NullLogger::class)->disableOriginalConstructor()->getMock();
         $this->notification = $this
             ->getMockBuilder(NullNotificationChannel::class)->disableOriginalConstructor()->getMock();

@@ -11,12 +11,11 @@ class Job
     protected $message;
     protected $success = false;
     protected $result = null;
+    protected $errorMessage = '';
     protected $json = null;
-
     protected $delay;
     protected $maxRetryCount;
     protected $strategy;
-    protected $errorMessage;
     protected $notify;
 
     public function __construct(
@@ -24,14 +23,12 @@ class Job
         int $delays,
         int $maxRetryCount,
         string $strategy,
-        string $errorMessage = '',
         bool $notify = true
     ) {
         $this->message = $message;
         $this->delay = $delays;
         $this->maxRetryCount = $maxRetryCount;
         $this->strategy = $strategy;
-        $this->errorMessage = $errorMessage ?? '';
         $this->notify = $notify;
     }
 
@@ -114,7 +111,7 @@ class Job
         return $this->errorMessage;
     }
 
-    public function getNotify()
+    public function shouldNotify()
     {
         return $this->notify;
     }
